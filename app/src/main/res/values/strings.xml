@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ArduinoGui</string>
+    <string name="app_name_connection">Verbindung einrichten</string>
+    <string name="app_name_project">Projekt einrichten</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="menu_popup_addbutton">Button hinzufügen</string>
+    <string name="menu_popup_addswitch">Switch hinzufügen</string>
+    <string name="mennu_popup_addled">LED hinzufügen</string>
+    <string name="title_activity_connection">Verbindung einrichten</string>
+    <string name="txtConType">Art der Verbindung</string>
+
+    <string-array name="arrConTypeEntries">
+        <item>Bitte wählen Sie</item>
+        <item>Bluetooth</item>
+        <item>Ethernet</item>
+    </string-array>
+
+    <string name="tvConName">Bezeichnung der Verbindung</string>
+    <string name="etConNameHint">Bezeichnung</string>
+    <string name="btnSubmit">OK</string>
+    <string name="btnCancel">Abbrechen</string>
+    <string name="mennu_popup_identifyer">Identifyer</string>
+    <string name="mennu_popup_delete">Element Löschen</string>
+    <string name="txtAllCons">Verfügbare Verbindungen</string>
+    <string name="btnNewCon">Neue Verbindung einrichten</string>
+    <string name="tglBtnChooseCon">auswählen</string>
+    <string name="tglBtnCloseCon">trennen</string>
+    <string name="ButtonSize">Größe der Buttons</string>
+    <string name="settings_ok">Übernehmen</string>
+    <string name="settings_buttons">Anordnung</string>
+    <string name="Colls">Anzahl der Reihen</string>
+    <string name="title_activity_new_project">Neues Projekt</string>
+    <string name="projName">Projektname</string>
+    <string name="Pro_action_settings">Einstellungen</string>
+
+</resources>

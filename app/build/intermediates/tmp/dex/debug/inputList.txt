@@ -1,0 +1,2 @@
+C:\Users\Lukas\HTL\5.Klasse\Dipl\ArduinoGui 0.4\ArduinoGui 0.4\app\build\intermediates\classes\debug
+C:\Users\Lukas\HTL\5.Klasse\Dipl\ArduinoGui 0.4\ArduinoGui 0.4\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-8fb8c268772962085051b2e297b04c9689332dd1.jar

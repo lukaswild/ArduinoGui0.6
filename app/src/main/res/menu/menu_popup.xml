@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<group android:id="@+id/group_popupmenu" >
+    <item android:id="@+id/AddLED" android:title="@string/mennu_popup_addled" android:visible="true" />
+    <item android:id="@+id/AddSwitch" android:title="@string/menu_popup_addswitch" android:visible="true" />
+    <item android:id="@+id/AddButton" android:title="@string/menu_popup_addbutton" android:visible="true" />
+</group>
+</menu>

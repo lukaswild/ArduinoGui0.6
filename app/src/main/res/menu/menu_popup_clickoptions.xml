@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_popupmenu_clickoptions" >
+        <item android:id="@+id/identifyer" android:title="@string/mennu_popup_identifyer" android:visible="true"/>
+        <item android:id="@+id/delete" android:title="@string/mennu_popup_delete" android:visible="true" />
+    </group>
+</menu>

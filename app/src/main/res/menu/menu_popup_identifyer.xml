@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_popupmenu_identifyer" >
+        <item android:id="@+id/p1" android:title="Digital Pin 1" android:visible="true" />
+        <item android:id="@+id/p2" android:title="Digital Pin 2" android:visible="true" />
+        <item android:id="@+id/p3" android:title="Digital Pin 3" android:visible="true" />
+        <item android:id="@+id/p4" android:title="Digital Pin 4" android:visible="true" />
+        <item android:id="@+id/p5" android:title="Digital Pin 5" android:visible="true" />
+        <item android:id="@+id/p6" android:title="Digital Pin 6" android:visible="true" />
+        <item android:id="@+id/p7" android:title="Digital Pin 7" android:visible="true" />
+        <item android:id="@+id/p8" android:title="Digital Pin 8" android:visible="true" />
+        <item android:id="@+id/p9" android:title="Digital Pin 9" android:visible="true" />
+        <item android:id="@+id/p10" android:title="Digital Pin 10" android:visible="true" />
+        <item android:id="@+id/p11" android:title="Digital Pin 11" android:visible="true" />
+        <item android:id="@+id/p12" android:title="Digital Pin 12" android:visible="true" />
+        <item android:id="@+id/p13" android:title="Digital Pin 13" android:visible="true" />
+        <item android:id="@+id/p14" android:title="Digital Pin 14" android:visible="true" />
+        <item android:id="@+id/p15" android:title="Digital Pin 15" android:visible="true" />
+        <item android:id="@+id/a1" android:title="Analog Pin 1" android:visible="true" />
+        <item android:id="@+id/a2" android:title="Analog Pin 2" android:visible="true" />
+        <item android:id="@+id/a3" android:title="Analog Pin 3" android:visible="true" />
+        <item android:id="@+id/a4" android:title="Analog Pin 4" android:visible="true" />
+        <item android:id="@+id/a5" android:title="Analog Pin 5" android:visible="true" />
+    </group>
+</menu>
