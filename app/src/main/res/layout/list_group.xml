@@ -15,7 +15,6 @@
         android:paddingTop="10dp"
         android:textSize="17dp" />
 
-    <!--id: tglBtnChooseCon-->
     <ToggleButton
         android:id="@+id/tglBtnChooseCon"
         style="@android:style/Widget.Button.Toggle"
