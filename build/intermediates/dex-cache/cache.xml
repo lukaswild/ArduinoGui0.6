@@ -2,11 +2,11 @@
 <items version="2" >
 
     <item
-        jar="C:\Program Files (x86)\Android\android-sdk\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jar="C:\Users\Lukas\android-sdks\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
         jumboMode="false"
         revision="21.1.2"
         sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
-        <dex dex="F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-c30e376a8a37b42530721aa3276156097e39d8df.jar" />
+        <dex dex="C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-8fb8c268772962085051b2e297b04c9689332dd1.jar" />
     </item>
 
 </items>

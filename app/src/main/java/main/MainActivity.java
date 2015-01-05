@@ -13,6 +13,7 @@ import observer.Project;
 import com.example.arduinogui.R;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -482,14 +483,15 @@ public class MainActivity extends Activity {
 
     public void ShowDialog(){
 
-        final AlertDialog.Builder popDialog = new  AlertDialog.Builder(this);
+        final Dialog popDialog = new Dialog(this);
         popDialog.setCancelable(true);
 
         final LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         final  View Viewlayout = inflater.inflate(R.layout.seekbar,(ViewGroup)findViewById(R.id.dialog_seekbar));
 
-        popDialog.setView(Viewlayout);
+        popDialog.setContentView(Viewlayout);
+        popDialog.setTitle("Einstellungen");
         popDialog.show();
 
         final SeekBar seek1 = (SeekBar)Viewlayout.findViewById(R.id.seekBar1);
@@ -557,8 +559,9 @@ public class MainActivity extends Activity {
 
                 imgadapt.notifyDataSetChanged();
                 project.getGui().getGridView().clearAnimation();
+                popDialog.cancel();
                 InitializeUI();
-                //TODO popDialog soll geschlossen werden
+
             }
         });
 
