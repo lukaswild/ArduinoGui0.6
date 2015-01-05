@@ -7,13 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.arduinogui.R;
 
 import java.util.HashMap;
 import java.util.List;
+
+import main.ConnectionActivity;
 
 /**
  * Created by Simon on 02.01.2015.
@@ -27,18 +28,18 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     private final String LOG_TAG = "ExpandableListAdapter";
 
     // child data in format of header title, child title
-    private HashMap<String, List<String>> listDataChild;
+    private HashMap<String, List<String>> mapDataChild;
 
     public ExpandableListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> listChildData) {
         this.context = context;
         this.listDataHeader = listDataHeader;
-        this.listDataChild = listChildData;
+        this.mapDataChild = listChildData;
     }
 
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.listDataChild.get(this.listDataHeader.get(groupPosition)).get(childPosition);
+        return this.mapDataChild.get(this.listDataHeader.get(groupPosition)).get(childPosition);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.listDataChild.get(this.listDataHeader.get(groupPosition)).size();
+        return this.mapDataChild.get(this.listDataHeader.get(groupPosition)).size();
     }
 
     @Override
@@ -80,22 +81,30 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+    public View getGroupView(final int groupPosition, final boolean isExpanded, View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_group, null);
         }
 
-        TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
+        final TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
 
-        ToggleButton tglBtnChooseCloseCon = (ToggleButton) convertView.findViewById(R.id.tglBtnChooseCon);
+        // Listener zu ToggleButton hinzufügen
+        final ToggleButton tglBtnChooseCloseCon = (ToggleButton) convertView.findViewById(R.id.tglBtnChooseCon);
+        final View finalConvertView = convertView;
         tglBtnChooseCloseCon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "TglBtn geklickt", Toast.LENGTH_SHORT).show();
+                if(tglBtnChooseCloseCon.isChecked()) {
+                    String key = listDataHeader.get(groupPosition).toString();
+                    ConnectionActivity.chooseConnection(groupPosition, key);
+                } else {
+//                    IConnection con =
+
+                }
             }
         });
 

@@ -1,26 +1,23 @@
 package observer;
 
-import java.util.ArrayList;
-
-import javax.security.auth.PrivateCredentialPermission;
-
-import android.R.integer;
-import android.nfc.tech.TagTechnology;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridView;
-import android.widget.TableLayout;
 
-import com.example.arduinogui.R;
+import java.util.ArrayList;
 
 import Views.ImageAdapter;
 import connection.BTConnection;
 import connection.CodeGenerator;
-import connection.EthernetConnection;
 import connection.IConnection;
-import elements.*;
+import elements.BoolElement;
+import elements.ComObject;
+import elements.Element;
+import elements.InputElement;
+import elements.LedModel;
+import elements.OutputElement;
+import elements.SwitchModel;
 
 public class Project extends Observable {
 
@@ -241,11 +238,11 @@ public class Project extends Observable {
 
     public void createDummyData(){
         // Dummy Daten für ExpandableListView
-        IConnection c1 = BTConnection.createAttributeCon("BCon1", "65:45:1");
-        IConnection c2 = BTConnection.createAttributeCon("BCon2", "37:85:2");
-        IConnection c3 = BTConnection.createAttributeCon("BCon3", "55:45:3");
-        IConnection c4 = BTConnection.createAttributeCon("BCon4", "65:49:4");
-        IConnection c5 = BTConnection.createAttributeCon("BCon5", "45:45:5");
+        IConnection c1 = BTConnection.createAttributeCon("BSibo1", "98:D3:31:B1:F6:82");
+        IConnection c2 = BTConnection.createAttributeCon("BSibo2", "98:D3:31:B1:F6:82");
+        IConnection c3 = BTConnection.createAttributeCon("BSibo3", "98:D3:31:B1:F6:82");
+        IConnection c4 = BTConnection.createAttributeCon("BLuggi1", "98:D3:31:B1:F4:7A");
+        IConnection c5 = BTConnection.createAttributeCon("BLuggi2", "98:D3:31:B1:F4:7A");
 
         listAllCons.add(c1);
         listAllCons.add(c2);

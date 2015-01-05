@@ -27,12 +27,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import connection.BTConnection;
 import connection.ExpandableListAdapter;
 
 public class ConnectionActivity extends Activity {
 
     // Neue Verbindung - Dialogfenster
-    private final String LOG_TAG = "ConnectionActivity";
+    private final static String LOG_TAG = "ConnectionActivity";
     EditText etConName;
     TextView tvConAddress;
     EditText etConAddress;
@@ -46,7 +47,15 @@ public class ConnectionActivity extends Activity {
     // ExpandableListView
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
+   static HashMap<String, List<String>> mapListDataChild; // TODO passt static ??
 
+    public HashMap<String, List<String>> getMapListDataChild() {
+        return mapListDataChild;
+    }
+
+    public void setMapListDataChild(HashMap<String, List<String>> mapListDataChild) {
+        this.mapListDataChild = mapListDataChild;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +75,7 @@ public class ConnectionActivity extends Activity {
         ArrayList<String> allConsHeader = getIntentExtra(parentIntent, "allConsHeader");
         ArrayList<String> allConsAddress = getIntentExtra(parentIntent, "allConsAddress");
 
-        Toast.makeText(this, "allConsType: " + allConsType.size() + "\nallConsHeader: " + allConsHeader.size() +
-                "\nallConsAddress: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
-
-        HashMap<String, List<String>> mapListDataChild = new HashMap<String, List<String>>();
+        mapListDataChild = new HashMap<String, List<String>>();
 
         // Für jede Kindview eine eigene Liste anlegen und zur Liste listChildren hinzufügen
         fillHashMap(allConsType, allConsHeader, allConsAddress, mapListDataChild);
@@ -329,6 +335,23 @@ public class ConnectionActivity extends Activity {
 ////        }
 //    }
 
+
+    public static void chooseConnection(int mapIndex, String key) {
+        Log.d(LOG_TAG, "" + mapIndex);
+        ArrayList<String> clickedEntry = (ArrayList<String>) mapListDataChild.get(key);
+        String clickedConType = clickedEntry.get(0);
+        String clickedConName = key;
+        String clickedConAddress = clickedEntry.get(1);
+        Log.d(LOG_TAG, clickedConType);
+        Log.d(LOG_TAG, clickedConName);
+        Log.d(LOG_TAG, clickedConAddress);
+
+        BTConnection.initialiseConnection(clickedConName, clickedConAddress);
+    }
+
+    public static void closeChosenConnection(int mapIndex, String key) {
+
+    }
 
     private class StableArrayAdapter extends ArrayAdapter<String> {
 
