@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.arduinogui.R;
 
@@ -88,6 +90,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
+
+        ToggleButton tglBtnChooseCloseCon = (ToggleButton) convertView.findViewById(R.id.tglBtnChooseCon);
+        tglBtnChooseCloseCon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "TglBtn geklickt", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         return convertView;
     }

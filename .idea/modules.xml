@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ArduinoGui 0.5.iml" filepath="$PROJECT_DIR$/ArduinoGui 0.5.iml" />
       <module fileurl="file://$PROJECT_DIR$/ArduinoGui 0.6.iml" filepath="$PROJECT_DIR$/ArduinoGui 0.6.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ArduinoGui0.6.iml" filepath="$PROJECT_DIR$/ArduinoGui0.6.iml" />
       <module fileurl="file://$PROJECT_DIR$/ArduinoGui04.iml" filepath="$PROJECT_DIR$/ArduinoGui04.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
