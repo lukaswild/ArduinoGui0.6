@@ -142,7 +142,7 @@ public class BTConnection implements IConnection {
      * @param conName Vom Benutzer festgelegte Bezeichnung für die Verbindung
      * @param macAddress MAC-Adresse des Bluetooth-Devices am Arduino
      */
-    public static BTConnection initialiseConnection(String conName, String macAddress) {
+    public static boolean initialiseConnection(String conName, String macAddress) {
 
         Log.d(LOG_TAG, "Connecting with " + macAddress + "...");
 
@@ -160,14 +160,16 @@ public class BTConnection implements IConnection {
 
             // Inputstream erstellen
             createInputStream();
+
+            if (isConnected)
+                Log.d(LOG_TAG, "Bluetooth-Verbindung erfolgreich initialisiert");
+            else
+                Log.d(LOG_TAG, "Fehler beim Aufbauen der Bluetooth-Verbindung");
+
+            return true;
         }
 
-        if (isConnected)
-            Log.d(LOG_TAG, "Bluetooth-Verbindung erfolgreich initialisiert");
-        else
-            Log.d(LOG_TAG, "Fehler beim Aufbauen der Bluetooth-Verbindung");
-
-        return instance;
+        return false;
     }
 
 
@@ -223,8 +225,8 @@ public class BTConnection implements IConnection {
         }
     }
 
-    @Override
-    public void closeConnection() {
+//    @Override
+    public static void closeConnection() {
 
         if (isConnected && streamOut != null) {
             isConnected = false;

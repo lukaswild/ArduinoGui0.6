@@ -71,18 +71,18 @@ public class EthernetConnection implements IConnection {
     }
 
 
-    public static EthernetConnection initialiseConnection(String conName, String ipAddress) {
+    public static boolean initialiseConnection(String conName, String ipAddress) {
         if(instance == null) {
             instance = new EthernetConnection();
             EthernetConnection.conName = conName;
             EthernetConnection.ipAddress = ipAddress;
+            return true;
         }
-
-        return instance;
+        return false;
     }
 
 
-    @Override
+//    @Override
     public void closeConnection() {
         instance = null;
     }

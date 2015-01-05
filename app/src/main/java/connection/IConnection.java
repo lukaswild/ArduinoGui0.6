@@ -7,7 +7,7 @@ public interface IConnection {
 	
 	public String receiveData();
 	
-	public void closeConnection();
+//	public void closeConnection();
 
     public void setConName(String name);
 

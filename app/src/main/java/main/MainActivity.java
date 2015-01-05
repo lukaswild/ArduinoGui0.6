@@ -1,47 +1,39 @@
 package main;
 
-import Views.ImageAdapter;
-import Views.MyImageView;
-import connection.BTConnection;
-import connection.EthernetConnection;
-import connection.IConnection;
-import elements.Element;
-import elements.LedModel;
-import elements.SwitchModel;
-import observer.Gui;
-import observer.Project;
-import com.example.arduinogui.R;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arduinogui.R;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
+import Views.ImageAdapter;
+import connection.BTConnection;
+import connection.IConnection;
+import elements.Element;
+import elements.LedModel;
+import elements.SwitchModel;
+import observer.Gui;
+import observer.Project;
 
 
 public class MainActivity extends Activity {
@@ -463,7 +455,7 @@ public class MainActivity extends Activity {
 
         for(IConnection c : project.getListAllCons()) {
             if(c instanceof BTConnection) {
-                allConsType.add("Bluetooth-Verbindung");
+                allConsType.add(getString(R.string.description_btCon));
                 allConsHeader.add( ((BTConnection) c).getConNameDeclaration());
                 allConsAddress.add(((BTConnection) c).getConAddressDeclaration());
             } // TODO else if c instanceof Ethernetconnection
@@ -593,14 +585,15 @@ public class MainActivity extends Activity {
                 if (data.getExtras().containsKey("conType")) {
                     int conTypeInt = data.getExtras().getInt("conType");
                     if (conTypeInt == 1) { // Bluetooth
+                        // Verbindung von project holen
                         //  BTConnection btConnection = BTConnection.initialiseConnection(name, address); // TODO wenn Verbindung am Arduino unterbrochen --> wird nicht mehr aufgebaut, da bei App bereits instantiiert
                         // project.setCurrentConnection(btConnection);
 
 
                     }
                     if (conTypeInt == 2) { // Ethernet
-                        EthernetConnection ethernetConnection = EthernetConnection.initialiseConnection(name, address);
-                        project.setCurrentConnection(ethernetConnection);
+//                        EthernetConnection ethernetConnection = EthernetConnection.initialiseConnection(name, address);
+//                        project.setCurrentConnection(ethernetConnection);
                     }
                     Toast.makeText(getApplicationContext(), project.getCurrentConnection().getConName() + "\n" +
                             project.getCurrentConnection().getAddress(), Toast.LENGTH_LONG).show();

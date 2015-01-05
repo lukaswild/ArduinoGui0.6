@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import connection.BTConnection;
+import connection.EthernetConnection;
 import connection.ExpandableListAdapter;
 
 public class ConnectionActivity extends Activity {
@@ -47,7 +48,7 @@ public class ConnectionActivity extends Activity {
     // ExpandableListView
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
-   static HashMap<String, List<String>> mapListDataChild; // TODO passt static ??
+    static HashMap<String, List<String>> mapListDataChild; // TODO passt static ??
 
     public HashMap<String, List<String>> getMapListDataChild() {
         return mapListDataChild;
@@ -335,18 +336,26 @@ public class ConnectionActivity extends Activity {
 ////        }
 //    }
 
-
-    public static void chooseConnection(int mapIndex, String key) {
-        Log.d(LOG_TAG, "" + mapIndex);
+    /**
+     * Hiermit wird eine Verbindung aufgebaut, wenn ein Schalter (ToggleButton) neben einer
+     * Verbindung angeklickt wurde
+     * @param key - Der Key des Eintrags in der HashMap
+     */
+    public static boolean chooseConnection(String key) {
         ArrayList<String> clickedEntry = (ArrayList<String>) mapListDataChild.get(key);
         String clickedConType = clickedEntry.get(0);
         String clickedConName = key;
         String clickedConAddress = clickedEntry.get(1);
+        boolean initialisingSuccessful = false;
         Log.d(LOG_TAG, clickedConType);
         Log.d(LOG_TAG, clickedConName);
-        Log.d(LOG_TAG, clickedConAddress);
 
-        BTConnection.initialiseConnection(clickedConName, clickedConAddress);
+        if(clickedConType.equals("Bluetooth-Verbindung"))
+            initialisingSuccessful = BTConnection.initialiseConnection(clickedConName, clickedConAddress);
+        else
+            initialisingSuccessful = EthernetConnection.initialiseConnection(clickedConName, clickedConAddress);
+
+        return initialisingSuccessful;
     }
 
     public static void closeChosenConnection(int mapIndex, String key) {

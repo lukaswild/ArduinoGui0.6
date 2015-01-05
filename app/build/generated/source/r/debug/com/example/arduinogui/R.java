@@ -124,22 +124,23 @@ public final class R {
         public static final int btnCancel=0x7f060007;
         public static final int btnNewCon=0x7f060008;
         public static final int btnSubmit=0x7f060009;
-        public static final int etConNameHint=0x7f06000a;
-        public static final int mennu_popup_addled=0x7f06000b;
-        public static final int mennu_popup_delete=0x7f06000c;
-        public static final int mennu_popup_identifyer=0x7f06000d;
-        public static final int menu_popup_addbutton=0x7f06000e;
-        public static final int menu_popup_addswitch=0x7f06000f;
-        public static final int projName=0x7f060010;
-        public static final int settings_buttons=0x7f060011;
-        public static final int settings_ok=0x7f060012;
-        public static final int tglBtnChooseCon=0x7f060013;
-        public static final int tglBtnCloseCon=0x7f060014;
-        public static final int title_activity_connection=0x7f060015;
-        public static final int title_activity_new_project=0x7f060016;
-        public static final int tvConName=0x7f060017;
-        public static final int txtAllCons=0x7f060018;
-        public static final int txtConType=0x7f060019;
+        public static final int description_btCon=0x7f06000a;
+        public static final int etConNameHint=0x7f06000b;
+        public static final int mennu_popup_addled=0x7f06000c;
+        public static final int mennu_popup_delete=0x7f06000d;
+        public static final int mennu_popup_identifyer=0x7f06000e;
+        public static final int menu_popup_addbutton=0x7f06000f;
+        public static final int menu_popup_addswitch=0x7f060010;
+        public static final int projName=0x7f060011;
+        public static final int settings_buttons=0x7f060012;
+        public static final int settings_ok=0x7f060013;
+        public static final int tglBtnChooseCon=0x7f060014;
+        public static final int tglBtnCloseCon=0x7f060015;
+        public static final int title_activity_connection=0x7f060016;
+        public static final int title_activity_new_project=0x7f060017;
+        public static final int tvConName=0x7f060018;
+        public static final int txtAllCons=0x7f060019;
+        public static final int txtConType=0x7f06001a;
     }
     public static final class style {
         /** 

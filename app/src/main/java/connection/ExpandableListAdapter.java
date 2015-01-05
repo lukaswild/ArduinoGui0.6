@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.arduinogui.R;
@@ -98,12 +99,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         tglBtnChooseCloseCon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(tglBtnChooseCloseCon.isChecked()) {
+                if(tglBtnChooseCloseCon.isChecked()) { // Wenn Verbindung aufgebaut werden soll
                     String key = listDataHeader.get(groupPosition).toString();
-                    ConnectionActivity.chooseConnection(groupPosition, key);
-                } else {
-//                    IConnection con =
-
+                    boolean initialisingNewConSuccessful = ConnectionActivity.chooseConnection(key);
+                    // Wenn bereits eine Verbindung vorhanden ist, so wird keine neue Verbindung aufgebaut --> ToggleButton soll nicht aktiviert werden
+                    if(!initialisingNewConSuccessful) {
+                        tglBtnChooseCloseCon.setChecked(false);
+                        Toast.makeText(context, "Bitte zuerst aktuelle Verbindung trennen", Toast.LENGTH_LONG).show();
+                    }
+                } else { // Wenn Verbindung beendet werden soll
+                    BTConnection.closeConnection();
                 }
             }
         });
