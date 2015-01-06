@@ -265,34 +265,35 @@ public class ConnectionActivity extends Activity {
 //            conAdapter.add(conAddress);
 //               conAdapter.notifyDataSetChanged();
 
-            case 0: // nichts ausgewählt - sollte nicht vorkommen
+            case 0: // nichts ausgewählt - sollte nicht vorkommene
                 Toast.makeText(getApplicationContext(), "Es wurde nichts ausgewählt. ", Toast.LENGTH_SHORT).show();
                 Log.e(LOG_TAG, "Es wurde kein Verbindungstyp ausgewählt");
                 break;
 
             case 1: // Bluetooth-Verbindung ausgewählt
-                Log.d(LOG_TAG, "Bluetooth-Verbindung");
                 strConType = "Bluetooth-Verbindung";
                 IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
-                MainActivity.getAllConnections().add(conToAddB); // Die neue Connection zur Liste mit allen Connections hinzufügen
-                expListAdapter.getListDataHeader().add(conName);
-                listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
-                mapExpListView.put(conName, listChildrenToAdd);
-                dialogNewCon.cancel();
+                addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddB);
                 break;
 
             case 2: // Ethernet-Verbindung ausgewählt
                 strConType = "Ethernet-Verbindung";
                 IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
-                MainActivity.getAllConnections().add(conToAddE); // Die neue Connection zur Liste mit allen Connections hinzufügen
-                listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
-                mapExpListView.put(conName, listChildrenToAdd);
-                dialogNewCon.cancel();
+                addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddE);
                 break;
         }
 
         expListAdapter.notifyDataSetChanged(); // Die ExpandableListView aktualisieren
         Log.i(LOG_TAG, "Liste aller Connections aktualisiert");
+    }
+
+    private void addNewConnection(String strConType, String conName, String conAddress,
+                                  HashMap<String, ArrayList<String>> mapExpListView, IConnection conToAdd) {
+        MainActivity.getAllConnections().add(conToAdd); // Die neue Connection zur Liste mit allen Connections hinzufügen
+        expListAdapter.getListDataHeader().add(conName);
+        ArrayList<String> listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
+        mapExpListView.put(conName, listChildrenToAdd);
+        dialogNewCon.cancel();
     }
 
     private ArrayList<String> createListChildrenToAdd(String strConType, String conAddress) {

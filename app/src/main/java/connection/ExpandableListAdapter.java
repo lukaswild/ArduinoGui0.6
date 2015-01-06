@@ -117,6 +117,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         tglBtnChooseCloseCon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(tglBtnChooseCloseCon.isChecked()) { // Wenn Verbindung aufgebaut werden soll
                     Log.d(LOG_TAG, "Verbindung wird aufgebaut...");
                     String key = listDataHeader.get(groupPosition).toString();
