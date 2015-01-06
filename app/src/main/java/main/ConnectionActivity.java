@@ -30,6 +30,7 @@ import java.util.List;
 import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.ExpandableListAdapter;
+import connection.IConnection;
 
 public class ConnectionActivity extends Activity {
 
@@ -43,18 +44,20 @@ public class ConnectionActivity extends Activity {
 
     // Verfügbare Verbindungen anzeigen - standardmäßig bei Start der Activity
     Dialog dialogNewCon;
-    private StableArrayAdapter conAdapter;
+    private StableArrayAdapter conAdapter; // nur für ListView benötigt - sollte nicht mehr benötigt werden
 
     // ExpandableListView
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
-    static HashMap<String, List<String>> mapListDataChild; // TODO passt static ??
+    static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
+    ExpandableListAdapter expListAdapter;
 
-    public HashMap<String, List<String>> getMapListDataChild() {
+
+    public HashMap<String, ArrayList<String>> getMapListDataChild() {
         return mapListDataChild;
     }
 
-    public void setMapListDataChild(HashMap<String, List<String>> mapListDataChild) {
+    public void setMapListDataChild(HashMap<String, ArrayList<String>> mapListDataChild) {
         this.mapListDataChild = mapListDataChild;
     }
 
@@ -69,25 +72,21 @@ public class ConnectionActivity extends Activity {
         }
         Intent parentIntent = getIntent();
 
-        // get the listview
-
-
         ArrayList<String> allConsType = getIntentExtra(parentIntent, "allConsType");
         ArrayList<String> allConsHeader = getIntentExtra(parentIntent, "allConsHeader");
         ArrayList<String> allConsAddress = getIntentExtra(parentIntent, "allConsAddress");
 
-        mapListDataChild = new HashMap<String, List<String>>();
+        mapListDataChild = new HashMap<String, ArrayList<String>>();
 
         // Für jede Kindview eine eigene Liste anlegen und zur Liste listChildren hinzufügen
         fillHashMap(allConsType, allConsHeader, allConsAddress, mapListDataChild);
 
         expListView = (ExpandableListView) findViewById(R.id.listViewAvailableCons);
-        ExpandableListAdapter listAdapter = new ExpandableListAdapter(this, allConsHeader, mapListDataChild);
-
+        expListAdapter = new ExpandableListAdapter(this, allConsHeader, mapListDataChild);
 
 
         // der ExpandableListView den Adapter übergeben
-        expListView.setAdapter(listAdapter);
+        expListView.setAdapter(expListAdapter);
         Log.d(LOG_TAG, "Adapter wurde ListView hinzugefügt");
     }
 
@@ -99,7 +98,7 @@ public class ConnectionActivity extends Activity {
     }
 
 
-    private void fillHashMap(ArrayList<String> allConsType, ArrayList<String> allConsHeader, ArrayList<String> allConsAddress, HashMap<String, List<String>> mapListDataChild) {
+    private void fillHashMap(ArrayList<String> allConsType, ArrayList<String> allConsHeader, ArrayList<String> allConsAddress, HashMap<String, ArrayList<String>> mapListDataChild) {
         for(int i = 0; i < allConsType.size(); i++) {
             ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
             child.add(allConsType.get(i));
@@ -112,25 +111,6 @@ public class ConnectionActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        // Listener der ToggleButtons //
-
-        // Listener der ToggleButtons werden hier gesetzt, da in onCreate ExpandableListView noch null ist (wird erst später aufgebaut)
-//        RelativeLayout relLayoutContainer = (RelativeLayout) findViewById(R.id.relativeLayoutListGroup);
-//
-//        for (int i = 0; i < expListView.getChildCount(); i++) {
-//            View v = (ExpandableListView) expListView.getChildAt(i);
-//            Log.d(LOG_TAG, "" + expListView.getChildCount());
-//            Log.d(LOG_TAG, expListView.getClass().toString());
-//            ToggleButton tglBtn = new ToggleButton(this);
-//            TextView tv = (TextView) findViewById(R.id.tvExpListHeader);
-//
-//
-//        }
-
-
-        // OptionsMenu //
-
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.new_connection, menu);
         return true;
@@ -267,26 +247,59 @@ public class ConnectionActivity extends Activity {
 
 
     /**
-     * Methode wird ausgef�hrt, wenn Button "OK" angeklickt wurde
+     * Methode wird ausgef�hrt, wenn Button "OK" im Dialogfenster (neue Verbindung einrichten) angeklickt wurde
      * @param v
      */
     public void btnSubmitClicked(View v) {
-        String strConName = etConName.getText().toString();
-        String address = etConAddress.getText().toString();
+        String strConType = "";
+        String conName = etConName.getText().toString();
+        String conAddress = etConAddress.getText().toString();
+        HashMap<String, ArrayList<String>> mapExpListView = expListAdapter.getMapDataChild();
+        ArrayList<String> listChildrenToAdd;
 
         // Es sind nur MAC-Adressen mit Separator ":" erlaubt (IP-Addressen werden mit einem Punkt getrennt, diese werden nicht ersetzt)
-        address.replaceAll("-", ":");
-        address.trim();
+        conAddress.replaceAll("-", ":");
+        conAddress.trim();
 
-        if (conType != 0) { // Bluetooth oder Ethernet
-            conAdapter.add(strConName);
-            //conAdapter.add(address);
-            conAdapter.notifyDataSetChanged();
-            Log.i(LOG_TAG, "Liste aller Connections aktualisiert");
-            dialogNewCon.cancel();
+        switch (conType) { // 0 (nichts ausgewählt), 1 (BT), oder 2 (Ethernet)
+//            conAdapter.add(conName);
+//            conAdapter.add(conAddress);
+//            conAdapter.notifyDataSetChanged();
+
+            case 0: // nichts ausgewählt - sollte nicht vorkommen
+                Toast.makeText(getApplicationContext(), "Es wurde nichts ausgewählt. ", Toast.LENGTH_SHORT).show();
+                Log.e(LOG_TAG, "Es wurde kein Verbindungstyp ausgewählt");
+                break;
+
+            case 1: // Bluetooth-Verbindung ausgewählt
+                strConType = "Bluetooth-Verbindung";
+                IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
+                MainActivity.getAllConnections().add(conToAddB);
+                listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
+                mapExpListView.put(conName, listChildrenToAdd);
+                dialogNewCon.cancel();
+                break;
+
+            case 2: // Ethernet-Verbindung ausgewählt
+                strConType = "Ethernet-Verbindung";
+//                IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
+//                MainActivity.getAllConnections().add(conToAddE);
+                listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
+                mapExpListView.put(conName, listChildrenToAdd);
+                dialogNewCon.cancel();
+                break;
         }
-        else // nichts ausgew�hlt - sollte �berhaupt nicht vorkommen (als Absicherung wird es abgefangen)
-            Toast.makeText(getApplicationContext(), "Es wurde nichts ausgew�hlt. ", Toast.LENGTH_SHORT).show();
+
+        expListAdapter.notifyDataSetChanged(); // Die ExpandableListView aktualisieren
+        Log.i(LOG_TAG, "Liste aller Connections aktualisiert");
+    }
+
+    private ArrayList<String> createListChildrenToAdd(String strConType, String conAddress) {
+        ArrayList<String> listChildrenToAdd;
+        listChildrenToAdd = new ArrayList<String>();
+        listChildrenToAdd.add(strConType);
+        listChildrenToAdd.add(conAddress);
+        return listChildrenToAdd;
     }
 
 

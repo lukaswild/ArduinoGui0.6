@@ -15,7 +15,7 @@ import main.MainActivity;
 
 public class EthernetConnection implements IConnection {
 
-  private int id=0;
+    private int id = 0;
 
     private final static String LOG_TAG = "EthernetConnection";
     private static String conName = ""; // Name der Connection
@@ -96,7 +96,7 @@ public class EthernetConnection implements IConnection {
     }
 
 
-//    @Override
+    //    @Override
     public void closeConnection() {
         instance = null;
     }

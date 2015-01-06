@@ -13,8 +13,8 @@ import android.widget.ToggleButton;
 
 import com.example.arduinogui.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import main.ConnectionActivity;
 
@@ -25,19 +25,27 @@ import main.ConnectionActivity;
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context context;
-    private List<String> listDataHeader; // header titles
+    private ArrayList<String> listDataHeader; // header titles
     private static int idCount = 0;
     private final String LOG_TAG = "ExpandableListAdapter";
 
     // child data in format of header title, child title
-    private HashMap<String, List<String>> mapDataChild;
+    private HashMap<String, ArrayList<String>> mapDataChild;
 
-    public ExpandableListAdapter(Context context, List<String> listDataHeader, HashMap<String, List<String>> listChildData) {
+    public ExpandableListAdapter(Context context, ArrayList<String> listDataHeader, HashMap<String, ArrayList<String>> listChildData) {
         this.context = context;
         this.listDataHeader = listDataHeader;
         this.mapDataChild = listChildData;
     }
 
+
+    public HashMap<String, ArrayList<String>> getMapDataChild() {
+        return mapDataChild;
+    }
+
+    public void setMapDataChild(HashMap<String, ArrayList<String>> mapDataChild) {
+        this.mapDataChild = mapDataChild;
+    }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
@@ -89,6 +97,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             LayoutInflater infalInflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.list_group, null);
         }
+
 
         final TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
         lblListHeader.setTypeface(null, Typeface.BOLD);

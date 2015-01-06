@@ -53,7 +53,8 @@
                     android:id="@+id/etConName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/etConNameHint" >
+                    android:hint="@string/etConNameHint"
+                    android:maxLength="20">
 
                     <requestFocus />
                 </EditText>

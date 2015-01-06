@@ -15,13 +15,7 @@ import main.MainActivity;
 
 public class BTConnection implements IConnection {
 
-// TODO Initialisierung einer neuen Verbindung auch über einen Thread oder AsyncTask
-
-    /**
-     * UUID für Bluetooth-Kommunikation
-     */
-
-    private int id=0;
+    private int id = 0;
     private final static UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String LOG_TAG = "BTConnection";
 
@@ -33,10 +27,10 @@ public class BTConnection implements IConnection {
     private static OutputStream streamOut = null; // TODO BufferedOutputStream
     private static InputStream streamIn = null; // TODO BufferedInputStream
 
-
     private static boolean isConnected = false;
     private static String macAddress; // MAC Adresse des Bluetooth Adapters
     private static BTConnection instance = null; //Instanz für Singleton-Pattern
+
 
     //getter und setter
     public int getId() {
@@ -55,8 +49,8 @@ public class BTConnection implements IConnection {
     }
 
     @Override
-    public void setConName(String conNname) {
-        BTConnection.conName = conNname;
+    public void setConName(String conName) {
+        BTConnection.conName = conName;
     }
 
     @Override
@@ -65,8 +59,8 @@ public class BTConnection implements IConnection {
     }
 
     @Override
-    public void setAddress(String macAdress) {
-        BTConnection.macAddress = macAdress;
+    public void setAddress(String macAddress) {
+        BTConnection.macAddress = macAddress;
     }
 
     public static boolean isConnected() {
@@ -102,7 +96,6 @@ public class BTConnection implements IConnection {
             Log.d(LOG_TAG, "Sending data: " + data);
             try {
                 streamOut.write(msgBuffer);
-
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error while sending data: " + e.toString());
             }
@@ -262,4 +255,3 @@ public class BTConnection implements IConnection {
             Log.e(LOG_TAG, "Trennen: Keine Verbindung zum Beenden");
     }
 }
-

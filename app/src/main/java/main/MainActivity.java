@@ -3,7 +3,6 @@ package main;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
@@ -25,9 +23,7 @@ import android.widget.Toast;
 
 import com.example.arduinogui.R;
 
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
 import Views.ImageAdapter;
@@ -75,6 +71,14 @@ public class MainActivity extends Activity {
 
     public static void setCurrentProject(Project currentProject) {
         CurrentProject = currentProject;
+    }
+
+    public static IConnection getCurrentConnection() {
+        return CurrentConnection;
+    }
+
+    public static void setCurrentConnection(IConnection currentConnection) {
+        CurrentConnection = currentConnection;
     }
 
     @Override
