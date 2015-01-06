@@ -112,7 +112,7 @@ public class MainActivity extends Activity {
         super.onResume();
         InitializeUI(CurrentProject);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
-        
+
     }
 
    /* @Override
@@ -135,8 +135,8 @@ public class MainActivity extends Activity {
 
         //Löscht zuerst einmal den Inhalt von Grdiview
         project.getGui().getGridView().clearAnimation();
-        gui.getGridView().setAdapter(imgadapt);
-        gui.getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        project.getGui().getGridView().setAdapter(imgadapt);
+        project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
@@ -221,7 +221,7 @@ public class MainActivity extends Activity {
         });*/
 
         // gridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-        gui.getGridView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        project.getGui().getGridView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, final View v,final int position, long id) {
