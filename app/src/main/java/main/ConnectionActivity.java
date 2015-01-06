@@ -35,11 +35,11 @@ public class ConnectionActivity extends Activity {
 
     // Neue Verbindung - Dialogfenster
     private final static String LOG_TAG = "ConnectionActivity";
-    EditText etConName;
-    TextView tvConAddress;
-    EditText etConAddress;
-    Button btnSubmit;
-    int conType = 0; // Art der Verbindung - 0: nichts ausgew�hlt, 1: Bluetooth, 2: Ethernet
+    private EditText etConName;
+    private TextView tvConAddress;
+    private EditText etConAddress;
+    private Button btnSubmit;
+    private int conType = 0; // Art der Verbindung - 0: nichts ausgew�hlt, 1: Bluetooth, 2: Ethernet
 
     // Verfügbare Verbindungen anzeigen - standardmäßig bei Start der Activity
     Dialog dialogNewCon;
@@ -205,7 +205,7 @@ public class ConnectionActivity extends Activity {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View v, int position, long arg3) {
-                Toast.makeText(getApplicationContext(), "Es wurde " + position + " geklickt", Toast.LENGTH_SHORT).show();
+                Log.d(LOG_TAG, "Es wurde Position " + position + " geklickt");
 
 				/*
 				 * Wert von position:
@@ -358,9 +358,6 @@ public class ConnectionActivity extends Activity {
         return initialisingSuccessful;
     }
 
-    public static void closeChosenConnection(int mapIndex, String key) {
-
-    }
 
     private class StableArrayAdapter extends ArrayAdapter<String> {
 

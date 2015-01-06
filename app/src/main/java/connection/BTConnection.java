@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import main.MainActivity;
+
 public class BTConnection implements IConnection {
 
 // TODO Initialisierung einer neuen Verbindung auch über einen Thread oder AsyncTask
@@ -67,8 +69,12 @@ public class BTConnection implements IConnection {
         BTConnection.macAddress = macAdress;
     }
 
-    public boolean isConnected() {
+    public static boolean isConnected() {
         return isConnected;
+    }
+
+    public static BTConnection getInstance() {
+        return instance;
     }
 
 
@@ -101,7 +107,7 @@ public class BTConnection implements IConnection {
                 Log.e(LOG_TAG, "Error while sending data: " + e.toString());
             }
         } else {
-            Log.d(LOG_TAG, "Cannot send data, not connected with Bluetooth");
+            Log.e(LOG_TAG, "Fehler beim Senden der Daten: Keine Verbindung");
         }
     }
 
@@ -124,7 +130,7 @@ public class BTConnection implements IConnection {
 
                 Log.d(LOG_TAG, "Message: " + data);
             } else
-                Log.d(LOG_TAG, "InputStream not available");
+                Log.e(LOG_TAG, "InputStream not available");
 
         } catch (Exception e) {
             Log.e(LOG_TAG, "Error receiving data: " + e.toString());
@@ -171,16 +177,15 @@ public class BTConnection implements IConnection {
             // Inputstream erstellen
             createInputStream();
 
-            if (isConnected)
+            if (isConnected) {
+                // Aufgebaute Verbindung als aktuell verwendete in der MainActivity setzen (currentConnection)
+                MainActivity.setCurrentConnection(instance);
                 Log.d(LOG_TAG, "Bluetooth-Verbindung erfolgreich initialisiert");
-            else {
-                Log.d(LOG_TAG, "Fehler beim Aufbauen der Bluetooth-Verbindung");
-                return false;
+                return true;
             }
-
-            return true;
+            else
+                Log.e(LOG_TAG, "Fehler beim Aufbauen der Bluetooth-Verbindung");
         }
-
         return false;
     }
 
@@ -225,6 +230,7 @@ public class BTConnection implements IConnection {
             Log.d(LOG_TAG, "Socket connected");
         } catch (IOException e) {
             isConnected = false;
+            instance = null;
             Log.e(LOG_TAG, "Error while trying to connect socket: " + e.toString());
         }
 
@@ -239,7 +245,7 @@ public class BTConnection implements IConnection {
         }
     }
 
-//    @Override
+    //    @Override
     public static void closeConnection() {
 
         if (isConnected && streamOut != null) {
@@ -253,7 +259,7 @@ public class BTConnection implements IConnection {
                 Log.e(LOG_TAG, "Fehler beim Beenden der Verbindung: " + e.toString());
             }
         } else
-            Log.d(LOG_TAG, "Trennen: Keine Verbindung zum Beenden");
+            Log.e(LOG_TAG, "Trennen: Keine Verbindung zum Beenden");
     }
 }
 

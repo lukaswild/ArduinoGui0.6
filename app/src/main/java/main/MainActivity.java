@@ -40,10 +40,10 @@ import observer.Project;
 public class MainActivity extends Activity {
 
 
-    public static ArrayList<Project> AllProjects;
-    public static Project CurrentProject;
-    public static ArrayList<IConnection> AllConnections;
-    public static IConnection CurrentConnection;
+    private static ArrayList<Project> AllProjects;
+    private static Project CurrentProject;
+    private static ArrayList<IConnection> AllConnections;
+    private static IConnection CurrentConnection;
 
     private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
 
@@ -56,6 +56,14 @@ public class MainActivity extends Activity {
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
     private final String LOG_TAG = "MainActivity";
+
+    public static IConnection getCurrentConnection() {
+        return CurrentConnection;
+    }
+
+    public static void setCurrentConnection(IConnection currentConnection) {
+        CurrentConnection = currentConnection;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -552,7 +560,6 @@ public class MainActivity extends Activity {
 
                                              }
                                          }
-
 
         );
 

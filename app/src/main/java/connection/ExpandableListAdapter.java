@@ -2,6 +2,7 @@ package connection;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,15 +101,19 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View v) {
                 if(tglBtnChooseCloseCon.isChecked()) { // Wenn Verbindung aufgebaut werden soll
+                    Log.d(LOG_TAG, "Verbindung wird aufgebaut...");
                     String key = listDataHeader.get(groupPosition).toString();
                     boolean initialisingNewConSuccessful = ConnectionActivity.chooseConnection(key);
                     // Wenn bereits eine Verbindung vorhanden ist, so wird keine neue Verbindung aufgebaut --> ToggleButton soll nicht aktiviert werden
                     if(!initialisingNewConSuccessful) {
                         tglBtnChooseCloseCon.setChecked(false);
-                        Toast.makeText(context, "Bitte zuerst aktuelle Verbindung trennen", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Verbinden nicht möglich \nBereits bestehende Verbindung beenden" +
+                                " oder Adresse überprüfen", Toast.LENGTH_LONG).show();
+                        Log.e(LOG_TAG, "Es besteht entweder bereits eine Verbindung oder die MAC- bzw. IP-Adresse ist falsch");
                     }
                 } else { // Wenn Verbindung beendet werden soll
                     BTConnection.closeConnection();
+                    Log.d(LOG_TAG, "Verbindung wird beendet");
                 }
             }
         });

@@ -10,6 +10,8 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 
+import main.MainActivity;
+
 
 public class EthernetConnection implements IConnection {
 
@@ -87,6 +89,7 @@ public class EthernetConnection implements IConnection {
             instance = new EthernetConnection();
             EthernetConnection.conName = conName;
             EthernetConnection.ipAddress = ipAddress;
+            MainActivity.setCurrentConnection(instance); // Diese Verbindung als aktuelle Verbindung setzen
             return true;
         }
         return false;

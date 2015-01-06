@@ -8,7 +8,6 @@ import android.widget.GridView;
 import java.util.ArrayList;
 
 import Views.ImageAdapter;
-import connection.BTConnection;
 import connection.CodeGenerator;
 import connection.IConnection;
 import elements.BoolElement;
