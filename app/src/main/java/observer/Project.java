@@ -78,40 +78,41 @@ public class Project extends Observable {
         this.imageAdapter = imageAdapter;
     }
 */
-    public Project(Gui gui,ImageAdapter imgadapt) {
+    public Project(Gui gui) {
 
         allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
         numberOfLines = 3;
-        id += 1; //für jeden neu erzeugte VAriable vom Typ Projekt wird de Id um 1 erhöht, beginnend bei 1
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-       // listAllCons = new ArrayList<IConnection>();
         mgui = gui;
-        imageAdapter = imgadapt;
-        //createDummyData();;
-        //gui = new Gui(null, numberOfRows,view); // TODO kein Context: muss in Activity gesetzt werden ?
+
     }
 
-    public Project(Gui gui,ImageAdapter imgadapt, String name) {
+    public Project(Gui gui, String name) {
 
         allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
         numberOfLines = 3;
-        id+=1; //für jeden neu erzeugte VAriable vom Typ Projekt wird de Id um 1 erhöht, beginnend bei 1
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        //listAllCons = new ArrayList<IConnection>();
         mgui=gui;
-        imageAdapter=imgadapt;
         mname=name;
-        //createDummyData();
-
-        //gui = new Gui(null, numberOfRows,view); // TODO kein Context: muss in Activity gesetzt werden ?
     }
+    public Project(Gui gui, String name, int Id) {
 
+        allElementModels = new ArrayList<Element>();
+        numberOfRows = 2;
+        numberOfLines = 3;
+        this.elementLed = new LedModel();
+        this.elementSwitch = new SwitchModel();
+        GridView view;
+        mgui=gui;
+        mname=name;
+        id=Id;
+    }
     public void setGui(Gui gui) {
         mgui=gui;
     }

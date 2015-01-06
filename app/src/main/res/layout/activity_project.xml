@@ -3,7 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background2"
+    android:background="@drawable/background1"
     tools:context="com.example.arduinogui.ProjectActivity"
     tools:ignore="MergeRootFrame" >
 
@@ -31,7 +31,7 @@
                     android:id="@+id/proName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/etConNameHint" >
+                    android:hint="@string/hintProName" >
 
 
                 </EditText>

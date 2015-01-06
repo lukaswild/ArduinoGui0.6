@@ -35,5 +35,6 @@
     <string name="projName">Projektname</string>
     <string name="Pro_action_settings">Einstellungen</string>
     <string name="description_btCon">Bluetooth-Verbindung</string>
+    <string name="hintProName">Projektname</string>
 
 </resources>
