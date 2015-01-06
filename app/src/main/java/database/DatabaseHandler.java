@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ArduinoGuiDatabase";
 
     // Tabellenname
-    private static final String TABLE_PROJECTS = "project";
+    private static final String TABLE_PROJECTS = "Project";
 
     // Inhalt der Tabelle Project
     private static final String KEY_ID = "id";

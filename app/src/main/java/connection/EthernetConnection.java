@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 
 public class EthernetConnection implements IConnection {
 
+  private int id=0;
 
     private final static String LOG_TAG = "EthernetConnection";
     private static String conName = ""; // Name der Connection
@@ -21,6 +22,16 @@ public class EthernetConnection implements IConnection {
     private static EthernetConnection instance = null;
 
 
+    //getter, setter
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    //Konstruktoren
     private EthernetConnection() {}
 
 

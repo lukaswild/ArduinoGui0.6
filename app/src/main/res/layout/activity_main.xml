@@ -7,33 +7,7 @@
     tools:context="main.MainActivity"
     tools:ignore="MergeRootFrame" >
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="bottom"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Connection"
-            android:id="@+id/textView2"
-            android:layout_alignParentRight="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Project"
-            android:id="@+id/textView3"
-            android:layout_alignParentLeft="true"
-            />
-
-    </RelativeLayout>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
@@ -50,5 +24,33 @@
             android:stretchMode="columnWidth"
             android:verticalSpacing="10dp" />
 
-    </RelativeLayout>
+    </FrameLayout>
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Connection"
+            android:id="@+id/textView2"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom|right"
+
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Project"
+            android:id="@+id/textView3"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="bottom|left"
+            />
+
+    </FrameLayout>
 </FrameLayout>

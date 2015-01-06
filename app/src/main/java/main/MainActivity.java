@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import Views.ImageAdapter;
 import connection.BTConnection;
@@ -38,7 +39,14 @@ import observer.Project;
 
 public class MainActivity extends Activity {
 
-    public static Project project;
+
+    public static ArrayList<Project> AllProjects;
+    public static Project CurrentProject;
+    public static ArrayList<IConnection> AllConnections;
+    public static IConnection CurrentConnection;
+
+    private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
+
     public static ImageAdapter imgadapt;
     public static Gui gui;
 
@@ -67,7 +75,7 @@ public class MainActivity extends Activity {
             dataFragment = new MainFragment();
             fm.beginTransaction().add(dataFragment,"data").commit();
 
-            dataFragment.setData(project);
+            dataFragment.setData(CurrentProject);
         }
 
 
@@ -79,22 +87,32 @@ public class MainActivity extends Activity {
         }
 
 
-        if (project==null){
-            project = new Project(gui,imgadapt);
+        if (CurrentProject ==null){
+            CurrentProject = new Project(gui,imgadapt);
         }
         else{
-            project= dataFragment.getData();
+            CurrentProject = dataFragment.getData();
         }
         if (imgadapt==null){
             imgadapt = new ImageAdapter(this);
         }
 
 
-        InitializeUI();
+        InitializeUI(CurrentProject);
+        Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
        // ShowName();
 
+        createDummyData();
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InitializeUI(CurrentProject);
+        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
+        
     }
 
    /* @Override
@@ -108,12 +126,12 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Wenn die activity zerstört wird, soll das project im Fragment gespeichert werden.
+        // Wenn die activity zerstört wird, soll das CurrentProject im Fragment gespeichert werden.
 
-        dataFragment.setData(project);
+        dataFragment.setData(CurrentProject);
     }
 
-    public void InitializeUI()  {
+    public void InitializeUI(final Project project)  {
 
         //Löscht zuerst einmal den Inhalt von Grdiview
         project.getGui().getGridView().clearAnimation();
@@ -127,13 +145,13 @@ public class MainActivity extends Activity {
                     case R.drawable.switch_off:
                         imgadapt.Update(R.drawable.switch_on,position);
                         imgadapt.notifyDataSetInvalidated();
-                        project.sendDataUpdateGui(v);
+                        project.sendDataUpdateGui(v,CurrentConnection);
                         break;
 
                     case R.drawable.switch_on:
                         imgadapt.Update(R.drawable.switch_off,position);
                         imgadapt.notifyDataSetInvalidated();
-                        project.sendDataUpdateGui(v);
+                        project.sendDataUpdateGui(v,CurrentConnection);
                         break;
 
                     //Button funktioniert zurzeit gleich wie ein switch, -> schlecht, besser alle click im onTouchListener realisieren,
@@ -142,7 +160,7 @@ public class MainActivity extends Activity {
                     case R.drawable.button_off:
                         imgadapt.Update(R.drawable.button_on,position);
                         imgadapt.notifyDataSetInvalidated();
-                        project.sendDataUpdateGui(v);
+                        project.sendDataUpdateGui(v,CurrentConnection);
                         break;
 
                     case R.drawable.button_on:
@@ -150,7 +168,7 @@ public class MainActivity extends Activity {
                         imgadapt.notifyDataSetInvalidated();
 
                         //Update an GUI funktioniert noch nicht
-                        project.sendDataUpdateGui(v);
+                        project.sendDataUpdateGui(v,CurrentConnection);
                         break;
 
                     case R.drawable.lamp_off:
@@ -159,7 +177,7 @@ public class MainActivity extends Activity {
 
                     default:
                         // Toast.makeText(getBaseContext(), "Fehler bei pos/" + position, Toast.LENGTH_SHORT).show();
-                        for(Element e : project.getAllElements()) {
+                        for(Element e : CurrentProject.getAllElements()) {
                             Toast.makeText(getBaseContext(), e.getName(), Toast.LENGTH_SHORT).show();
                         }
                         break;
@@ -271,7 +289,7 @@ public class MainActivity extends Activity {
 
                                             //auf die Eingabe reagierne, und dementsprechend den Identifyer des Elements setzen
 
-                                            if (SwitchIdentfiyer(item2, position)) return true;
+                                            if (SwitchIdentfiyer(item2, position, project)) return true;
                                             return false;
 
 
@@ -288,7 +306,7 @@ public class MainActivity extends Activity {
 
 
                                 default:
-                                   /* for (Element var : project.getAllElements()) {
+                                   /* for (Element var : CurrentProject.getAllElements()) {
                                         if (var.getName() == ("element" + position)) {
                                             var.setIdentifier(Integer.toString(item.getItemId()));
 
@@ -310,68 +328,68 @@ public class MainActivity extends Activity {
         });
     }
 
-    private boolean SwitchIdentfiyer(MenuItem item2, int position) {
+    private boolean SwitchIdentfiyer(MenuItem item2, int position, Project project) {
         switch (item2.getItemId()){
 
             case R.id.p1:
-                project.getElementByName("element"+position).setIdentifier("P1");
+                project.getElementByName("element" + position).setIdentifier("P1");
                 return true;
             case R.id.p2:
-                project.getElementByName("element"+position).setIdentifier("P2");
+                project.getElementByName("element" + position).setIdentifier("P2");
                 return true;
             case R.id.p3:
-                project.getElementByName("element"+position).setIdentifier("P3");
+                project.getElementByName("element" + position).setIdentifier("P3");
                 return true;
             case R.id.p4:
-                project.getElementByName("element"+position).setIdentifier("P4");
+                project.getElementByName("element" + position).setIdentifier("P4");
                 return true;
             case R.id.p5:
-                project.getElementByName("element"+position).setIdentifier("P5");
+                project.getElementByName("element" + position).setIdentifier("P5");
                 return true;
             case R.id.p6:
-                project.getElementByName("element"+position).setIdentifier("P6");
+                project.getElementByName("element" + position).setIdentifier("P6");
                 return true;
             case R.id.p7:
-                project.getElementByName("element"+position).setIdentifier("P7");
+                project.getElementByName("element" + position).setIdentifier("P7");
                 return true;
             case R.id.p8:
-                project.getElementByName("element"+position).setIdentifier("P8");
+                project.getElementByName("element" + position).setIdentifier("P8");
                 return true;
             case R.id.p9:
-                project.getElementByName("element"+position).setIdentifier("P9");
+                project.getElementByName("element" + position).setIdentifier("P9");
                 return true;
             case R.id.p10:
-                project.getElementByName("element"+position).setIdentifier("P10");
+                project.getElementByName("element" + position).setIdentifier("P10");
                 return true;
             case R.id.p11:
-                project.getElementByName("element"+position).setIdentifier("P11");
+                project.getElementByName("element" + position).setIdentifier("P11");
                 return true;
             case R.id.p12:
-                project.getElementByName("element"+position).setIdentifier("P12");
+                project.getElementByName("element" + position).setIdentifier("P12");
                 return true;
             case R.id.p13:
-                project.getElementByName("element"+position).setIdentifier("P13");
+                project.getElementByName("element" + position).setIdentifier("P13");
                 return true;
             case R.id.p14:
-                project.getElementByName("element"+position).setIdentifier("P14");
+                project.getElementByName("element" + position).setIdentifier("P14");
                 return true;
             case R.id.p15:
-                project.getElementByName("element"+position).setIdentifier("P15");
+                project.getElementByName("element" + position).setIdentifier("P15");
                 return true;
             case R.id.a1:
-                project.getElementByName("element"+position).setIdentifier("A1");
+                project.getElementByName("element" + position).setIdentifier("A1");
                 return true;
             case R.id.a2:
-                project.getElementByName("element"+position).setIdentifier("A2");
+                project.getElementByName("element" + position).setIdentifier("A2");
                 return true;
             case R.id.a3:
-                project.getElementByName("element"+position).setIdentifier("A3");
+                project.getElementByName("element" + position).setIdentifier("A3");
                 return true;
             case R.id.a4:
-                project.getElementByName("element"+position).setIdentifier("A4");
+                project.getElementByName("element" + position).setIdentifier("A4");
                 return true;
             case R.id.a5:
-                project.getElementByName("element"+position).setIdentifier("A5");
+                project.getElementByName("element" + position).setIdentifier("A5");
                 return true;
 
         }
@@ -383,8 +401,8 @@ public class MainActivity extends Activity {
 
         //Wird nur gesetzt wenn der Name des Projekts nicht leer ist,
         //standardmäßig wird Project angezeigt
-        if (!project.getName().equals(null)){
-            view.setText(project.getName());
+        if (!CurrentProject.getName().equals(null)){
+            view.setText(CurrentProject.getName());
         }
 
     }
@@ -447,13 +465,13 @@ public class MainActivity extends Activity {
         Intent newConIntent = new Intent(this, ConnectionActivity.class);
 
         // listView
-//        newConIntent.putExtra("listAvailableCons", project.getListAllCons()); // ArrayList<String> mitgeben
+//        newConIntent.putExtra("listAvailableCons", CurrentProject.getListAllCons()); // ArrayList<String> mitgeben
 
         ArrayList<String> allConsType = new ArrayList<String>();
         ArrayList<String> allConsHeader = new ArrayList<String>(); // Name der Verbindungen - wird als aufklappbares Feld angezeigt
         ArrayList<String> allConsAddress = new ArrayList<String>();
 
-        for(IConnection c : project.getListAllCons()) {
+        for(IConnection c : AllConnections) {
             if(c instanceof BTConnection) {
                 allConsType.add(getString(R.string.description_btCon));
                 allConsHeader.add( ((BTConnection) c).getConNameDeclaration());
@@ -469,9 +487,6 @@ public class MainActivity extends Activity {
 
         startActivityForResult(newConIntent, REQUEST_CODE_NEW_CON);
     }
-
-
-
 
     public void ShowDialog(){
 
@@ -516,14 +531,14 @@ public class MainActivity extends Activity {
         final SeekBar seek2 = (SeekBar)Viewlayout.findViewById(R.id.seekBar2);
 
 
-        seek2.setProgress(project.getGui().getGridView().getNumColumns());
+        seek2.setProgress(CurrentProject.getGui().getGridView().getNumColumns());
         seek2.setDrawingCacheBackgroundColor(Color.DKGRAY);
 
         seek2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                              @Override
                                              public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                                                 project.getGui().getGridView().setNumColumns(progress);
+                                                 CurrentProject.getGui().getGridView().setNumColumns(progress);
 
                                              }
 
@@ -550,9 +565,9 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 imgadapt.notifyDataSetChanged();
-                project.getGui().getGridView().clearAnimation();
+                CurrentProject.getGui().getGridView().clearAnimation();
                 popDialog.cancel();
-                InitializeUI();
+                InitializeUI(CurrentProject);
 
             }
         });
@@ -569,7 +584,6 @@ public class MainActivity extends Activity {
      * @param data
      */
 
-
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         if(resultCode != 0) {
@@ -585,18 +599,18 @@ public class MainActivity extends Activity {
                 if (data.getExtras().containsKey("conType")) {
                     int conTypeInt = data.getExtras().getInt("conType");
                     if (conTypeInt == 1) { // Bluetooth
-                        // Verbindung von project holen
+                        // Verbindung von CurrentProject holen
                         //  BTConnection btConnection = BTConnection.initialiseConnection(name, address); // TODO wenn Verbindung am Arduino unterbrochen --> wird nicht mehr aufgebaut, da bei App bereits instantiiert
-                        // project.setCurrentConnection(btConnection);
+                        // CurrentProject.setCurrentConnection(btConnection);
 
 
                     }
                     if (conTypeInt == 2) { // Ethernet
 //                        EthernetConnection ethernetConnection = EthernetConnection.initialiseConnection(name, address);
-//                        project.setCurrentConnection(ethernetConnection);
+//                        CurrentProject.setCurrentConnection(ethernetConnection);
                     }
-                    Toast.makeText(getApplicationContext(), project.getCurrentConnection().getConName() + "\n" +
-                            project.getCurrentConnection().getAddress(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), CurrentConnection.getConName() + "\n" +
+                            CurrentConnection.getAddress(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -604,7 +618,7 @@ public class MainActivity extends Activity {
                 String proName = "";
                 if (data.getExtras().containsKey("name")) {
                     proName = data.getExtras().getString("name");
-                    project.setName(proName);
+                    CurrentProject.setName(proName);
                 }
 
             }
@@ -612,5 +626,19 @@ public class MainActivity extends Activity {
 
     }
 
+    public void createDummyData(){
+        // Dummy Daten für ExpandableListView
+        IConnection c1 = BTConnection.createAttributeCon("BSibo1", "98:D3:31:B1:F6:82");
+        IConnection c2 = BTConnection.createAttributeCon("BSibo2", "98:D3:31:B1:F6:82");
+        IConnection c3 = BTConnection.createAttributeCon("BSibo3", "98:D3:31:B1:F6:82");
+        IConnection c4 = BTConnection.createAttributeCon("BLuggi1", "98:D3:31:B1:F4:7A");
+        IConnection c5 = BTConnection.createAttributeCon("BLuggi2", "98:D3:31:B1:F4:7A");
 
+        AllConnections.add(c1);
+        AllConnections.add(c2);
+        AllConnections.add(c3);
+        AllConnections.add(c4);
+        AllConnections.add(c5);
+
+    }
 }

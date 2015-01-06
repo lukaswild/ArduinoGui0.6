@@ -21,6 +21,7 @@ import elements.SwitchModel;
 
 public class Project extends Observable {
 
+
     private int id=0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
 
 
@@ -28,8 +29,10 @@ public class Project extends Observable {
     private String mname; // Name sollte vom Benutzer im Nachhinein vergeben werden
     private int numberOfRows; // Anzahl von Elementen in einer Reihe
     private int numberOfLines; // Anzahl von Elementen untereinander (Anzahl von Zeilen)
+    /*
     private ArrayList<IConnection> listAllCons;
     private IConnection currentConnection; // Je nach dem welchen Verbindungstyp Benutzer wählt BT oder Ethernet
+    */
     private ArrayList<Element> allElementModels;
     private Gui mgui;
     private Db dbConnection; // TODO DB-Programmierung erfolgt später
@@ -55,6 +58,16 @@ public class Project extends Observable {
     public Gui getGui() {
         return mgui;
     }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     //Dineg wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondenr neu erzeugt werden, da
     //sie auf dem aktuellen Context beruhen
 
@@ -75,12 +88,13 @@ public class Project extends Observable {
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        listAllCons = new ArrayList<IConnection>();
+       // listAllCons = new ArrayList<IConnection>();
         mgui = gui;
         imageAdapter = imgadapt;
-        createDummyData();;
+        //createDummyData();;
         //gui = new Gui(null, numberOfRows,view); // TODO kein Context: muss in Activity gesetzt werden ?
     }
+
     public Project(Gui gui,ImageAdapter imgadapt, String name) {
 
         allElementModels = new ArrayList<Element>();
@@ -90,11 +104,11 @@ public class Project extends Observable {
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        listAllCons = new ArrayList<IConnection>();
+        //listAllCons = new ArrayList<IConnection>();
         mgui=gui;
         imageAdapter=imgadapt;
         mname=name;
-        createDummyData();
+        //createDummyData();
 
         //gui = new Gui(null, numberOfRows,view); // TODO kein Context: muss in Activity gesetzt werden ?
     }
@@ -103,6 +117,7 @@ public class Project extends Observable {
         mgui=gui;
     }
 
+    /*
     public ArrayList<IConnection> getListAllCons() {
         return listAllCons;
     }
@@ -118,6 +133,7 @@ public class Project extends Observable {
     public void setCurrentConnection(IConnection currentConnection) {
         this.currentConnection = currentConnection;
     }
+    */
 
     public  void  addElement(Element element) {
         allElementModels.add(element);
@@ -155,7 +171,7 @@ public class Project extends Observable {
      * Ebenso wird mithilfe des Observer-Patterns die Gui aktualisiert, also z.B. das Feedbackelement Led auf High gesetzt.
      * @param v - View des das Event ausl�senden Elements
      */
-    public void sendDataUpdateGui(View v) {
+    public void sendDataUpdateGui(View v, IConnection currentConnection) {
 
         Element model = (Element) v.getTag(); // zugeh�rige Modelklasse holen, kann nur ein Element sein
 
@@ -232,23 +248,9 @@ public class Project extends Observable {
 
 		@Override
 		public void onClick(View v) {
-			sendDataUpdateGui(v);
+		//	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Insant
 		}
 	}
 
-    public void createDummyData(){
-        // Dummy Daten für ExpandableListView
-        IConnection c1 = BTConnection.createAttributeCon("BSibo1", "98:D3:31:B1:F6:82");
-        IConnection c2 = BTConnection.createAttributeCon("BSibo2", "98:D3:31:B1:F6:82");
-        IConnection c3 = BTConnection.createAttributeCon("BSibo3", "98:D3:31:B1:F6:82");
-        IConnection c4 = BTConnection.createAttributeCon("BLuggi1", "98:D3:31:B1:F4:7A");
-        IConnection c5 = BTConnection.createAttributeCon("BLuggi2", "98:D3:31:B1:F4:7A");
 
-        listAllCons.add(c1);
-        listAllCons.add(c2);
-        listAllCons.add(c3);
-        listAllCons.add(c4);
-        listAllCons.add(c5);
-
-    }
 }

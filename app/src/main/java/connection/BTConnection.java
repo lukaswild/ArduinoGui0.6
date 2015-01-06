@@ -18,6 +18,8 @@ public class BTConnection implements IConnection {
     /**
      * UUID für Bluetooth-Kommunikation
      */
+
+    private int id=0;
     private final static UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String LOG_TAG = "BTConnection";
 
@@ -34,6 +36,14 @@ public class BTConnection implements IConnection {
     private static String macAddress; // MAC Adresse des Bluetooth Adapters
     private static BTConnection instance = null; //Instanz für Singleton-Pattern
 
+    //getter und setter
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     private BTConnection() {}
 

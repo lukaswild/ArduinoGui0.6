@@ -3,7 +3,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background1"
+    android:background="@drawable/background2"
     tools:context="com.example.arduinogui.ProjectActivity"
     tools:ignore="MergeRootFrame" >
 

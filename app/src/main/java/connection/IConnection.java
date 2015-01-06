@@ -1,7 +1,6 @@
 package connection;
 
 public interface IConnection {
-
 	
 	public void sendData(String data);
 	
