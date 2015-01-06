@@ -171,7 +171,6 @@ public class ConnectionActivity extends Activity {
             }
         });
         dialogNewCon.show();
-
     }
 
 

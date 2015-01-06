@@ -3,66 +3,42 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background1"
     tools:context="com.example.arduinogui.ProjectActivity"
-    tools:ignore="MergeRootFrame" >
+    tools:ignore="MergeRootFrame"
+    android:background="@drawable/background1">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+    <LinearLayout
+        android:id="@+id/linLayoutAvCons"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="left|top"
+        android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/linLayout1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:isScrollContainer="true"
-                android:orientation="vertical" >
+        <TextView
+            android:id="@+id/tvAvailablePros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txtAllPro"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                <TextView
-                    android:id="@+id/tvConName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/projName" />
+        <ExpandableListView
+            android:id="@+id/listViewAvailablePros"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top" />
 
-                <EditText
-                    android:id="@+id/proName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hintProName" >
+        <Space
+            android:layout_width="20px"
+            android:layout_height="50px"
+            android:layout_gravity="left|bottom" />
 
+        <Button
+            android:id="@+id/btnNewPro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="createNewProject"
+            android:text="@string/btnNewPro" />
 
-                </EditText>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/linLayout1"
-                android:orientation="horizontal" >
-
-                <Button
-                    android:id="@+id/proBtnSubmit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:onClick="ProBtnSubmitClicked"
-                    android:text="@string/btnSubmit" />
-
-                <Button
-                    android:id="@+id/proBtnCancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:onClick="ProBtnCancelClicked"
-                    android:text="@string/btnCancel" />
-            </LinearLayout>
-        </RelativeLayout>
-
+    </LinearLayout>
 </FrameLayout>

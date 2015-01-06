@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import Views.ImageAdapter;
@@ -91,6 +93,8 @@ public class MainActivity extends Activity {
                     .add(R.id.container, new PlaceholderFragment()).commit();
 
         }
+
+        CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X");
 /*
 //        FragmentManager fm= getFragmentManager();
 //        dataFragment=(MainFragment)fm.findFragmentByTag("data");
@@ -101,42 +105,34 @@ public class MainActivity extends Activity {
 //
 //            dataFragment.setData(CurrentProject);
 //        }
-               /*
+             */
         Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",0);
         Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",1);
         Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",2);
         AllProjects.add(pro1.getId(),pro1);
         AllProjects.add(pro2.getId(),pro2);
         AllProjects.add(pro3.getId(),pro3);
-*/
-        //Schauen ob schon ein Projekt existeirt, wenn nicht kommt der Dialog zum Erzeugen
-       /* if (AllProjects == null) {
-            Log.d(LOG_TAG,"iwas1");
+
+        if(AllProjects.isEmpty()) {
             final Dialog popDialog = new Dialog(this);
             popDialog.setCancelable(true);
-            Log.d(LOG_TAG,"iwas2");
 
             // View Viewlayout = inflater.inflate(R.layout.dialog_project,(ViewGroup)findViewById(R.id.dialog_projekt));
 
-            popDialog.setContentView(R.layout.new_connection);
+            popDialog.setContentView(R.layout.dialog_project);
             popDialog.setTitle("Projekt festlegen");
-            Log.d(LOG_TAG,"iwas3");
             popDialog.show();
-            Log.d(LOG_TAG,"iwas4");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-           Button btn = (Button)popDialog.findViewById(R.id.DialogProBtnSubmit);
+
+
+            Button btn = (Button) popDialog.findViewById(R.id.DialogProBtnSubmit);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String string ="";
-                    EditText edit =(EditText)popDialog.findViewById(R.id.proNamePopup);
-                    CurrentProject = new Project(new Gui(getBaseContext(),1,(GridView)findViewById(R.id.gridview)),edit.getText().toString());
-                  //  CurrentProject.setName(edit.getText().toString());
+                    String string = "";
+                    EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
+                    //CurrentProject = new Project(new Gui(getBaseContext(),1,(GridView)findViewById(R.id.gridview)),edit.getText().toString());
+                    CurrentProject.setName(edit.getText().toString());
                     AllProjects.add(CurrentProject);
                     popDialog.cancel();
 
@@ -144,32 +140,26 @@ public class MainActivity extends Activity {
 
             });
 
-
-
         }
-        */
+
+
+
         //Alle Projekte haben eine ID. Die ID wird beim Erzeugen eines neuen Projekts gesetzt (im Konstruktor
         //von Projekt), das heißt das letute erzeuget Projekt hat die höchste ID. Diese projekt wird gesucht und
         //auf CurrentProjekt gesetzt
-        /*
-        else{
-            int id=0;
-            ArrayList<Integer> ID= new ArrayList<Integer>();
 
-            for (Project p:AllProjects){
-                ID.add(p.getId());
-                id = Collections.max(ID);
-            }
-            CurrentProject=AllProjects.get(id);
+        else{
+
+            CurrentProject=AllProjects.get(AllProjects.size()-1);
         }
-        */
+
         imgadapt = new ImageAdapter(this);
 
-        CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt 1");
 
+       // CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt 1");
         InitializeUI(CurrentProject);
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
-       // ShowName();
+        ShowName();
 
         createDummyData();
 
@@ -179,6 +169,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        ShowName();
         InitializeUI(CurrentProject);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 
@@ -467,6 +458,7 @@ public class MainActivity extends Activity {
 
     public void ShowName(){
         TextView view = (TextView)findViewById(R.id.textView3);
+        TextView view2 = (TextView)findViewById(R.id.textView2);
 
         //Wird nur gesetzt wenn der Name des Projekts nicht leer ist,
         //standardmäßig wird Project angezeigt
@@ -474,6 +466,10 @@ public class MainActivity extends Activity {
             view.setText(CurrentProject.getName());
         }
 
+      /*  if (!CurrentConnection.equals(null)){
+            view2.setText(CurrentConnection.getConName());
+        }
+*/
     }
 
     @Override
@@ -500,7 +496,7 @@ public class MainActivity extends Activity {
             return true;
         }
         if (id == R.id.newproject) {
-            createNewProject();
+            startActivityProject();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -524,11 +520,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void createNewProject() {
-        Intent newProIntent = new Intent(this, ProjectActivity.class);
-        startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
-    }
-
     public void startActivityConnection() {
         Log.d(LOG_TAG, "ConnectionActivity wird gestartet...");
         Intent newConIntent = new Intent(this, ConnectionActivity.class);
@@ -540,10 +531,10 @@ public class MainActivity extends Activity {
         ArrayList<String> allConsHeader = new ArrayList<String>(); // Name der Verbindungen - wird als aufklappbares Feld angezeigt
         ArrayList<String> allConsAddress = new ArrayList<String>();
 
-        for(IConnection c : AllConnections) {
-            if(c instanceof BTConnection) {
+        for (IConnection c : AllConnections) {
+            if (c instanceof BTConnection) {
                 allConsType.add(getString(R.string.description_btCon));
-                allConsHeader.add( ((BTConnection) c).getConNameDeclaration());
+                allConsHeader.add(((BTConnection) c).getConNameDeclaration());
                 allConsAddress.add(((BTConnection) c).getConAddressDeclaration());
             } // TODO else if c instanceof Ethernetconnection
         }
@@ -556,6 +547,31 @@ public class MainActivity extends Activity {
 
         startActivityForResult(newConIntent, REQUEST_CODE_NEW_CON);
     }
+
+    public void startActivityProject(){
+        Intent newProIntent = new Intent(this, ProjectActivity.class);
+
+        // listView
+//        newConIntent.putExtra("listAvailableCons", CurrentProject.getListAllCons()); // ArrayList<String> mitgeben
+
+        ArrayList<String> allProName = new ArrayList<String>();
+        ArrayList<String> allProElements = new ArrayList<String>();
+
+        for (Project c : AllProjects) {
+
+                allProName.add(c.getName());
+                allProElements.add(Integer.toString(c.getAllElements().size()));
+
+        }
+//        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
+
+        newProIntent.putExtra("allProName", allProName);
+        newProIntent.putExtra("allProElements", allProElements);
+
+        startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
+    }
+
+
 
     public void ShowDialog(){
 

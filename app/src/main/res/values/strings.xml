@@ -31,10 +31,12 @@
     <string name="settings_ok">Übernehmen</string>
     <string name="settings_buttons">Anordnung</string>
     <string name="Colls">Anzahl der Reihen</string>
-    <string name="title_activity_new_project">Neues Projekt</string>
+    <string name="title_activity_new_project">Projekt einrichten</string>
     <string name="projName">Projektname</string>
     <string name="Pro_action_settings">Einstellungen</string>
     <string name="description_btCon">Bluetooth-Verbindung</string>
     <string name="hintProName">Projektname</string>
+    <string name="txtAllPro">Verfügbare Projekte</string>
+    <string name="btnNewPro">Projekt einrichten</string>
 
 </resources>
