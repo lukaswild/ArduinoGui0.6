@@ -15,18 +15,29 @@ public class CodeGenerator {
 		boolean msgBool = (boolean)msg;
 
 		if(msgBool) // wenn msgBool true ist
-			code = "B;1";
+			code = "B1";
 		else 
-			code = "B;0";
+			code = "B0";
 
-		code += ";" + identifier;
+		code += "I" + identifier;
 		return code; 
 	}
 	
 
 	public static String generateCodeToSend(String msg, String identifier) { 
-		String code = "P;" + msg + ";" + identifier;// P für PWM
+		String code = "P" + msg + "I" + identifier;// P für PWM
 		return code; 
 	}
 
 }
+
+/*Code des Idenifyers:
+
+für PWM:
+P + message + I + identifyer; z.B. P12I2
+
+für Bool:
+B+ message + I + identifyer; z.B. B0IA2 -> A2 ist analog2 (identifyer)
+
+*/
+
