@@ -26,8 +26,8 @@ public class BTConnection implements IConnection {
     private static String conName;
     private static BluetoothAdapter adapter = null;
     private static BluetoothSocket socket = null;
-    private static OutputStream streamOut = null;
-    private static InputStream streamIn = null;
+    private static OutputStream streamOut = null; // TODO BufferedOutputStream
+    private static InputStream streamIn = null; // TODO BufferedInputStream
 
 
     private static boolean isConnected = false;
@@ -163,8 +163,10 @@ public class BTConnection implements IConnection {
 
             if (isConnected)
                 Log.d(LOG_TAG, "Bluetooth-Verbindung erfolgreich initialisiert");
-            else
+            else {
                 Log.d(LOG_TAG, "Fehler beim Aufbauen der Bluetooth-Verbindung");
+                return false;
+            }
 
             return true;
         }
@@ -198,9 +200,11 @@ public class BTConnection implements IConnection {
     private static void createConnectSocket(BluetoothDevice remote_device) {
         try {
             socket = remote_device.createInsecureRfcommSocketToServiceRecord(uuid);
-            Log.d(LOG_TAG, "Socket successful created");
+            Log.d(LOG_TAG, "Socket erfolgreich erstellt");
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error while creating socket: " + e.toString());
+            Log.e(LOG_TAG, "Fehler beim Erstellen des Sockets: " + e.toString());
+            isConnected = false;
+            instance = null;
         }
 
         adapter.cancelDiscovery();
