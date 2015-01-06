@@ -17,6 +17,8 @@ public class EthernetConnection implements IConnection {
 
     private int id = 0;
 
+    private String conNameDeclaration;
+    private String conAddressDeclaration;
     private final static String LOG_TAG = "EthernetConnection";
     private static String conName = ""; // Name der Connection
     private static String ipAddress = "";
@@ -31,6 +33,22 @@ public class EthernetConnection implements IConnection {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getConNameDeclaration() {
+        return conNameDeclaration;
+    }
+
+    public void setConNameDeclaration(String conNameDeclaration) {
+        this.conNameDeclaration = conNameDeclaration;
+    }
+
+    public String getConAddressDeclaration() {
+        return conAddressDeclaration;
+    }
+
+    public void setConAddressDeclaration(String conAddressDeclaration) {
+        this.conAddressDeclaration = conAddressDeclaration;
     }
 
     //Konstruktoren
@@ -81,6 +99,15 @@ public class EthernetConnection implements IConnection {
             Log.e(LOG_TAG, "Fehler beim Empfangen der Daten - Keine Daten empfangen");
         }
         return message;
+    }
+
+
+    public static EthernetConnection createAttributeCon(String conNameDeclaration, String conAddressDeclaration) {
+        EthernetConnection conDeclaration = new EthernetConnection();
+        conDeclaration.setConNameDeclaration(conNameDeclaration);
+        conDeclaration.setConAddressDeclaration(conAddressDeclaration);
+
+        return conDeclaration;
     }
 
 

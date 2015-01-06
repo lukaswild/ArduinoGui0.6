@@ -47,6 +47,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this.mapDataChild = mapDataChild;
     }
 
+    public ArrayList<String> getListDataHeader() {
+        return listDataHeader;
+    }
+
+    public void setListDataHeader(ArrayList<String> listDataHeader) {
+        this.listDataHeader = listDataHeader;
+    }
+
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         return this.mapDataChild.get(this.listDataHeader.get(groupPosition)).get(childPosition);

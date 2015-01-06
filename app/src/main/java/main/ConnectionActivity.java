@@ -264,7 +264,7 @@ public class ConnectionActivity extends Activity {
         switch (conType) { // 0 (nichts ausgewählt), 1 (BT), oder 2 (Ethernet)
 //            conAdapter.add(conName);
 //            conAdapter.add(conAddress);
-//            conAdapter.notifyDataSetChanged();
+//               conAdapter.notifyDataSetChanged();
 
             case 0: // nichts ausgewählt - sollte nicht vorkommen
                 Toast.makeText(getApplicationContext(), "Es wurde nichts ausgewählt. ", Toast.LENGTH_SHORT).show();
@@ -272,9 +272,11 @@ public class ConnectionActivity extends Activity {
                 break;
 
             case 1: // Bluetooth-Verbindung ausgewählt
+                Log.d(LOG_TAG, "Bluetooth-Verbindung");
                 strConType = "Bluetooth-Verbindung";
                 IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
-                MainActivity.getAllConnections().add(conToAddB);
+                MainActivity.getAllConnections().add(conToAddB); // Die neue Connection zur Liste mit allen Connections hinzufügen
+                expListAdapter.getListDataHeader().add(conName);
                 listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
                 mapExpListView.put(conName, listChildrenToAdd);
                 dialogNewCon.cancel();
@@ -282,8 +284,8 @@ public class ConnectionActivity extends Activity {
 
             case 2: // Ethernet-Verbindung ausgewählt
                 strConType = "Ethernet-Verbindung";
-//                IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
-//                MainActivity.getAllConnections().add(conToAddE);
+                IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
+                MainActivity.getAllConnections().add(conToAddE); // Die neue Connection zur Liste mit allen Connections hinzufügen
                 listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
                 mapExpListView.put(conName, listChildrenToAdd);
                 dialogNewCon.cancel();
