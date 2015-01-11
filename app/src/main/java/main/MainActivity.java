@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +40,8 @@ import observer.Project;
 
 
 public class MainActivity extends Activity {
+
+    //Felder
     private static ArrayList<Project> AllProjects = new ArrayList<Project>();
     private static Project CurrentProject;
 
@@ -46,6 +49,7 @@ public class MainActivity extends Activity {
     private static IConnection CurrentConnection;
 
     private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
+    public static HashMap<Integer, String> ElementIdentifyer = new HashMap<Integer, String>();
 
     public static ImageAdapter imgadapt;
     public static Gui gui;
@@ -94,6 +98,7 @@ public class MainActivity extends Activity {
 
         }
 
+
         CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X");
 /*
 //        FragmentManager fm= getFragmentManager();
@@ -106,13 +111,15 @@ public class MainActivity extends Activity {
 //            dataFragment.setData(CurrentProject);
 //        }
              */
-        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",0);
-        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",1);
-        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",2);
-        AllProjects.add(pro1.getId(),pro1);
-        AllProjects.add(pro2.getId(),pro2);
-        AllProjects.add(pro3.getId(),pro3);
 
+        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1);
+        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2);
+        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3);
+        AllProjects.add(pro1);
+        AllProjects.add(pro2);
+        AllProjects.add(pro3);
+
+        //soll angezeigt werden wenn es noch kein einziges projekt gibt
         if(AllProjects.isEmpty()) {
             final Dialog popDialog = new Dialog(this);
             popDialog.setCancelable(true);
@@ -155,9 +162,17 @@ public class MainActivity extends Activity {
 
         imgadapt = new ImageAdapter(this);
 
-
-       // CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt 1");
-        InitializeUI(CurrentProject);
+/*
+        Switch sw = (Switch)findViewById(R.id.switch1);
+        sw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext()," switch 1", Toast.LENGTH_SHORT).show();
+            }
+        });
+*/
+        // CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt 1");
+       // InitializeUI(CurrentProject); nur mehr in der onResume, da
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();
 
@@ -169,6 +184,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
         ShowName();
         InitializeUI(CurrentProject);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
@@ -188,7 +204,8 @@ public class MainActivity extends Activity {
         super.onDestroy();
         // Wenn die activity zerstört wird, soll das CurrentProject im Fragment gespeichert werden.
 
-        dataFragment.setData(CurrentProject);
+        Toast.makeText(getBaseContext()," In der OnDestroy", Toast.LENGTH_SHORT).show();
+        // dataFragment.setData(CurrentProject);
     }
 
     public void InitializeUI(final Project project)  {
@@ -389,71 +406,16 @@ public class MainActivity extends Activity {
     }
 
     private boolean SwitchIdentfiyer(MenuItem item2, int position, Project project) {
-        switch (item2.getItemId()){
 
-            case R.id.p1:
-                project.getElementByName("element" + position).setIdentifier("P1");
-                return true;
-            case R.id.p2:
-                project.getElementByName("element" + position).setIdentifier("P2");
-                return true;
-            case R.id.p3:
-                project.getElementByName("element" + position).setIdentifier("P3");
-                return true;
-            case R.id.p4:
-                project.getElementByName("element" + position).setIdentifier("P4");
-                return true;
-            case R.id.p5:
-                project.getElementByName("element" + position).setIdentifier("P5");
-                return true;
-            case R.id.p6:
-                project.getElementByName("element" + position).setIdentifier("P6");
-                return true;
-            case R.id.p7:
-                project.getElementByName("element" + position).setIdentifier("P7");
-                return true;
-            case R.id.p8:
-                project.getElementByName("element" + position).setIdentifier("P8");
-                return true;
-            case R.id.p9:
-                project.getElementByName("element" + position).setIdentifier("P9");
-                return true;
-            case R.id.p10:
-                project.getElementByName("element" + position).setIdentifier("P10");
-                return true;
-            case R.id.p11:
-                project.getElementByName("element" + position).setIdentifier("P11");
-                return true;
-            case R.id.p12:
-                project.getElementByName("element" + position).setIdentifier("P12");
-                return true;
-            case R.id.p13:
-                project.getElementByName("element" + position).setIdentifier("P13");
-                return true;
-            case R.id.p14:
-                project.getElementByName("element" + position).setIdentifier("P14");
-                return true;
-            case R.id.p15:
-                project.getElementByName("element" + position).setIdentifier("P15");
-                return true;
-            case R.id.a1:
-                project.getElementByName("element" + position).setIdentifier("A1");
-                return true;
-            case R.id.a2:
-                project.getElementByName("element" + position).setIdentifier("A2");
-                return true;
-            case R.id.a3:
-                project.getElementByName("element" + position).setIdentifier("A3");
-                return true;
-            case R.id.a4:
-                project.getElementByName("element" + position).setIdentifier("A4");
-                return true;
-            case R.id.a5:
-                project.getElementByName("element" + position).setIdentifier("A5");
-                return true;
-
+        createHashmap();
+        if (ElementIdentifyer.containsKey(item2.getItemId())){
+            project.getElementByName("element" + position).setIdentifier(ElementIdentifyer.get(item2.getItemId()));
+            return true;
         }
-        return false;
+        else{
+            return false;
+        }
+
     }
 
     public void ShowName(){
@@ -559,8 +521,8 @@ public class MainActivity extends Activity {
 
         for (Project c : AllProjects) {
 
-                allProName.add(c.getName());
-                allProElements.add(Integer.toString(c.getAllElements().size()));
+            allProName.add(c.getName());
+            allProElements.add(Integer.toString(c.getAllElements().size()));
 
         }
 //        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
@@ -725,5 +687,28 @@ public class MainActivity extends Activity {
         AllConnections.add(c4);
         AllConnections.add(c5);
 
+    }
+
+    public void createHashmap(){
+        ElementIdentifyer.put(R.id.p1,"P1");
+        ElementIdentifyer.put(R.id.p2,"P2");
+        ElementIdentifyer.put(R.id.p3,"P3");
+        ElementIdentifyer.put(R.id.p4,"P4");
+        ElementIdentifyer.put(R.id.p5,"P5");
+        ElementIdentifyer.put(R.id.p6,"P6");
+        ElementIdentifyer.put(R.id.p7,"P7");
+        ElementIdentifyer.put(R.id.p8,"P8");
+        ElementIdentifyer.put(R.id.p9,"P9");
+        ElementIdentifyer.put(R.id.p10,"P10");
+        ElementIdentifyer.put(R.id.p11,"P11");
+        ElementIdentifyer.put(R.id.p12,"P12");
+        ElementIdentifyer.put(R.id.p13,"P13");
+        ElementIdentifyer.put(R.id.p14,"P14");
+        ElementIdentifyer.put(R.id.p15,"P15");
+        ElementIdentifyer.put(R.id.a1,"A1");
+        ElementIdentifyer.put(R.id.a2,"A2");
+        ElementIdentifyer.put(R.id.a3,"A3");
+        ElementIdentifyer.put(R.id.a4,"A4");
+        ElementIdentifyer.put(R.id.a5,"A5");
     }
 }

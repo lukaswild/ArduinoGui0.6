@@ -3,20 +3,21 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background1"
     tools:context="main.MainActivity"
     tools:ignore="MergeRootFrame" >
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="fill_parent"
+        android:paddingBottom="40dp"
+        android:background="@drawable/background1"
         android:layout_height="match_parent"
         android:layout_gravity="top">
 
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/gridview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="483dp"
             android:columnWidth="90dp"
             android:gravity="center"
             android:horizontalSpacing="10dp"
@@ -30,7 +31,8 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
-        android:layout_gravity="bottom" >
+        android:layout_gravity="bottom"
+        android:background="@android:color/darker_gray">
 
         <TextView
             android:layout_width="wrap_content"
@@ -39,7 +41,7 @@
             android:text="Connection"
             android:id="@+id/textView2"
             android:layout_alignParentRight="true"
-            android:layout_gravity="bottom|right"/>
+            android:layout_gravity="center|right"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,8 +49,16 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Project"
             android:id="@+id/textView3"
-            android:layout_alignParentLeft="true"/>
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center|left"/>
 
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:id="@+id/switch1"
+            android:layout_gravity="center_vertical|center" />
 
     </FrameLayout>
 </FrameLayout>

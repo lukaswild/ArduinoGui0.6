@@ -21,7 +21,7 @@ import elements.SwitchModel;
 public class Project extends Observable {
 
 
-    private int id=0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
+    private static int id=0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
 
 
 
