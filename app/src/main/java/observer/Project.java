@@ -5,15 +5,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import connection.IConnection;
 import elements.BoolElement;
 import elements.Element;
 import elements.InputElement;
 import elements.LedModel;
-import elements.OutputElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ComObject;
@@ -33,7 +33,7 @@ public class Project extends Observable {
     private ArrayList<IConnection> listAllCons;
     private IConnection currentConnection; // Je nach dem welchen Verbindungstyp Benutzer wählt BT oder Ethernet
     */
-    private ArrayList<Element> allElementModels;
+//    private ArrayList<Element> allElementModels;
     private Gui mgui;
     private Db dbConnection; // TODO DB-Programmierung erfolgt später
     private final String LOG_TAG = "Project";
@@ -42,7 +42,7 @@ public class Project extends Observable {
     private LedModel elementLed;
     private ImageAdapter imageAdapter;
 
-    private HashMap<Integer, Element> mapViewModel;
+    private HashMap<Integer, Element> mapAllViewModels;
 
     //  private SwitchView viewSwitch;
 
@@ -70,12 +70,12 @@ public class Project extends Observable {
         this.id = id;
     }
 
-    public HashMap<Integer, Element> getMapViewModel() {
-        return mapViewModel;
+    public HashMap<Integer, Element> getMapAllViewModels() {
+        return mapAllViewModels;
     }
 
-    public void setMapViewModel(HashMap<Integer, Element> mapViewModel) {
-        this.mapViewModel = mapViewModel;
+    public void setMapAllViewModels(HashMap<Integer, Element> mapAllViewModels) {
+        this.mapAllViewModels = mapAllViewModels;
     }
 
     //Dineg wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondenr neu erzeugt werden, da
@@ -91,7 +91,7 @@ public class Project extends Observable {
 */
     public Project(Gui gui) {
 
-        allElementModels = new ArrayList<Element>();
+//        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
         numberOfLines = 3;
         this.elementLed = new LedModel();
@@ -100,12 +100,12 @@ public class Project extends Observable {
         mgui = gui;
         id++;
 
-        this.mapViewModel = new HashMap<Integer, Element>();
+        this.mapAllViewModels = new HashMap<Integer, Element>();
     }
 
     public Project(Gui gui, String name) {
 
-        allElementModels = new ArrayList<Element>();
+//        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
         numberOfLines = 3;
         this.elementLed = new LedModel();
@@ -114,12 +114,12 @@ public class Project extends Observable {
         mgui=gui;
         mname=name;
         id++;
-        this.mapViewModel = new HashMap<Integer, Element>();
+        this.mapAllViewModels = new HashMap<Integer, Element>();
     }
 
     public Project(Gui gui, String name, int Id) {
 
-        allElementModels = new ArrayList<Element>();
+//        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
         numberOfLines = 3;
         this.elementLed = new LedModel();
@@ -128,7 +128,7 @@ public class Project extends Observable {
         mgui=gui;
         mname=name;
         id=Id;
-        this.mapViewModel = new HashMap<Integer, Element>();
+        this.mapAllViewModels = new HashMap<Integer, Element>();
     }
     public void setGui(Gui gui) {
         mgui=gui;
@@ -152,34 +152,62 @@ public class Project extends Observable {
     }
     */
 
-    public  void  addElement(Element element) {
-        allElementModels.add(element);
+    public void addElement(int key, Element element) {
+        mapAllViewModels.put(key, element);
     }
 
-    public  boolean removeElement(Element element){
-        if (allElementModels.equals(element)) {
-            allElementModels.remove(element);
+    public boolean removeElement(int key) {
+        if(mapAllViewModels.containsKey(key)) {
+            mapAllViewModels.remove(key);
             return true;
         }
-        else return false;
+        return false;
     }
 
-    public ArrayList<Element> getAllElements() {
-        return allElementModels;
-    }
 
-    public Element getElementByName(String Name){
-        for (Element z:allElementModels){
-            if (z.getName().equals(Name)){
-                return z;
+//    public  void  addElement(Element element) {
+//        allElementModels.add(element);
+//    }
+
+//    public  boolean removeElement(Element element){
+//        if (allElementModels.equals(element)) {
+//            allElementModels.remove(element);
+//            return true;
+//        }
+//        else return false;
+//    }
+
+//    public ArrayList<Element> getAllElements() {
+//        return allElementModels;
+//    }
+
+//    public Element getElementByName(String Name){
+//        for (Element z : allElementModels){
+//            if (z.getName().equals(Name)){
+//                return z;
+//            }
+//        }
+//        return  null;
+//    }
+
+
+    public Element getElementByName(String name) {
+        Iterator iterator = mapAllViewModels.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Element e = (Element) entry.getValue();
+            if(e.getName().equals(name)) {
+                return e;
             }
+            iterator.remove();
         }
-        return  null;
+        return null;
     }
 
-    public void setAllElements(ArrayList<Element> allElements) {
-        this.allElementModels = allElements;
-    }
+
+//    public void setAllElements(ArrayList<Element> allElements) {
+//        this.allElementModels = allElements;
+//    }
 
     /**
      * Wenn eine View durch ihren Listener ein Event liefert, so wird diese Methode ausgef�hrt.
@@ -191,9 +219,10 @@ public class Project extends Observable {
     public void sendDataUpdateGui(View v, IConnection currentConnection, int position) {
         Log.d(LOG_TAG, "In Methode sendDataUpdateGui");
 //        Element model = (Element) v.getTag(); // zugeh�rige Modelklasse holen, kann nur ein Element sein
-        Element model = mapViewModel.get(position);
+        Element model = mapAllViewModels.get(position);
 
-        Log.d(LOG_TAG, "Klasse von model: " + model.getClass());
+        if(model == null)
+            Log.e(LOG_TAG, "Model ist NULL");
 
         if(model instanceof BoolElement) {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
@@ -201,6 +230,7 @@ public class Project extends Observable {
             boolean newStatus = !curStatus;
 
             String code = CodeGenerator.generateCodeToSend(newStatus, model.getIdentifier());
+            Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
             // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
             if(model instanceof InputElement) { // sollte true sein - als Absicherung
@@ -225,25 +255,36 @@ public class Project extends Observable {
                 notify(comObject);
                 Log.d(LOG_TAG, "Gui aktualisiert");
 
-                // änderung aller dazugehörigen OutputElemente in Klasse Gui
-                for(Element e : allElementModels) {
-                    if(e instanceof OutputElement) {
-                        if(e.getIdentifier().equals(model.getIdentifier())) {
-                            // Zugeh�riges OutputElement, z.B. Led, wurde gefunden
 
-                            ArrayList<View> allViews = mgui.getAllViews();
-                            for(View view : allViews) {
-                                //if(((SuperView)view).getName().equals(model.getName())) {
+                ///////// TODO Ersetzen durch HashMap - Iterator unten
+                // änderung aller dazugehörigen OutputElemente
+//                for(Element e : allElementModels) {
+//                    if(e instanceof OutputElement) {
+//                        if(e.getIdentifier().equals(model.getIdentifier())) {
+//                            // Zugeh�riges OutputElement, z.B. Led, wurde gefunden
+//
+//                            ArrayList<View> allViews = mgui.getAllViews();
+//                            for(View view : allViews) {
+//                                //if(((SuperView)view).getName().equals(model.getName())) {
+//
+//
+//                                // Zugeh�rige View gefunden
+//                                // View updaten
+//                                //	comObject = new ComObject(view, newStatus);
+//                                //	notify(comObject);
+//                            }
+//                        }
+//                    }
+//                }
 
-
-                                // Zugeh�rige View gefunden
-                                // View updaten
-                                //	comObject = new ComObject(view, newStatus);
-                                //	notify(comObject);
-                            }
-                        }
-                    }
+                Iterator iterator = mapAllViewModels.entrySet().iterator();
+                while (iterator.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iterator.next();
+                    Log.d(LOG_TAG, entry.getKey() + " = " + ((Element)(entry.getValue())).getName());
+                    iterator.remove();
                 }
+
+
             } else
                 Log.e(LOG_TAG, "Error - Kein InputElement");
 
@@ -265,7 +306,7 @@ public class Project extends Observable {
     }
 
     public void addModelToMap(int position, Element model) {
-        mapViewModel.put(position, model);
+        mapAllViewModels.put(position, model);
     }
 
     /**

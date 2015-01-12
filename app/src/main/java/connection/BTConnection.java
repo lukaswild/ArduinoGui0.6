@@ -93,11 +93,11 @@ public class BTConnection implements IConnection {
     public void sendData(String data) {
         byte[] msgBuffer = data.getBytes();
         if (isConnected) {
-            Log.d(LOG_TAG, "Sending data: " + data);
+            Log.d(LOG_TAG, "Senden der Daten: " + data);
             try {
                 streamOut.write(msgBuffer);
             } catch (IOException e) {
-                Log.e(LOG_TAG, "Error while sending data: " + e.toString());
+                Log.e(LOG_TAG, "Fehler beim Senden von Daten: " + e.toString());
             }
         } else {
             Log.e(LOG_TAG, "Fehler beim Senden der Daten: Keine Verbindung");
@@ -114,19 +114,19 @@ public class BTConnection implements IConnection {
         try {
             if (streamIn.available() > 0) {
                 laenge = streamIn.read(buffer);
-                Log.d(LOG_TAG, "Number of received bytes: " + String.valueOf(laenge));
+                Log.d(LOG_TAG, "Anzahl empfangener Bytes : " + String.valueOf(laenge));
 
                 // Message zusammensetzen:
                 for (int i = 0; i < laenge; i++) {
                     data += (char) buffer[i];
                 }
 
-                Log.d(LOG_TAG, "Message: " + data);
+                Log.d(LOG_TAG, "Nachricht : " + data);
             } else
-                Log.e(LOG_TAG, "InputStream not available");
+                Log.e(LOG_TAG, "InputStream nicht verfügbar ");
 
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Error receiving data: " + e.toString());
+            Log.e(LOG_TAG, "Fehler beim Empfangen der Daten : " + e.toString());
         }
 
         return data;

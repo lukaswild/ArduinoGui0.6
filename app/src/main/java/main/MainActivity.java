@@ -26,6 +26,8 @@ import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import connection.BTConnection;
 import connection.IConnection;
@@ -233,9 +235,17 @@ public class MainActivity extends Activity {
 
                     default:
                         // Toast.makeText(getBaseContext(), "Fehler bei pos/" + position, Toast.LENGTH_SHORT).show();
-                        for(Element e : CurrentProject.getAllElements()) {
-                            Toast.makeText(getBaseContext(), e.getName(), Toast.LENGTH_SHORT).show();
+//                        for(Element e : CurrentProject.getAllElements()) {
+//                            Toast.makeText(getBaseContext(), e.getName(), Toast.LENGTH_SHORT).show();
+//                        }
+
+                        Iterator iterator = CurrentProject.getMapAllViewModels().entrySet().iterator();
+                        while (iterator.hasNext()) {
+                            Map.Entry entry = (Map.Entry) iterator.next();
+                            Toast.makeText(getBaseContext(), ((Element)(entry.getValue())).getName(), Toast.LENGTH_SHORT).show();
+                            iterator.remove();
                         }
+
                         break;
 
                 }
@@ -305,14 +315,14 @@ public class MainActivity extends Activity {
                                     imgadapt.notifyDataSetChanged();
                                     // Hinzufügen eines neuen ModelElements in die Liste aller Models im Project
                                     project.addModelToMap(position, new LedModel(ELEMENT_NAME + Integer.toString(position), false));
-                                    project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
+                               //     project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 case R.id.AddSwitch:
                                     imgadapt.Update(R.drawable.switch_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
-                                    project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
+                               //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 default:
@@ -633,8 +643,8 @@ public class MainActivity extends Activity {
         for (Project c : AllProjects) {
 
             allProName.add(c.getName());
-            allProElements.add(Integer.toString(c.getAllElements().size()));
-
+//            allProElements.add(Integer.toString(c.getAllElements().size()));
+            allProElements.add(Integer.toString(c.getMapAllViewModels().size()));
         }
 //        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
 
@@ -710,8 +720,6 @@ public class MainActivity extends Activity {
 
                                              }
                                          }
-
-
         );
 
 

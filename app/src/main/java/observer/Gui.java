@@ -8,9 +8,7 @@ import android.widget.GridView;
 
 import java.util.ArrayList;
 
-import elements.BoolElement;
 import generic.ComObject;
-import elements.Element;
 
 
 /* 
@@ -69,25 +67,25 @@ public class Gui extends View implements IObserver {
 	public void update(Observable senderClass, ComObject comObject) {
 
 		if(senderClass instanceof Project) { // senderClass sollte von Klasse Project sein 
-			Project project = (Project) senderClass;
-			ArrayList<Element> allModelElements = project.getAllElements(); // Hole alle Modelelemente
-			String newStatusString = comObject.getStatus();
-            //TODO Fehler
-            //int modelIndex =0;
-			int modelIndex = allModelElements.indexOf(comObject.getView());
-
-			Element modelToUpdate = allModelElements.get(modelIndex); // InputElement, welches das Event ausgelöst hat (z.B. Switch)
-			
-			
-
-			// TODO vorerst nur f�r BoolElement - PwmElement sp�ter
-
-			boolean newStatus = false;
-			if(newStatusString.equals("1"))
-				newStatus = true;
-
-			// Setzen der neuen Status im Model
-			((BoolElement)modelToUpdate).setStatusHigh(newStatus);
+//			Project project = (Project) senderClass;
+////			ArrayList<Element> allModelElements = project.getAllElements(); // Hole alle Modelelemente
+//            HashMap<Integer, Element> allViewModels = project.getMapAllViewModels();
+//			String newStatusString = comObject.getStatus();
+//            //TODO Anpassung wegen neuer HashMap
+//            //int modelIndex =0;
+//			int modelIndex = allModelElements.indexOf(comObject.getView());
+//
+//			Element modelToUpdate = allModelElements.get(modelIndex); // InputElement, welches das Event ausgelöst hat (z.B. Switch)
+//
+//
+//			// TODO vorerst nur f�r BoolElement - PwmElement sp�ter
+//
+//			boolean newStatus = false;
+//			if(newStatusString.equals("1"))
+//				newStatus = true;
+//
+//			// Setzen der neuen Status im Model
+//			((BoolElement)modelToUpdate).setStatusHigh(newStatus);
 
 			
 		} else

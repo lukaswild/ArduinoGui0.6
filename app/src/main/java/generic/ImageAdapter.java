@@ -1,7 +1,6 @@
 package generic;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -104,14 +103,10 @@ public class ImageAdapter extends BaseAdapter {
        //     if(imageView.getName() == null)
                 imageView.setName(ELEMENT_NAME + position);
 
-            Log.d(LOG_TAG, "getView im if-Zweig bei position " + position);
-
         } else {
             imageView = (MyImageView) convertView;
             imageView.setName(ELEMENT_NAME + position);
-            Log.d(LOG_TAG, "getView im else-Zweig bei position " + position);
         }
-        Log.d(LOG_TAG, "position: " + position + "\tElementName: " + imageView.getName());
         imageView.setImageResource((int) getItemInt(position));
         return imageView;
 
