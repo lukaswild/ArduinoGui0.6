@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
@@ -21,7 +21,7 @@ import com.example.arduinogui.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import connection.ExpandableListAdapter;
+import generic.ExpListAdapterAllCons;
 
 /**
  * Created by Lukas on 04.01.2015.
@@ -66,7 +66,7 @@ public class ProjectActivity extends  Activity {
         fillHashMap(allProElements, allProName, mapListDataChild);
 
         expListView=(ExpandableListView) findViewById(R.id.listViewAvailablePros);
-        expListAdapter=new ExpandableListAdapter(this,allProName,mapListDataChild);
+        expListAdapter=new ExpListAdapterAllCons(this,allProName,mapListDataChild);
 
         expListView.setAdapter(expListAdapter);
     }

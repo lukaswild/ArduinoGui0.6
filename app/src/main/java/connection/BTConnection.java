@@ -152,8 +152,8 @@ public class BTConnection implements IConnection {
      * @param macAddress MAC-Adresse des Bluetooth-Devices am Arduino
      */
     public static boolean initialiseConnection(String conName, String macAddress) {
-
-        Log.d(LOG_TAG, "Connecting with " + macAddress + "...");
+        // TODO BT Berechtigungsanfrage automatisch, wenn BT disabled
+        Log.d(LOG_TAG, "Verbinden mit " + macAddress + "...");
 
         if(instance == null) {
             instance = new BTConnection();
@@ -161,8 +161,12 @@ public class BTConnection implements IConnection {
             BTConnection.adapter = BluetoothAdapter.getDefaultAdapter();
             BTConnection.macAddress = macAddress;
             BTConnection.conName = conName;
-            BluetoothDevice remote_device = adapter.getRemoteDevice(BTConnection.macAddress);
-            createConnectSocket(remote_device); // Socket erstellen und verbinden
+            BluetoothDevice remote_device = null;
+
+                remote_device = adapter.getRemoteDevice(BTConnection.macAddress);
+                createConnectSocket(remote_device); // Socket erstellen und verbinden
+
+                // TODO Toast ausgeben, wenn MAC ungültig und ToggleButton nicht verbinden (kann nur über Activity gemacht werden)
 
             // Outputstream erstellen:
             createOutputStream();
@@ -186,9 +190,9 @@ public class BTConnection implements IConnection {
     private static void createInputStream() {
         try {
             streamIn = socket.getInputStream();
-            Log.d(LOG_TAG, "InputStream created");
+            Log.d(LOG_TAG, "InputStream erzeugt");
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error creating InputStream: " + e.toString());
+            Log.e(LOG_TAG, "Fehler beim Erzeugen des InputStreams: " + e.toString());
             isConnected = false;
         }
     }
@@ -197,9 +201,9 @@ public class BTConnection implements IConnection {
     private static void createOutputStream() {
         try {
             streamOut = socket.getOutputStream();
-            Log.d(LOG_TAG, "OutputStream created");
+            Log.d(LOG_TAG, "OutputStream erzeugt");
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error creating OutputStream: " + e.toString());
+            Log.e(LOG_TAG, "Fehler beim Erzeugen des OutputStreams: " + e.toString());
             isConnected = false;
         }
     }
@@ -208,9 +212,9 @@ public class BTConnection implements IConnection {
     private static void createConnectSocket(BluetoothDevice remote_device) {
         try {
             socket = remote_device.createInsecureRfcommSocketToServiceRecord(uuid);
-            Log.d(LOG_TAG, "Socket erfolgreich erstellt");
+            Log.d(LOG_TAG, "Socket erfolgreich erzeugt");
         } catch (Exception e) {
-            Log.e(LOG_TAG, "Fehler beim Erstellen des Sockets: " + e.toString());
+            Log.e(LOG_TAG, "Fehler beim Erzeugen des Sockets: " + e.toString());
             isConnected = false;
             instance = null;
         }
@@ -220,11 +224,11 @@ public class BTConnection implements IConnection {
         // Socket verbinden
         try {
             socket.connect();
-            Log.d(LOG_TAG, "Socket connected");
+            Log.d(LOG_TAG, "Socket verbunden");
         } catch (IOException e) {
             isConnected = false;
             instance = null;
-            Log.e(LOG_TAG, "Error while trying to connect socket: " + e.toString());
+            Log.e(LOG_TAG, "Fehler beim Verbinden des Sockets : " + e.toString());
         }
 
         // Socket beenden, falls nicht verbunden werden konnte
@@ -232,7 +236,7 @@ public class BTConnection implements IConnection {
             try {
                 socket.close();
             } catch (Exception e) {
-                Log.e(LOG_TAG, "Error while trying to close socket: " + e.toString());
+                Log.e(LOG_TAG, "Fehler beim Schließen des Sockets: " + e.toString());
 
             }
         }

@@ -29,7 +29,7 @@ import java.util.List;
 
 import connection.BTConnection;
 import connection.EthernetConnection;
-import connection.ExpandableListAdapter;
+import generic.ExpListAdapterAllCons;
 import connection.IConnection;
 
 public class ConnectionActivity extends Activity {
@@ -50,7 +50,7 @@ public class ConnectionActivity extends Activity {
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
     static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
-    ExpandableListAdapter expListAdapter;
+    ExpListAdapterAllCons expListAdapter;
 
 
     public HashMap<String, ArrayList<String>> getMapListDataChild() {
@@ -82,13 +82,15 @@ public class ConnectionActivity extends Activity {
         fillHashMap(allConsType, allConsHeader, allConsAddress, mapListDataChild);
 
         expListView = (ExpandableListView) findViewById(R.id.listViewAvailableCons);
-        expListAdapter = new ExpandableListAdapter(this, allConsHeader, mapListDataChild);
+        expListAdapter = new ExpListAdapterAllCons(this, allConsHeader, mapListDataChild);
 
 
         // der ExpandableListView den Adapter übergeben
         expListView.setAdapter(expListAdapter);
         Log.d(LOG_TAG, "Adapter wurde ListView hinzugefügt");
     }
+
+
 
     private ArrayList<String> getIntentExtra(Intent intent, String key) {
         ArrayList<String> listExtra = new ArrayList<String>();

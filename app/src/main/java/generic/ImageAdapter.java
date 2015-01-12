@@ -1,4 +1,4 @@
-package Views;
+package generic;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,6 +13,7 @@ import com.example.arduinogui.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Views.MyImageView;
 import elements.Element;
 
 //import com.example.test.R;

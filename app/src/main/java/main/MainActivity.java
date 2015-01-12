@@ -19,22 +19,20 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
-import Views.ImageAdapter;
 import connection.BTConnection;
 import connection.IConnection;
 import elements.Element;
 import elements.LedModel;
 import elements.SwitchModel;
+import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
 

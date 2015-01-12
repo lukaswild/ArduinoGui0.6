@@ -21,8 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:focusable="false"
-        android:textOff="@string/tglBtnChooseCon"
-        android:textOn="@string/tglBtnCloseCon"/>
+        android:focusable="false"/>
 
 </RelativeLayout>

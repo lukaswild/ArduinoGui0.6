@@ -1,4 +1,4 @@
-package connection;
+package generic;
 
 /**
  * Generieren eines Codes für die übertragung von änderungen an den Arduino.
