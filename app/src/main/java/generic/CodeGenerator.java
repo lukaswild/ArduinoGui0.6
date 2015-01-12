@@ -1,5 +1,7 @@
 package generic;
 
+import android.util.Log;
+
 /**
  * Generieren eines Codes für die übertragung von änderungen an den Arduino.
  * An erster Stelle steht entweder ein "B" für Boolean oder ein "P" für Pwm.
@@ -9,8 +11,11 @@ package generic;
  */
 public class CodeGenerator {
 
+    private final static String LOG_TAG = "CodeGenerator";
+
 	public static String generateCodeToSend(boolean msg, String identifier) {
-		String code = "";
+        Log.d(LOG_TAG, "Generiere Code...");
+        String code = "";
 
 		boolean msgBool = (boolean)msg;
 
@@ -24,7 +29,8 @@ public class CodeGenerator {
 	}
 	
 
-	public static String generateCodeToSend(String msg, String identifier) { 
+	public static String generateCodeToSend(String msg, String identifier) {
+        Log.d(LOG_TAG, "Generiere Code...");
 		String code = "P" + msg + "I" + identifier;// P für PWM
 		return code; 
 	}

@@ -1,8 +1,6 @@
 package observer;
 
-import elements.ComObject;
-import android.view.View;
-import android.widget.ViewSwitcher;
+import generic.ComObject;
 
 /**
  * @author Simon

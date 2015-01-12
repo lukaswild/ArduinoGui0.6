@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,7 +29,6 @@ import java.util.HashMap;
 
 import connection.BTConnection;
 import connection.IConnection;
-import elements.BoolElement;
 import elements.Element;
 import elements.LedModel;
 import elements.SwitchModel;
@@ -101,9 +99,9 @@ public class MainActivity extends Activity {
 
         CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X");
 
-        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1");
-        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2");
-        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3");
+        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1);
+        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2);
+        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3);
         AllProjects.add(pro1);
         AllProjects.add(pro2);
         AllProjects.add(pro3);
@@ -153,7 +151,9 @@ public class MainActivity extends Activity {
         InitializeUI(CurrentProject);
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();
+
         createDummyData();
+
 
     }
 
@@ -185,6 +185,7 @@ public class MainActivity extends Activity {
     }
 
     public void InitializeUI(final Project project)  {
+
         //Löscht zuerst einmal den Inhalt von Grdiview
         //  project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
@@ -197,31 +198,34 @@ public class MainActivity extends Activity {
                     case R.drawable.switch_off:
                         imgadapt.Update(R.drawable.switch_on,position);
                         imgadapt.notifyDataSetInvalidated();
-                        project.sendDataUpdateGui(v,CurrentConnection);
+                        Log.d(LOG_TAG, "Switch off: Senden an Arduino und Updaten der Gui...");
+                        project.sendDataUpdateGui(v,CurrentConnection, position);
                         break;
 
                     case R.drawable.switch_on:
                         imgadapt.Update(R.drawable.switch_off,position);
                         imgadapt.notifyDataSetInvalidated();
-                        project.sendDataUpdateGui(v,CurrentConnection);
+                        Log.d(LOG_TAG, "Switch on: Senden an Arduino und Updaten der Gui...");
+                        project.sendDataUpdateGui(v,CurrentConnection, position);
                         break;
 
                     //Button funktioniert zurzeit gleich wie ein switch, -> schlecht, besser alle click im onTouchListener realisieren,
                     //es kann auf drücken, bzw. loslassen der views geschaut werden, funktioniert derzeit noch nicht
                     //github comment
-                    case R.drawable.button_off:
-                        imgadapt.Update(R.drawable.button_on,position);
-                        imgadapt.notifyDataSetInvalidated();
-                        project.sendDataUpdateGui(v,CurrentConnection);
-                        break;
+//                    case R.drawable.button_off:
+//                        imgadapt.Update(R.drawable.button_on,position);
+//                        imgadapt.notifyDataSetInvalidated();
+//                        project.sendDataUpdateGui(v,CurrentConnection, position);
+//                        break;
+//                        TODO ToggleButton
+//                    case R.drawable.button_on:
+//                        imgadapt.Update(R.drawable.button_off,position);
+//                        imgadapt.notifyDataSetInvalidated();
+//
+//                        //Update an GUI funktioniert noch nicht
+//                        project.sendDataUpdateGui(v,CurrentConnection, position);
+//                        break;
 
-                    case R.drawable.button_on:
-                        imgadapt.Update(R.drawable.button_off,position);
-                        imgadapt.notifyDataSetInvalidated();
-
-                        //Update an GUI funktioniert noch nicht
-                        project.sendDataUpdateGui(v,CurrentConnection);
-                        break;
 
                     case R.drawable.lamp_off:
                         Toast.makeText(getBaseContext(), "Element " + position + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
@@ -238,7 +242,6 @@ public class MainActivity extends Activity {
 
             }
         });
-
 
   /*      gui.getGridView().setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -290,7 +293,7 @@ public class MainActivity extends Activity {
 
                             switch (item.getItemId()) {
 
-                                case R.id.AddButton:
+                                case R.id.AddButton: // PushButton adden
                                     imgadapt.Update(R.drawable.button_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     // TODO Model für PushButton der Liste im Project adden
@@ -301,13 +304,15 @@ public class MainActivity extends Activity {
                                     imgadapt.Update(R.drawable.lamp_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     // Hinzufügen eines neuen ModelElements in die Liste aller Models im Project
-                                    project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
+                                    project.addModelToMap(position, new LedModel(ELEMENT_NAME + Integer.toString(position), false));
+//                                    project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 case R.id.AddSwitch:
                                     imgadapt.Update(R.drawable.switch_off, position);
                                     imgadapt.notifyDataSetChanged();
-                                    project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
+                                    project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
+//                                    project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 default:
@@ -641,8 +646,7 @@ public class MainActivity extends Activity {
                 String proName = "";
                 if (data.getExtras().containsKey("name")) {
                     proName = data.getExtras().getString("name");
-                    AllProjects.add(new Project(new Gui(getBaseContext(),2,(GridView)findViewById(R.id.gridview)),proName));
-                    CurrentProject=AllProjects.get(AllProjects.size()-1);
+                    CurrentProject.setName(proName);
                 }
 
             }

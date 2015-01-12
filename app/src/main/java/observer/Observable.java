@@ -2,7 +2,7 @@ package observer;
 
 import java.util.ArrayList;
 
-import elements.ComObject;
+import generic.ComObject;
 import android.view.View;
 
 public class Observable {

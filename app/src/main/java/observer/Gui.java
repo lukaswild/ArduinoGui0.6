@@ -1,26 +1,16 @@
 package observer;
 
-import java.util.ArrayList;
-
-
-import elements.BoolElement;
-import elements.ComObject;
-import elements.Element;
-import elements.OutputElement;
-import elements.SwitchModel;
-import android.R.integer;
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.View;
-import android.view.ViewDebug.IntToString;
 import android.widget.GridLayout;
 import android.widget.GridView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 
-import com.example.arduinogui.R;
+import java.util.ArrayList;
+
+import elements.BoolElement;
+import generic.ComObject;
+import elements.Element;
 
 
 /* 
@@ -32,8 +22,6 @@ public class Gui extends View implements IObserver {
 	private final String LOG_TAG = "Gui";
 	GridLayout gridLayout; 
 	ArrayList<View> allViews = new ArrayList<View>();
-
-
 
     private GridView mgridView;
 

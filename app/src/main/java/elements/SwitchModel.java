@@ -1,12 +1,15 @@
 package elements;
 
+import android.util.Log;
+
 import connection.IConnection;
 
 public class SwitchModel extends BoolElement implements InputElement {
 
+    private final String LOG_TAG = "SwitchModel";
 	
 	
-	public SwitchModel(String name, boolean statusHigh) {
+    public SwitchModel(String name, boolean statusHigh) {
 		super.name = name;
 		super.statusHigh = statusHigh;
 	}
@@ -16,7 +19,8 @@ public class SwitchModel extends BoolElement implements InputElement {
 
 	@Override
 	public void sendDataToArduino(IConnection connection, String data) {
-		connection.sendData(data);
+        Log.d(LOG_TAG, "Daten an Arduino senden...");
+        connection.sendData(data);
 	}
 
 }

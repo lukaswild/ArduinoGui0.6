@@ -6,17 +6,18 @@ import android.view.View.OnClickListener;
 import android.widget.GridView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import generic.ImageAdapter;
-import generic.CodeGenerator;
 import connection.IConnection;
 import elements.BoolElement;
-import elements.ComObject;
 import elements.Element;
 import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
 import elements.SwitchModel;
+import generic.CodeGenerator;
+import generic.ComObject;
+import generic.ImageAdapter;
 
 public class Project extends Observable {
 
@@ -40,6 +41,8 @@ public class Project extends Observable {
     private SwitchModel elementSwitch;
     private LedModel elementLed;
     private ImageAdapter imageAdapter;
+
+    private HashMap<Integer, Element> mapViewModel;
 
     //  private SwitchView viewSwitch;
 
@@ -67,6 +70,14 @@ public class Project extends Observable {
         this.id = id;
     }
 
+    public HashMap<Integer, Element> getMapViewModel() {
+        return mapViewModel;
+    }
+
+    public void setMapViewModel(HashMap<Integer, Element> mapViewModel) {
+        this.mapViewModel = mapViewModel;
+    }
+
     //Dineg wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondenr neu erzeugt werden, da
     //sie auf dem aktuellen Context beruhen
 
@@ -89,6 +100,7 @@ public class Project extends Observable {
         mgui = gui;
         id++;
 
+        this.mapViewModel = new HashMap<Integer, Element>();
     }
 
     public Project(Gui gui, String name) {
@@ -102,8 +114,22 @@ public class Project extends Observable {
         mgui=gui;
         mname=name;
         id++;
+        this.mapViewModel = new HashMap<Integer, Element>();
     }
 
+    public Project(Gui gui, String name, int Id) {
+
+        allElementModels = new ArrayList<Element>();
+        numberOfRows = 2;
+        numberOfLines = 3;
+        this.elementLed = new LedModel();
+        this.elementSwitch = new SwitchModel();
+        GridView view;
+        mgui=gui;
+        mname=name;
+        id=Id;
+        this.mapViewModel = new HashMap<Integer, Element>();
+    }
     public void setGui(Gui gui) {
         mgui=gui;
     }
@@ -162,11 +188,15 @@ public class Project extends Observable {
      * Ebenso wird mithilfe des Observer-Patterns die Gui aktualisiert, also z.B. das Feedbackelement Led auf High gesetzt.
      * @param v - View des das Event ausl�senden Elements
      */
-    public void sendDataUpdateGui(View v, IConnection currentConnection) {
+    public void sendDataUpdateGui(View v, IConnection currentConnection, int position) {
+        Log.d(LOG_TAG, "In Methode sendDataUpdateGui");
+//        Element model = (Element) v.getTag(); // zugeh�rige Modelklasse holen, kann nur ein Element sein
+        Element model = mapViewModel.get(position);
 
-        Element model = (Element) v.getTag(); // zugeh�rige Modelklasse holen, kann nur ein Element sein
+        Log.d(LOG_TAG, "Klasse von model: " + model.getClass());
 
         if(model instanceof BoolElement) {
+            Log.d(LOG_TAG, "Model ist ein BoolElement");
             boolean curStatus = ((BoolElement) model).isStatusHigh();
             boolean newStatus = !curStatus;
 
@@ -174,7 +204,10 @@ public class Project extends Observable {
 
             // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
             if(model instanceof InputElement) { // sollte true sein - als Absicherung
+                Log.d(LOG_TAG, "Model ist ein InputElement");
+                Log.d(LOG_TAG, "Senden an Arduino...");
                 ((InputElement)model).sendDataToArduino(currentConnection, code);
+                Log.d(LOG_TAG, "Gesendet");
 
 				/* TODO Status nur �ndern, wenn �bertragung auch wirklich funktioniert hat:
 				 * - entweder zuerst Status des Arduino-Elements abfragen,
@@ -186,8 +219,11 @@ public class Project extends Observable {
                 ((BoolElement) model).setStatusHigh(newStatus);
 
                 // änderung des Status des InputElements in Klasse Gui
+                Log.d(LOG_TAG, "Erzeugen eines ComObjects");
                 ComObject comObject = new ComObject(v, newStatus);
+                Log.d(LOG_TAG, "Gui benachrichtigen und aktualisieren...");
                 notify(comObject);
+                Log.d(LOG_TAG, "Gui aktualisiert");
 
                 // änderung aller dazugehörigen OutputElemente in Klasse Gui
                 for(Element e : allElementModels) {
@@ -208,10 +244,11 @@ public class Project extends Observable {
                         }
                     }
                 }
-            }
+            } else
+                Log.e(LOG_TAG, "Error - Kein InputElement");
 
         } else {
-            Log.e(LOG_TAG, "Error - Kein InputElement!");
+            Log.e(LOG_TAG, "Error - Kein BoolElement!");
         }
     } //TODO else if (model instanceof PwmElement)
 
@@ -227,6 +264,9 @@ public class Project extends Observable {
         // TODO Momentan wird Identifier in Element definiert --> Methode w�re unn�tig
     }
 
+    public void addModelToMap(int position, Element model) {
+        mapViewModel.put(position, model);
+    }
 
     /**
      * Listener-Klasse f�r die einzelnen Views.
@@ -235,13 +275,13 @@ public class Project extends Observable {
      *
      */
     //TODO Fehler
-	 private class ElementListener implements OnClickListener {
+    private class ElementListener implements OnClickListener {
 
-		@Override
-		public void onClick(View v) {
-		//	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Insant
-		}
-	}
+        @Override
+        public void onClick(View v) {
+            //	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Instanz
+        }
+    }
 
 
 }

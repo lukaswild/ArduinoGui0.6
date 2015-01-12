@@ -5,7 +5,6 @@
     android:layout_height="match_parent" >
 
 
-
     <TextView
         android:id="@+id/tvExpListHeader"
         android:layout_width="fill_parent"

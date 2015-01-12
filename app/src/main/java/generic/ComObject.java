@@ -1,4 +1,4 @@
-package elements;
+package generic;
 
 import android.view.View;
 
