@@ -32,7 +32,7 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         // Allgemein notwendig
         String headerTitle = (String) getGroup(groupPosition);
-        convertView = inflateLayoutGroup(convertView);
+        convertView = inflateLayoutGroup(convertView,R.layout.list_group);
         final TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
         setListHeader(headerTitle, lblListHeader);
 

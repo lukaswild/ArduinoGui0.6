@@ -87,6 +87,7 @@ public class Project extends Observable {
         this.elementSwitch = new SwitchModel();
         GridView view;
         mgui = gui;
+        id++;
 
     }
 
@@ -100,19 +101,9 @@ public class Project extends Observable {
         GridView view;
         mgui=gui;
         mname=name;
+        id++;
     }
-    public Project(Gui gui, String name, int Id) {
 
-        allElementModels = new ArrayList<Element>();
-        numberOfRows = 2;
-        numberOfLines = 3;
-        this.elementLed = new LedModel();
-        this.elementSwitch = new SwitchModel();
-        GridView view;
-        mgui=gui;
-        mname=name;
-        id=Id;
-    }
     public void setGui(Gui gui) {
         mgui=gui;
     }

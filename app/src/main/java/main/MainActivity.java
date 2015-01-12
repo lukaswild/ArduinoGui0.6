@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.util.HashMap;
 
 import connection.BTConnection;
 import connection.IConnection;
+import elements.BoolElement;
 import elements.Element;
 import elements.LedModel;
 import elements.SwitchModel;
@@ -98,21 +100,10 @@ public class MainActivity extends Activity {
 
 
         CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X");
-/*
-//        FragmentManager fm= getFragmentManager();
-//        dataFragment=(MainFragment)fm.findFragmentByTag("data");
-//
-//        if (  dataFragment==null){
-//            dataFragment = new MainFragment();
-//            fm.beginTransaction().add(dataFragment,"data").commit();
-//
-//            dataFragment.setData(CurrentProject);
-//        }
-             */
 
-        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1);
-        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2);
-        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3);
+        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1");
+        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2");
+        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3");
         AllProjects.add(pro1);
         AllProjects.add(pro2);
         AllProjects.add(pro3);
@@ -121,8 +112,6 @@ public class MainActivity extends Activity {
         if(AllProjects.isEmpty()) {
             final Dialog popDialog = new Dialog(this);
             popDialog.setCancelable(true);
-
-            // View Viewlayout = inflater.inflate(R.layout.dialog_project,(ViewGroup)findViewById(R.id.dialog_projekt));
 
             popDialog.setContentView(R.layout.dialog_project);
             popDialog.setTitle("Projekt festlegen");
@@ -136,7 +125,6 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     String string = "";
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
-                    //CurrentProject = new Project(new Gui(getBaseContext(),1,(GridView)findViewById(R.id.gridview)),edit.getText().toString());
                     CurrentProject.setName(edit.getText().toString());
                     AllProjects.add(CurrentProject);
                     popDialog.cancel();
@@ -160,22 +148,12 @@ public class MainActivity extends Activity {
 
         imgadapt = new ImageAdapter(this);
 
-/*
-        Switch sw = (Switch)findViewById(R.id.switch1);
-        sw.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getBaseContext()," switch 1", Toast.LENGTH_SHORT).show();
-            }
-        });
-*/
-        // CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt 1");
-       // InitializeUI(CurrentProject); nur mehr in der onResume, da
+
+        Log.d(LOG_TAG,"Vor Gui");
+        InitializeUI(CurrentProject);
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();
-
         createDummyData();
-
 
     }
 
@@ -207,7 +185,6 @@ public class MainActivity extends Activity {
     }
 
     public void InitializeUI(final Project project)  {
-
         //Löscht zuerst einmal den Inhalt von Grdiview
         //  project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
@@ -261,6 +238,7 @@ public class MainActivity extends Activity {
 
             }
         });
+
 
   /*      gui.getGridView().setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -663,7 +641,8 @@ public class MainActivity extends Activity {
                 String proName = "";
                 if (data.getExtras().containsKey("name")) {
                     proName = data.getExtras().getString("name");
-                    CurrentProject.setName(proName);
+                    AllProjects.add(new Project(new Gui(getBaseContext(),2,(GridView)findViewById(R.id.gridview)),proName));
+                    CurrentProject=AllProjects.get(AllProjects.size()-1);
                 }
 
             }
@@ -708,5 +687,17 @@ public class MainActivity extends Activity {
         ElementIdentifyer.put(R.id.a3,"A3");
         ElementIdentifyer.put(R.id.a4,"A4");
         ElementIdentifyer.put(R.id.a5,"A5");
+    }
+
+    public static void SetCurrentProjByName(String name){
+        for (Project p:AllProjects   ) {
+            if (p.getName().equals(name)) {
+                CurrentProject = p;
+
+            } else {
+                //es wird kein Projekt gefuunden
+
+            }
+        }
     }
 }

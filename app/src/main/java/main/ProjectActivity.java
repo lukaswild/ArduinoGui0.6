@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import generic.ExpListAdapterAllCons;
+import generic.ExpListAdapterAllPro;
 
 /**
  * Created by Lukas on 04.01.2015.
@@ -38,7 +39,7 @@ public class ProjectActivity extends  Activity {
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
     static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
-    ExpandableListAdapter expListAdapter;
+    ExpListAdapterAllPro expListAdapter;
 
 
     @Override
@@ -66,7 +67,7 @@ public class ProjectActivity extends  Activity {
         fillHashMap(allProElements, allProName, mapListDataChild);
 
         expListView=(ExpandableListView) findViewById(R.id.listViewAvailablePros);
-        expListAdapter=new ExpListAdapterAllCons(this,allProName,mapListDataChild);
+        expListAdapter=new ExpListAdapterAllPro(this,allProName,mapListDataChild);
 
         expListView.setAdapter(expListAdapter);
     }

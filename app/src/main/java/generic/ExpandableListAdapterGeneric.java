@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -56,16 +57,20 @@ public abstract class ExpandableListAdapterGeneric extends BaseExpandableListAda
         listHeader.setText(headerTitle);
     }
 
-    protected View inflateLayoutGroup(View convertView) {
+    protected View inflateLayoutGroup(View convertView, int resource) {
         if (convertView == null) {
             LayoutInflater inflateLayout = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflateLayout.inflate(R.layout.list_group, null);
+            convertView = inflateLayout.inflate(resource, null);
         }
         return convertView;
     }
 
     protected ToggleButton getToggleButton(View convertView) {
         return (ToggleButton) convertView.findViewById(R.id.tglBtnChooseCon);
+    }
+
+    protected Button getButton(View convertView){
+        return (Button) convertView.findViewById(R.id.btnSetPro);
     }
 
     protected void setStateTexts(ToggleButton tglBtnChooseCloseCon, String textOff, String textOn) {
