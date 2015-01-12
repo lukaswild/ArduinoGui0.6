@@ -187,7 +187,7 @@ public class MainActivity extends Activity {
     public void InitializeUI(final Project project)  {
 
         //Löscht zuerst einmal den Inhalt von Grdiview
-        //  project.getGui().getGridView().clearAnimation();
+        project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
         project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -305,14 +305,14 @@ public class MainActivity extends Activity {
                                     imgadapt.notifyDataSetChanged();
                                     // Hinzufügen eines neuen ModelElements in die Liste aller Models im Project
                                     project.addModelToMap(position, new LedModel(ELEMENT_NAME + Integer.toString(position), false));
-//                                    project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
+                                    project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 case R.id.AddSwitch:
                                     imgadapt.Update(R.drawable.switch_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
-//                                    project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
+                                    project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 default:
@@ -335,7 +335,7 @@ public class MainActivity extends Activity {
                             switch (itemId) {
 
                                 case R.id.identifyer:
-
+                                    popupMenu.dismiss();
                                     PopupMenu popupMenu2 = new PopupMenu(getApplicationContext(), v);
                                     popupMenu2.inflate(R.menu.menu_popup_identifyer);
                                     popupMenu2.show();
@@ -345,17 +345,158 @@ public class MainActivity extends Activity {
                                         @Override
                                         public boolean onMenuItemClick(MenuItem item2) {
 
+                                            createHashmap();
                                             //auf die Eingabe reagierne, und dementsprechend den Identifyer des Elements setzen
 
-                                            if (SwitchIdentfiyer(item2, position, project)) return true;
-                                            return false;
+                                            //Toast.makeText(getBaseContext(),"id:gfh",Toast.LENGTH_SHORT).show();
+                                            switch (item2.getItemId()){
+                                                case R.id.p1:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P1");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p2:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P2");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p3:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P3");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p4:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P4");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p5:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P5");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p6:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P6");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p7:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P7");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p8:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P8");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p9:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P9");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p10:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P10");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p11:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P11");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p12:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P12");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                case R.id.p13:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P13");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.p14:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P14");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.p15:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("P15");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.a1:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("A1");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.a2:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("A2");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.a3:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("A3");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.a4:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("A4");
+                                                        return true;
+                                                    }
+                                                    return false;
+                                                case R.id.a5:
+                                                    if (project.getElementByName("element" + position)!= null){
+                                                        project.getElementByName("element" + position).setIdentifier("A5");
+                                                        return true;
+                                                    }
+                                                    return false;
+
+                                                default:
+                                                    return false;
+
+                                            }
+                                           // project.getElementByName("element" + position).setIdentifier(ElementIdentifyer.get(item2.getItemId()));
+                                           // Toast.makeText(getBaseContext(),"identifyer:"+project.getElementByName("element" + position).getIdentifier(),Toast.LENGTH_SHORT).show();
+                                            //return true;
 
 
 
                                         }
                                     });
 
-                                    return true;
+                                    return false;
 
                                 case R.id.delete:
                                     imgadapt.Update(R.drawable.add1, position);
@@ -386,18 +527,7 @@ public class MainActivity extends Activity {
         });
     }
 
-    private boolean SwitchIdentfiyer(MenuItem item2, int position, Project project) {
 
-        createHashmap();
-        if (ElementIdentifyer.containsKey(item2.getItemId())){
-            project.getElementByName("element" + position).setIdentifier(ElementIdentifyer.get(item2.getItemId()));
-            return true;
-        }
-        else{
-            return false;
-        }
-
-    }
 
     public void ShowName(){
         TextView view = (TextView)findViewById(R.id.textView3);
