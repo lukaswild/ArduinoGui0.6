@@ -38,5 +38,6 @@
     <string name="hintProName">Projektname</string>
     <string name="txtAllPro">Verfügbare Projekte</string>
     <string name="btnNewPro">Projekt einrichten</string>
+    <string name="btnAddNewPro">Neues Projekt hinzufügen</string>
 
 </resources>

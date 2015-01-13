@@ -26,7 +26,7 @@ public class Project extends Observable {
 
 
 
-    private String mname; // Name sollte vom Benutzer im Nachhinein vergeben werden
+    private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden
     private int numberOfRows; // Anzahl von Elementen in einer Reihe
     private int numberOfLines; // Anzahl von Elementen untereinander (Anzahl von Zeilen)
     /*
@@ -34,7 +34,7 @@ public class Project extends Observable {
     private IConnection currentConnection; // Je nach dem welchen Verbindungstyp Benutzer wählt BT oder Ethernet
     */
 //    private ArrayList<Element> allElementModels;
-    private Gui mgui;
+    private Gui gui;
     private Db dbConnection; // TODO DB-Programmierung erfolgt später
     private final String LOG_TAG = "Project";
 
@@ -50,15 +50,15 @@ public class Project extends Observable {
 
     //Getter und Setter
     public String getName() {
-        return mname;
+        return name;
     }
 
     public void setName(String name) {
-        this.mname=name;
+        this.name =name;
     }
 
     public Gui getGui() {
-        return mgui;
+        return gui;
     }
 
 
@@ -97,8 +97,8 @@ public class Project extends Observable {
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        mgui = gui;
-        id++;
+        this.gui = gui;
+
 
         this.mapAllViewModels = new HashMap<Integer, Element>();
     }
@@ -111,13 +111,11 @@ public class Project extends Observable {
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        mgui=gui;
-        mname=name;
-        id++;
+        this.gui =gui;
+        this.name =name;
         this.mapAllViewModels = new HashMap<Integer, Element>();
     }
-
-    public Project(Gui gui, String name, int Id) {
+    public Project(Gui gui, String name, int id) {
 
 //        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
@@ -125,13 +123,14 @@ public class Project extends Observable {
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        mgui=gui;
-        mname=name;
-        id=Id;
+        this.gui =gui;
+        this.name =name;
+        this.id=id;
         this.mapAllViewModels = new HashMap<Integer, Element>();
     }
+
     public void setGui(Gui gui) {
-        mgui=gui;
+        this.gui =gui;
     }
 
     /*
@@ -263,7 +262,7 @@ public class Project extends Observable {
 //                        if(e.getIdentifier().equals(model.getIdentifier())) {
 //                            // Zugeh�riges OutputElement, z.B. Led, wurde gefunden
 //
-//                            ArrayList<View> allViews = mgui.getAllViews();
+//                            ArrayList<View> allViews = gui.getAllViews();
 //                            for(View view : allViews) {
 //                                //if(((SuperView)view).getName().equals(model.getName())) {
 //

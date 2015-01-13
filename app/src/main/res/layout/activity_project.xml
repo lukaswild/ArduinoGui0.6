@@ -7,30 +7,45 @@
     tools:ignore="MergeRootFrame"
     android:background="@drawable/background1">
 
-    <LinearLayout
-        android:id="@+id/linLayoutAvCons"
+    <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="left|top"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top">
+
+        <LinearLayout
+            android:id="@+id/linLayoutAvCons"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left|top"
+            android:orientation="vertical"
+            android:paddingBottom="60dp">
+
+            <TextView
+                android:id="@+id/tvAvailablePros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/txtAllPro"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <ExpandableListView
+                android:id="@+id/listViewAvailablePros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|top" />
+
+            <Space
+                android:layout_width="20px"
+                android:layout_height="50px"
+                android:layout_gravity="left|bottom" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvAvailablePros"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/txtAllPro"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <ExpandableListView
-            android:id="@+id/listViewAvailablePros"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|top" />
-
-        <Space
-            android:layout_width="20px"
-            android:layout_height="50px"
-            android:layout_gravity="left|bottom" />
 
         <Button
             android:id="@+id/btnNewPro"
@@ -38,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:onClick="createNewProject"
-            android:text="@string/btnNewPro" />
+            android:text="@string/btnAddNewPro" />
 
-    </LinearLayout>
+    </FrameLayout>
 </FrameLayout>

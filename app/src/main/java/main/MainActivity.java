@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
         }
 
 
-        CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X");
+        CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",11);
 
         Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1);
         Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2);
@@ -315,14 +315,14 @@ public class MainActivity extends Activity {
                                     imgadapt.notifyDataSetChanged();
                                     // Hinzufügen eines neuen ModelElements in die Liste aller Models im Project
                                     project.addModelToMap(position, new LedModel(ELEMENT_NAME + Integer.toString(position), false));
-                               //     project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
+                                    //     project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 case R.id.AddSwitch:
                                     imgadapt.Update(R.drawable.switch_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
-                               //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
+                                    //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                                     return true;
 
                                 default:
@@ -497,8 +497,8 @@ public class MainActivity extends Activity {
                                                     return false;
 
                                             }
-                                           // project.getElementByName("element" + position).setIdentifier(ElementIdentifyer.get(item2.getItemId()));
-                                           // Toast.makeText(getBaseContext(),"identifyer:"+project.getElementByName("element" + position).getIdentifier(),Toast.LENGTH_SHORT).show();
+                                            // project.getElementByName("element" + position).setIdentifier(ElementIdentifyer.get(item2.getItemId()));
+                                            // Toast.makeText(getBaseContext(),"identifyer:"+project.getElementByName("element" + position).getIdentifier(),Toast.LENGTH_SHORT).show();
                                             //return true;
 
 
