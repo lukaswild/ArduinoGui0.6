@@ -3,7 +3,6 @@ package main;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,11 +12,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,14 +23,9 @@ import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import connection.BTConnection;
 import connection.IConnection;
-import elements.Element;
-import elements.LedModel;
-import elements.SwitchModel;
 import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
@@ -43,16 +35,12 @@ public class MainActivity extends Activity {
 
     //Felder
     private static ArrayList<Project> AllProjects = new ArrayList<Project>();
-    private static Project CurrentProject;
+    private static Project currentProject;
 
     private static ArrayList<IConnection> AllConnections = new ArrayList<IConnection>();
-    private static IConnection CurrentConnection;
-
+    private static IConnection currentConnection;
     private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
-    public static HashMap<Integer, String> ElementIdentifyer = new HashMap<Integer, String>();
-
     public static ImageAdapter imgadapt;
-    public static Gui gui;
 
     private MainFragment dataFragment;
     private final int REQUEST_CODE_NEW_CON = 100;
@@ -72,19 +60,19 @@ public class MainActivity extends Activity {
     }
 
     public static Project getCurrentProject() {
-        return CurrentProject;
+        return currentProject;
     }
 
     public static void setCurrentProject(Project currentProject) {
-        CurrentProject = currentProject;
+        MainActivity.currentProject = currentProject;
     }
 
     public static IConnection getCurrentConnection() {
-        return CurrentConnection;
+        return currentConnection;
     }
 
     public static void setCurrentConnection(IConnection currentConnection) {
-        CurrentConnection = currentConnection;
+        MainActivity.currentConnection = currentConnection;
     }
 
     @Override
@@ -98,12 +86,12 @@ public class MainActivity extends Activity {
 
         }
 
+        currentProject =new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X", 11, imgadapt);
 
-        CurrentProject=new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",11);
+        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1, imgadapt);
+        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2, imgadapt);
+        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3, imgadapt);
 
-        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1);
-        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2);
-        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3);
         AllProjects.add(pro1);
         AllProjects.add(pro2);
         AllProjects.add(pro3);
@@ -118,17 +106,15 @@ public class MainActivity extends Activity {
             popDialog.show();
 
 
-
             Button btn = (Button) popDialog.findViewById(R.id.DialogProBtnSubmit);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String string = "";
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
-                    CurrentProject.setName(edit.getText().toString());
-                    AllProjects.add(CurrentProject);
+                    currentProject.setName(edit.getText().toString());
+                    AllProjects.add(currentProject);
                     popDialog.cancel();
-
                 }
 
             });
@@ -136,21 +122,18 @@ public class MainActivity extends Activity {
         }
 
 
-
         //Alle Projekte haben eine ID. Die ID wird beim Erzeugen eines neuen Projekts gesetzt (im Konstruktor
         //von Projekt), das heißt das letute erzeuget Projekt hat die höchste ID. Diese projekt wird gesucht und
         //auf CurrentProjekt gesetzt
 
-        else{
-
-            CurrentProject=AllProjects.get(AllProjects.size()-1);
+        else {
+            currentProject = AllProjects.get(AllProjects.size()-1);
         }
 
         imgadapt = new ImageAdapter(this);
 
-
         Log.d(LOG_TAG,"Vor Gui");
-        InitializeUI(CurrentProject);
+        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();
 
@@ -164,7 +147,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         ShowName();
-        InitializeUI(CurrentProject);
+        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 
     }
@@ -174,369 +157,17 @@ public class MainActivity extends Activity {
         super.onConfigurationChanged(newConfig);
         setContentView(R.layout.activity_main);
 
-        InitializeUI();
+        initializeUI();
     }*/
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Wenn die activity zerstört wird, soll das CurrentProject im Fragment gespeichert werden.
+        // Wenn die activity zerstört wird, soll das currentProject im Fragment gespeichert werden.
 
         Toast.makeText(getBaseContext()," In der OnDestroy", Toast.LENGTH_SHORT).show();
-        // dataFragment.setData(CurrentProject);
+        // dataFragment.setData(currentProject);
     }
-
-    public void InitializeUI(final Project project)  {
-
-        //Löscht zuerst einmal den Inhalt von Grdiview
-        project.getGui().getGridView().clearAnimation();
-        project.getGui().getGridView().setAdapter(imgadapt);
-        project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-
-                switch (imgadapt.getItemInt(position)) {
-                    case R.drawable.switch_off:
-                        imgadapt.Update(R.drawable.switch_on,position);
-                        imgadapt.notifyDataSetInvalidated();
-                        Log.d(LOG_TAG, "Switch off: Senden an Arduino und Updaten der Gui...");
-                        project.sendDataUpdateGui(v,CurrentConnection, position);
-                        break;
-
-                    case R.drawable.switch_on:
-                        imgadapt.Update(R.drawable.switch_off,position);
-                        imgadapt.notifyDataSetInvalidated();
-                        Log.d(LOG_TAG, "Switch on: Senden an Arduino und Updaten der Gui...");
-                        project.sendDataUpdateGui(v,CurrentConnection, position);
-                        break;
-
-                    //Button funktioniert zurzeit gleich wie ein switch, -> schlecht, besser alle click im onTouchListener realisieren,
-                    //es kann auf drücken, bzw. loslassen der views geschaut werden, funktioniert derzeit noch nicht
-                    //github comment
-//                    case R.drawable.button_off:
-//                        imgadapt.Update(R.drawable.button_on,position);
-//                        imgadapt.notifyDataSetInvalidated();
-//                        project.sendDataUpdateGui(v,CurrentConnection, position);
-//                        break;
-//                        TODO ToggleButton
-//                    case R.drawable.button_on:
-//                        imgadapt.Update(R.drawable.button_off,position);
-//                        imgadapt.notifyDataSetInvalidated();
-//
-//                        //Update an GUI funktioniert noch nicht
-//                        project.sendDataUpdateGui(v,CurrentConnection, position);
-//                        break;
-
-
-                    case R.drawable.lamp_off:
-                        Toast.makeText(getBaseContext(), "Element " + position + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    default:
-                        // Toast.makeText(getBaseContext(), "Fehler bei pos/" + position, Toast.LENGTH_SHORT).show();
-//                        for(Element e : CurrentProject.getAllElements()) {
-//                            Toast.makeText(getBaseContext(), e.getName(), Toast.LENGTH_SHORT).show();
-//                        }
-
-                        Iterator iterator = CurrentProject.getMapAllViewModels().entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            Map.Entry entry = (Map.Entry) iterator.next();
-                            Toast.makeText(getBaseContext(), ((Element)(entry.getValue())).getName(), Toast.LENGTH_SHORT).show();
-                            iterator.remove();
-                        }
-
-                        break;
-
-                }
-
-            }
-        });
-
-  /*      gui.getGridView().setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-
-                MyImageView view = (MyImageView) v;
-
-                if ((event.getAction() == MotionEvent.ACTION_DOWN) && (int) v.getId() == (int) R.drawable.switch_off) {
-                    imgadapt.Update(R.drawable.switch_on,(int) v.getId());
-                    imgadapt.notifyDataSetInvalidated();
-                    return true;
-                }
-                if ((event.getAction() == MotionEvent.ACTION_DOWN) && (int) v.getId() == (int) R.drawable.switch_on) {
-                    imgadapt.Update(R.drawable.switch_off,(int) v.getId());
-                    imgadapt.notifyDataSetInvalidated();
-                    return true;
-                }
-                if ((event.getAction() == MotionEvent.ACTION_DOWN)) {
-                    imgadapt.Update(R.drawable.switch_on,(int) v.getId());
-                    imgadapt.notifyDataSetInvalidated();
-                    return true;
-                }
-                if ((event.getAction() == MotionEvent.ACTION_UP) && (int) v.getId() == (int) R.drawable.button_off) {
-                    imgadapt.Update(R.drawable.button_off,(int) v.getId());
-                    imgadapt.notifyDataSetInvalidated();
-                    return true;
-                }
-
-
-                Toast.makeText(getBaseContext(),"id:"+view.getName(),Toast.LENGTH_SHORT).show();
-                return  false;
-            }
-        });*/
-
-        // gridview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-        project.getGui().getGridView().setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View v,final int position, long id) {
-                final Context context = getBaseContext();
-
-                if ((int) imgadapt.getItemInt(position) == R.drawable.add1) {
-                    PopupMenu popupMenu = new PopupMenu(context, v);
-                    popupMenu.inflate(R.menu.menu_popup);
-                    popupMenu.show();
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-
-                            switch (item.getItemId()) {
-
-                                case R.id.AddButton: // PushButton adden
-                                    imgadapt.Update(R.drawable.button_off, position);
-                                    imgadapt.notifyDataSetChanged();
-                                    // TODO Model für PushButton der Liste im Project adden
-                                    return true;
-
-                                case R.id.AddLED:
-                                    //es wird das Bild geändert, und dem imageadapt wir gesagt, dass sich etwas geändert hat -> er soll neu zeichnen
-                                    imgadapt.Update(R.drawable.lamp_off, position);
-                                    imgadapt.notifyDataSetChanged();
-                                    // Hinzufügen eines neuen ModelElements in die Liste aller Models im Project
-                                    project.addModelToMap(position, new LedModel(ELEMENT_NAME + Integer.toString(position), false));
-                                    //     project.addElement(new LedModel(ELEMENT_NAME + Integer.toString(position), false));
-                                    return true;
-
-                                case R.id.AddSwitch:
-                                    imgadapt.Update(R.drawable.switch_off, position);
-                                    imgadapt.notifyDataSetChanged();
-                                    project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
-                                    //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
-                                    return true;
-
-                                default:
-                                    return false;
-
-                            }
-                        }
-                    });
-                    return false;
-                } else {
-
-                    final PopupMenu popupMenu = new PopupMenu(context, v);
-                    popupMenu.inflate(R.menu.menu_popup_clickoptions);
-                    popupMenu.show();
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(final MenuItem item) {
-
-                            int itemId = item.getItemId();
-                            switch (itemId) {
-
-                                case R.id.identifyer:
-                                    popupMenu.dismiss();
-                                    PopupMenu popupMenu2 = new PopupMenu(getApplicationContext(), v);
-                                    popupMenu2.inflate(R.menu.menu_popup_identifyer);
-                                    popupMenu2.show();
-                                    popupMenu2.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-
-
-                                        @Override
-                                        public boolean onMenuItemClick(MenuItem item2) {
-
-                                            createHashmap();
-                                            //auf die Eingabe reagierne, und dementsprechend den Identifyer des Elements setzen
-
-                                            //Toast.makeText(getBaseContext(),"id:gfh",Toast.LENGTH_SHORT).show();
-                                            switch (item2.getItemId()){
-                                                case R.id.p1:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P1");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p2:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P2");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p3:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P3");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p4:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P4");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p5:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P5");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p6:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P6");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p7:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P7");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p8:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P8");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p9:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P9");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p10:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P10");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p11:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P11");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p12:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P12");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                case R.id.p13:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P13");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.p14:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P14");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.p15:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("P15");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.a1:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("A1");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.a2:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("A2");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.a3:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("A3");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.a4:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("A4");
-                                                        return true;
-                                                    }
-                                                    return false;
-                                                case R.id.a5:
-                                                    if (project.getElementByName("element" + position)!= null){
-                                                        project.getElementByName("element" + position).setIdentifier("A5");
-                                                        return true;
-                                                    }
-                                                    return false;
-
-                                                default:
-                                                    return false;
-
-                                            }
-                                            // project.getElementByName("element" + position).setIdentifier(ElementIdentifyer.get(item2.getItemId()));
-                                            // Toast.makeText(getBaseContext(),"identifyer:"+project.getElementByName("element" + position).getIdentifier(),Toast.LENGTH_SHORT).show();
-                                            //return true;
-
-
-
-                                        }
-                                    });
-
-                                    return false;
-
-                                case R.id.delete:
-                                    imgadapt.Update(R.drawable.add1, position);
-                                    imgadapt.notifyDataSetChanged();
-                                    return true;
-
-
-                                default:
-                                   /* for (Element var : CurrentProject.getAllElements()) {
-                                        if (var.getName() == ("element" + position)) {
-                                            var.setIdentifier(Integer.toString(item.getItemId()));
-
-
-                                        Toast.makeText(getBaseContext(),"ID" + var.getIdentifier(),Toast.LENGTH_SHORT);
-                                            return  true;
-                                     }
-                                    }*/
-                                    return false;
-
-                            }
-                            //return false;
-                        }
-                    });
-                    return false;
-                }
-
-            }
-        });
-    }
-
 
 
     public void ShowName(){
@@ -545,12 +176,12 @@ public class MainActivity extends Activity {
 
         //Wird nur gesetzt wenn der Name des Projekts nicht leer ist,
         //standardmäßig wird Project angezeigt
-        if (!CurrentProject.getName().equals(null)){
-            view.setText(CurrentProject.getName());
+        if (!currentProject.getName().equals(null)){
+            view.setText(currentProject.getName());
         }
 
-      /*  if (!CurrentConnection.equals(null)){
-            view2.setText(CurrentConnection.getConName());
+      /*  if (!currentConnection.equals(null)){
+            view2.setText(currentConnection.getConName());
         }
 */
     }
@@ -608,7 +239,7 @@ public class MainActivity extends Activity {
         Intent newConIntent = new Intent(this, ConnectionActivity.class);
 
         // listView
-//        newConIntent.putExtra("listAvailableCons", CurrentProject.getListAllCons()); // ArrayList<String> mitgeben
+//        newConIntent.putExtra("listAvailableCons", currentProject.getListAllCons()); // ArrayList<String> mitgeben
 
         ArrayList<String> allConsType = new ArrayList<String>();
         ArrayList<String> allConsHeader = new ArrayList<String>(); // Name der Verbindungen - wird als aufklappbares Feld angezeigt
@@ -635,7 +266,7 @@ public class MainActivity extends Activity {
         Intent newProIntent = new Intent(this, ProjectActivity.class);
 
         // listView
-//        newConIntent.putExtra("listAvailableCons", CurrentProject.getListAllCons()); // ArrayList<String> mitgeben
+//        newConIntent.putExtra("listAvailableCons", currentProject.getListAllCons()); // ArrayList<String> mitgeben
 
         ArrayList<String> allProName = new ArrayList<String>();
         ArrayList<String> allProElements = new ArrayList<String>();
@@ -699,14 +330,14 @@ public class MainActivity extends Activity {
         final SeekBar seek2 = (SeekBar)Viewlayout.findViewById(R.id.seekBar2);
 
 
-        seek2.setProgress(CurrentProject.getGui().getGridView().getNumColumns());
+        seek2.setProgress(currentProject.getGui().getGridView().getNumColumns());
         seek2.setDrawingCacheBackgroundColor(Color.DKGRAY);
 
         seek2.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                              @Override
                                              public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                                                 CurrentProject.getGui().getGridView().setNumColumns(progress);
+                                                 currentProject.getGui().getGridView().setNumColumns(progress);
 
                                              }
 
@@ -731,9 +362,9 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 imgadapt.notifyDataSetChanged();
-                CurrentProject.getGui().getGridView().clearAnimation();
+                currentProject.getGui().getGridView().clearAnimation();
                 popDialog.cancel();
-                InitializeUI(CurrentProject);
+                currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);
 
             }
         });
@@ -765,18 +396,18 @@ public class MainActivity extends Activity {
                 if (data.getExtras().containsKey("conType")) {
                     int conTypeInt = data.getExtras().getInt("conType");
                     if (conTypeInt == 1) { // Bluetooth
-                        // Verbindung von CurrentProject holen
+                        // Verbindung von currentProject holen
                         //  BTConnection btConnection = BTConnection.initialiseConnection(name, address); // TODO wenn Verbindung am Arduino unterbrochen --> wird nicht mehr aufgebaut, da bei App bereits instantiiert
-                        // CurrentProject.setCurrentConnection(btConnection);
+                        // currentProject.setCurrentConnection(btConnection);
 
 
                     }
                     if (conTypeInt == 2) { // Ethernet
 //                        EthernetConnection ethernetConnection = EthernetConnection.initialiseConnection(name, address);
-//                        CurrentProject.setCurrentConnection(ethernetConnection);
+//                        currentProject.setCurrentConnection(ethernetConnection);
                     }
-                    Toast.makeText(getApplicationContext(), CurrentConnection.getConName() + "\n" +
-                            CurrentConnection.getAddress(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), currentConnection.getConName() + "\n" +
+                            currentConnection.getAddress(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -784,7 +415,7 @@ public class MainActivity extends Activity {
                 String proName = "";
                 if (data.getExtras().containsKey("name")) {
                     proName = data.getExtras().getString("name");
-                    CurrentProject.setName(proName);
+                    currentProject.setName(proName);
                 }
 
             }
@@ -808,37 +439,14 @@ public class MainActivity extends Activity {
 
     }
 
-    public void createHashmap(){
-        ElementIdentifyer.put(R.id.p1,"P1");
-        ElementIdentifyer.put(R.id.p2,"P2");
-        ElementIdentifyer.put(R.id.p3,"P3");
-        ElementIdentifyer.put(R.id.p4,"P4");
-        ElementIdentifyer.put(R.id.p5,"P5");
-        ElementIdentifyer.put(R.id.p6,"P6");
-        ElementIdentifyer.put(R.id.p7,"P7");
-        ElementIdentifyer.put(R.id.p8,"P8");
-        ElementIdentifyer.put(R.id.p9,"P9");
-        ElementIdentifyer.put(R.id.p10,"P10");
-        ElementIdentifyer.put(R.id.p11,"P11");
-        ElementIdentifyer.put(R.id.p12,"P12");
-        ElementIdentifyer.put(R.id.p13,"P13");
-        ElementIdentifyer.put(R.id.p14,"P14");
-        ElementIdentifyer.put(R.id.p15,"P15");
-        ElementIdentifyer.put(R.id.a1,"A1");
-        ElementIdentifyer.put(R.id.a2,"A2");
-        ElementIdentifyer.put(R.id.a3,"A3");
-        ElementIdentifyer.put(R.id.a4,"A4");
-        ElementIdentifyer.put(R.id.a5,"A5");
-    }
 
     public static void SetCurrentProjByName(String name){
         for (Project p:AllProjects   ) {
             if (p.getName().equals(name)) {
-                CurrentProject = p;
+                currentProject = p;
 
             } else {
-                //es wird kein Projekt gefuunden
-
+                //es wird kein Projekt gefunden
             }
         }
     }

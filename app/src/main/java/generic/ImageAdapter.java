@@ -44,6 +44,10 @@ public class ImageAdapter extends BaseAdapter {
         imgRes.put(id,name);
     }
 
+    public void remove(int key) {
+        imgRes.remove(key);
+    }
+
     public void setLength(int length) {
         this.length = length;
     }

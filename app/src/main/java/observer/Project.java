@@ -14,6 +14,7 @@ import elements.BoolElement;
 import elements.Element;
 import elements.InputElement;
 import elements.LedModel;
+import elements.OutputElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ComObject;
@@ -35,14 +36,14 @@ public class Project extends Observable {
     */
 //    private ArrayList<Element> allElementModels;
     private Gui gui;
-    private Db dbConnection; // TODO DB-Programmierung erfolgt später
+    private Db dbConnection; // TODO DB-Programmierung
     private final String LOG_TAG = "Project";
 
     private SwitchModel elementSwitch;
     private LedModel elementLed;
     private ImageAdapter imageAdapter;
 
-    private HashMap<Integer, Element> mapAllViewModels;
+    private HashMap<Integer, Element> mapAllViewModels; // Speichern aller Modelelemente mit ihrer Position als Key
 
     //  private SwitchView viewSwitch;
 
@@ -78,7 +79,8 @@ public class Project extends Observable {
         this.mapAllViewModels = mapAllViewModels;
     }
 
-    //Dineg wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondenr neu erzeugt werden, da
+
+    //Dinge wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondern neu erzeugt werden, da
     //sie auf dem aktuellen Context beruhen
 
     /*public ImageAdapter getImageAdapter() {
@@ -99,7 +101,6 @@ public class Project extends Observable {
         GridView view;
         this.gui = gui;
 
-
         this.mapAllViewModels = new HashMap<Integer, Element>();
     }
 
@@ -115,7 +116,8 @@ public class Project extends Observable {
         this.name =name;
         this.mapAllViewModels = new HashMap<Integer, Element>();
     }
-    public Project(Gui gui, String name, int id) {
+
+    public Project(Gui gui, String name, int id, ImageAdapter imageAdapter) {
 
 //        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
@@ -127,6 +129,7 @@ public class Project extends Observable {
         this.name =name;
         this.id=id;
         this.mapAllViewModels = new HashMap<Integer, Element>();
+        this.imageAdapter = imageAdapter;
     }
 
     public void setGui(Gui gui) {
@@ -198,10 +201,10 @@ public class Project extends Observable {
             if(e.getName().equals(name)) {
                 return e;
             }
-            iterator.remove();
         }
         return null;
     }
+
 
 
 //    public void setAllElements(ArrayList<Element> allElements) {
@@ -220,49 +223,57 @@ public class Project extends Observable {
 //        Element model = (Element) v.getTag(); // zugeh�rige Modelklasse holen, kann nur ein Element sein
         Element model = mapAllViewModels.get(position);
 
-        if(model == null)
-            Log.e(LOG_TAG, "Model ist NULL");
+        Log.d(LOG_TAG, "Position: " + position);
+        if(model != null)
+            Log.d(LOG_TAG, "Modelname : " + model.getName());
+        else
+            Log.e(LOG_TAG, "Model ist  NULL");
 
         if(model instanceof BoolElement) {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
             boolean curStatus = ((BoolElement) model).isStatusHigh();
             boolean newStatus = !curStatus;
 
-            String code = CodeGenerator.generateCodeToSend(newStatus, model.getIdentifier());
-            Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
+            if(model.getIdentifier() != null) {
+                String code = CodeGenerator.generateCodeToSend(newStatus, model.getIdentifier());
+                Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
-            // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
-            if(model instanceof InputElement) { // sollte true sein - als Absicherung
-                Log.d(LOG_TAG, "Model ist ein InputElement");
-                Log.d(LOG_TAG, "Senden an Arduino...");
-                ((InputElement)model).sendDataToArduino(currentConnection, code);
-                Log.d(LOG_TAG, "Gesendet");
+                // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
+                if (model instanceof InputElement) { // sollte true sein - als Absicherung
+                    Log.d(LOG_TAG, "Model ist ein InputElement");
+                    Log.d(LOG_TAG, "Senden an Arduino...");
+                    ((InputElement) model).sendDataToArduino(currentConnection, code); // Daten an Arduino senden
+                    Log.d(LOG_TAG, "Gesendet");
 
-				/* TODO Status nur �ndern, wenn �bertragung auch wirklich funktioniert hat:
+				/* TODO Status nur ändern, wenn Übertragung auch wirklich funktioniert hat:
 				 * - entweder zuerst Status des Arduino-Elements abfragen,
 				 * - oder über Arduino-Library sofort nach Aktualisieren true zur�cksenden,
 				 *   über Connection dies empfangen und zur�ckgeben.
 				 */
-
-                // �nderung des Status im Model
-                ((BoolElement) model).setStatusHigh(newStatus);
-
-                // änderung des Status des InputElements in Klasse Gui
-                Log.d(LOG_TAG, "Erzeugen eines ComObjects");
-                ComObject comObject = new ComObject(v, newStatus);
-                Log.d(LOG_TAG, "Gui benachrichtigen und aktualisieren...");
-                notify(comObject);
-                Log.d(LOG_TAG, "Gui aktualisiert");
+                    // �nderung des Status im Model
+                    ((BoolElement) model).setStatusHigh(newStatus);
 
 
-                ///////// TODO Ersetzen durch HashMap - Iterator unten
-                // änderung aller dazugehörigen OutputElemente
+                    ////////////////// bis hier funktioniert //////////////////
+
+
+
+//                    // Änderung des Status des InputElements in Klasse Gui - nicht notwendig, da bereits nach Anklicken Element geändert wird
+//                    Log.d(LOG_TAG, "Erzeugen eines ComObjects");
+//                    ComObject comObject = new ComObject(v, newStatus);
+//                    Log.d(LOG_TAG, "Gui benachrichtigen und aktualisieren...");
+//                    notify(comObject);
+//                    Log.d(LOG_TAG, "Gui aktualisiert");
+
+
+                    ///////// TODO Ersetzen durch HashMap - Iterator unten
+                    // änderung aller dazugehörigen OutputElemente
 //                for(Element e : allElementModels) {
 //                    if(e instanceof OutputElement) {
 //                        if(e.getIdentifier().equals(model.getIdentifier())) {
 //                            // Zugeh�riges OutputElement, z.B. Led, wurde gefunden
 //
-//                            ArrayList<View> allViews = gui.getAllViews();
+//                            ArrayList<View> allViews = mgui.getAllViews();
 //                            for(View view : allViews) {
 //                                //if(((SuperView)view).getName().equals(model.getName())) {
 //
@@ -276,19 +287,33 @@ public class Project extends Observable {
 //                    }
 //                }
 
-                Iterator iterator = mapAllViewModels.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry entry = (Map.Entry) iterator.next();
-                    Log.d(LOG_TAG, entry.getKey() + " = " + ((Element)(entry.getValue())).getName());
-                    iterator.remove();
-                }
+                    Iterator iterator = mapAllViewModels.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Log.d(LOG_TAG, "Größe der Map: " + String.valueOf(mapAllViewModels.size()));
+                        Map.Entry entry = (Map.Entry) iterator.next();
+                        Element currentElement = (Element) entry.getValue();
+
+                        if (currentElement instanceof OutputElement) {
+                            String identifierCurEl = currentElement.getIdentifier();
+                            if(model.getIdentifier().equals(identifierCurEl)) {
+                                // Dazugehöriges OutputElement gefunden
+                                Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
+                                ComObject comObject = new ComObject(model, position);
 
 
+                                Log.d(LOG_TAG, "Position des OutputElements: " + (Integer)entry.getKey());
+
+                                gui.update(this, currentElement, (Integer) entry.getKey()); // TODO über notifiy!!!
+
+                            }
+                        }
+                    }
+                } else
+                    Log.e(LOG_TAG, "Error - Kein InputElement");
             } else
-                Log.e(LOG_TAG, "Error - Kein InputElement");
-
+                Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
         } else {
-            Log.e(LOG_TAG, "Error - Kein BoolElement!");
+            Log.d(LOG_TAG, "Kein BoolElement");
         }
     } //TODO else if (model instanceof PwmElement)
 
@@ -306,13 +331,14 @@ public class Project extends Observable {
 
     public void addModelToMap(int position, Element model) {
         mapAllViewModels.put(position, model);
+        Log.d(LOG_TAG, "Model wurde Map hinzugefügt");
+        Log.d(LOG_TAG, "Größe der Map: " + mapAllViewModels.size());
     }
 
     /**
      * Listener-Klasse f�r die einzelnen Views.
      * Dieser Listener verweist auf die Methode sendDataUpdateGui.
      * @author Simon
-     *
      */
     //TODO Fehler
     private class ElementListener implements OnClickListener {
@@ -322,6 +348,5 @@ public class Project extends Observable {
             //	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Instanz
         }
     }
-
 
 }

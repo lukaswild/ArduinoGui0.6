@@ -153,6 +153,7 @@ public class BTConnection implements IConnection {
      */
     public static boolean initialiseConnection(String conName, String macAddress) {
         // TODO BT Berechtigungsanfrage automatisch, wenn BT disabled
+
         Log.d(LOG_TAG, "Verbinden mit " + macAddress + "...");
 
         if(instance == null) {
@@ -242,7 +243,6 @@ public class BTConnection implements IConnection {
         }
     }
 
-    //    @Override
     public static void closeConnection() {
 
         if (isConnected && streamOut != null) {

@@ -3,7 +3,6 @@ package main;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -25,12 +23,11 @@ import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import connection.BTConnection;
 import connection.EthernetConnection;
-import generic.ExpListAdapterAllCons;
 import connection.IConnection;
+import generic.ExpListAdapterAllCons;
 
 public class ConnectionActivity extends Activity {
 
@@ -44,7 +41,6 @@ public class ConnectionActivity extends Activity {
 
     // Verfügbare Verbindungen anzeigen - standardmäßig bei Start der Activity
     Dialog dialogNewCon;
-    private StableArrayAdapter conAdapter; // nur für ListView benötigt - sollte nicht mehr benötigt werden
 
     // ExpandableListView
     private ExpandableListView expListView;
@@ -367,24 +363,12 @@ public class ConnectionActivity extends Activity {
         Log.d(LOG_TAG, clickedConType);
         Log.d(LOG_TAG, clickedConName);
 
-        if(clickedConType.equals("Bluetooth-Verbindung"))
+        if(clickedConType.equals("Bluetooth-Verbindung")) {
             initialisingSuccessful = BTConnection.initialiseConnection(clickedConName, clickedConAddress);
+        }
         else
             initialisingSuccessful = EthernetConnection.initialiseConnection(clickedConName, clickedConAddress);
 
         return initialisingSuccessful;
-    }
-
-
-    private class StableArrayAdapter extends ArrayAdapter<String> {
-
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-
-        public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
-            super(context, textViewResourceId, objects);
-            for (int i = 0; i < objects.size(); ++i) {
-                mIdMap.put(objects.get(i), i);
-            }
-        }
     }
 }

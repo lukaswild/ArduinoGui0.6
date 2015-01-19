@@ -1,6 +1,7 @@
 package generic;
 
 import android.view.View;
+import elements.Element;
 
 /**
  * Klasse enthält 2 Instanzvariablen: ein Element und einen Status.
@@ -11,9 +12,31 @@ import android.view.View;
  */
 public class ComObject {
 
+    private Element model;
+
+
+
+    private int position;
+
 	private View view;
 	private String status; // Ist ein String - bei boolean enthält er 0 oder 1
-	
+
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public Element getModel() {
+        return model;
+    }
+
+    public void setModel(Element model) {
+        this.model = model;
+    }
 	
 	public View getView() {
 		return view;
@@ -42,6 +65,12 @@ public class ComObject {
 		
 		getStatusString(statusBool);
 	}
+
+
+    public ComObject(Element model, int position) {
+        this.model = model;
+        this.position = position;
+    }
 	
 //	public ComObject(String viewName, boolean statusBool) {
 //		
@@ -54,6 +83,4 @@ public class ComObject {
 		else
 			this.status = "0";
 	}
-
-
 }
