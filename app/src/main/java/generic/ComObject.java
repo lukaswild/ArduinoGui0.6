@@ -10,6 +10,7 @@ import elements.Element;
  * @version 2014 - 1
  *
  */
+// TODO Klasse momentan nicht notwendig
 public class ComObject {
 
     private Element model;

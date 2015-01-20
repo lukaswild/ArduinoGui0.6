@@ -17,7 +17,6 @@ import elements.LedModel;
 import elements.OutputElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
-import generic.ComObject;
 import generic.ImageAdapter;
 
 public class Project extends Observable {
@@ -100,8 +99,8 @@ public class Project extends Observable {
         this.elementSwitch = new SwitchModel();
         GridView view;
         this.gui = gui;
-
         this.mapAllViewModels = new HashMap<Integer, Element>();
+        addToObservers(gui);
     }
 
     public Project(Gui gui, String name) {
@@ -115,6 +114,7 @@ public class Project extends Observable {
         this.gui =gui;
         this.name =name;
         this.mapAllViewModels = new HashMap<Integer, Element>();
+        addToObservers(gui);
     }
 
     public Project(Gui gui, String name, int id, ImageAdapter imageAdapter) {
@@ -130,29 +130,12 @@ public class Project extends Observable {
         this.id=id;
         this.mapAllViewModels = new HashMap<Integer, Element>();
         this.imageAdapter = imageAdapter;
+        addToObservers(gui); // Gui zur Liste der Observers hinzufügen - damit werden Updates an die Gui gesendet
     }
 
     public void setGui(Gui gui) {
         this.gui =gui;
     }
-
-    /*
-    public ArrayList<IConnection> getListAllCons() {
-        return listAllCons;
-    }
-
-    public void setListAllCons(ArrayList<IConnection> listAllCons) {
-        this.listAllCons = listAllCons;
-    }
-
-    public IConnection getCurrentConnection() {
-        return currentConnection;
-    }
-
-    public void setCurrentConnection(IConnection currentConnection) {
-        this.currentConnection = currentConnection;
-    }
-    */
 
     public void addElement(int key, Element element) {
         mapAllViewModels.put(key, element);
@@ -165,32 +148,6 @@ public class Project extends Observable {
         }
         return false;
     }
-
-
-//    public  void  addElement(Element element) {
-//        allElementModels.add(element);
-//    }
-
-//    public  boolean removeElement(Element element){
-//        if (allElementModels.equals(element)) {
-//            allElementModels.remove(element);
-//            return true;
-//        }
-//        else return false;
-//    }
-
-//    public ArrayList<Element> getAllElements() {
-//        return allElementModels;
-//    }
-
-//    public Element getElementByName(String Name){
-//        for (Element z : allElementModels){
-//            if (z.getName().equals(Name)){
-//                return z;
-//            }
-//        }
-//        return  null;
-//    }
 
 
     public Element getElementByName(String name) {
@@ -206,11 +163,6 @@ public class Project extends Observable {
     }
 
 
-
-//    public void setAllElements(ArrayList<Element> allElements) {
-//        this.allElementModels = allElements;
-//    }
-
     /**
      * Wenn eine View durch ihren Listener ein Event liefert, so wird diese Methode ausgef�hrt.
      * Als erstes wird durch die im Parameter mitgelieferte View das ausl�sende Element identifiziert.
@@ -219,11 +171,9 @@ public class Project extends Observable {
      * @param v - View des das Event ausl�senden Elements
      */
     public void sendDataUpdateGui(View v, IConnection currentConnection, int position) {
-        Log.d(LOG_TAG, "In Methode sendDataUpdateGui");
-//        Element model = (Element) v.getTag(); // zugeh�rige Modelklasse holen, kann nur ein Element sein
         Element model = mapAllViewModels.get(position);
-
         Log.d(LOG_TAG, "Position: " + position);
+
         if(model != null)
             Log.d(LOG_TAG, "Modelname : " + model.getName());
         else
@@ -239,11 +189,12 @@ public class Project extends Observable {
                 Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
                 // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
-                if (model instanceof InputElement) { // sollte true sein - als Absicherung
+                if (model instanceof InputElement) { // sollte true sein - als Absicherung trotzdem abfragen
                     Log.d(LOG_TAG, "Model ist ein InputElement");
                     Log.d(LOG_TAG, "Senden an Arduino...");
                     ((InputElement) model).sendDataToArduino(currentConnection, code); // Daten an Arduino senden
                     Log.d(LOG_TAG, "Gesendet");
+
 
 				/* TODO Status nur ändern, wenn Übertragung auch wirklich funktioniert hat:
 				 * - entweder zuerst Status des Arduino-Elements abfragen,
@@ -252,40 +203,6 @@ public class Project extends Observable {
 				 */
                     // �nderung des Status im Model
                     ((BoolElement) model).setStatusHigh(newStatus);
-
-
-                    ////////////////// bis hier funktioniert //////////////////
-
-
-
-//                    // Änderung des Status des InputElements in Klasse Gui - nicht notwendig, da bereits nach Anklicken Element geändert wird
-//                    Log.d(LOG_TAG, "Erzeugen eines ComObjects");
-//                    ComObject comObject = new ComObject(v, newStatus);
-//                    Log.d(LOG_TAG, "Gui benachrichtigen und aktualisieren...");
-//                    notify(comObject);
-//                    Log.d(LOG_TAG, "Gui aktualisiert");
-
-
-                    ///////// TODO Ersetzen durch HashMap - Iterator unten
-                    // änderung aller dazugehörigen OutputElemente
-//                for(Element e : allElementModels) {
-//                    if(e instanceof OutputElement) {
-//                        if(e.getIdentifier().equals(model.getIdentifier())) {
-//                            // Zugeh�riges OutputElement, z.B. Led, wurde gefunden
-//
-//                            ArrayList<View> allViews = mgui.getAllViews();
-//                            for(View view : allViews) {
-//                                //if(((SuperView)view).getName().equals(model.getName())) {
-//
-//
-//                                // Zugeh�rige View gefunden
-//                                // View updaten
-//                                //	comObject = new ComObject(view, newStatus);
-//                                //	notify(comObject);
-//                            }
-//                        }
-//                    }
-//                }
 
                     Iterator iterator = mapAllViewModels.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -298,13 +215,9 @@ public class Project extends Observable {
                             if(model.getIdentifier().equals(identifierCurEl)) {
                                 // Dazugehöriges OutputElement gefunden
                                 Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
-                                ComObject comObject = new ComObject(model, position);
-
 
                                 Log.d(LOG_TAG, "Position des OutputElements: " + (Integer)entry.getKey());
-
-                                gui.update(this, currentElement, (Integer) entry.getKey()); // TODO über notifiy!!!
-
+                                notify(this, currentElement, (Integer) entry.getKey());
                             }
                         }
                     }
@@ -312,11 +225,16 @@ public class Project extends Observable {
                     Log.e(LOG_TAG, "Error - Kein InputElement");
             } else
                 Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
-        } else {
+        } else //TODO else if (model instanceof PwmElement)
             Log.d(LOG_TAG, "Kein BoolElement");
-        }
-    } //TODO else if (model instanceof PwmElement)
+    }
 
+
+    public void addModelToMap(int position, Element model) {
+        mapAllViewModels.put(position, model);
+        Log.d(LOG_TAG, "Model wurde Map hinzugefügt");
+        Log.d(LOG_TAG, "Größe der Map: " + mapAllViewModels.size());
+    }
 
 
 
@@ -327,12 +245,6 @@ public class Project extends Observable {
      */
     public void connectWith(Element e, String identifier) {
         // TODO Momentan wird Identifier in Element definiert --> Methode w�re unn�tig
-    }
-
-    public void addModelToMap(int position, Element model) {
-        mapAllViewModels.put(position, model);
-        Log.d(LOG_TAG, "Model wurde Map hinzugefügt");
-        Log.d(LOG_TAG, "Größe der Map: " + mapAllViewModels.size());
     }
 
     /**
@@ -348,5 +260,4 @@ public class Project extends Observable {
             //	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Instanz
         }
     }
-
 }

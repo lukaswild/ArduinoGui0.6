@@ -274,7 +274,7 @@ public class MainActivity extends Activity {
         for (Project c : AllProjects) {
 
             allProName.add(c.getName());
-//            allProElements.add(Integer.toString(c.getAllElements().size()));
+//            allProElements.addToObservers(Integer.toString(c.getAllElements().size()));
             allProElements.add(Integer.toString(c.getMapAllViewModels().size()));
         }
 //        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();

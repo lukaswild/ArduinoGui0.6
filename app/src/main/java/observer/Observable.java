@@ -2,8 +2,7 @@ package observer;
 
 import java.util.ArrayList;
 
-import generic.ComObject;
-import android.view.View;
+import elements.Element;
 
 public class Observable {
 
@@ -14,20 +13,26 @@ public class Observable {
         observers = new ArrayList<IObserver>();
     }
 
-    public void add(IObserver o) {
+    public void addToObservers(IObserver o) {
         observers.add(o);
     }
 
-    public void remove(IObserver o) {
+    public void removeFromObservers(IObserver o) {
         observers.remove(o);
     }
 
 
-    public void notify(ComObject comObject) {
-		for (IObserver o : observers) {
-			o.update(this, comObject);
-		}
-	}
+//    public void notify(ComObject comObject) {
+//        for (IObserver o : observers) {
+//            o.update(this, comObject);
+//        }
+//    }
+
+    public void notify(Observable senderClass, Element modelToUpdate, int position) {
+        for (IObserver o : observers) {
+            o.update(senderClass, modelToUpdate, position);
+        }
+    }
 	
 	
 //	public void notify(Object msg) {

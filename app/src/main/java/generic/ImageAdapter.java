@@ -39,7 +39,7 @@ public class ImageAdapter extends BaseAdapter {
     private final String ELEMENT_NAME =  "element";
     private static int elementCount = 0;
 
-    public void Update(int name, int id) {
+    public void update(int name, int id) {
 
         imgRes.put(id,name);
     }

@@ -19,7 +19,6 @@ import connection.IConnection;
 import elements.Element;
 import elements.LedModel;
 import elements.SwitchModel;
-import generic.ComObject;
 import generic.ImageAdapter;
 
 
@@ -32,6 +31,8 @@ public class Gui extends View implements IObserver {
     private GridView gridView;
     public static HashMap<Integer, String> elementIdentifier = new HashMap<Integer, String>();
     private final String ELEMENT_NAME = "element";
+    private int imgLedOn = R.drawable.lamp_on;
+    private int imgLedOff = R.drawable.lamp_off;
 
 
     /**
@@ -54,42 +55,6 @@ public class Gui extends View implements IObserver {
     }
 
 
-    /**
-     * Herausfiltern des zu aktualisierenden Elements aus der Liste mit allen Elementen und �ndern des Status
-     *
-     * Es m�ssen insgesamt 2 Elemente aktualisiert werden: das, welches das Event ausgel�st hat (Schalterstellung aktualisieren)
-     * und das, welches das ausl�sende anzeigt (Led). --> Ausl�sende Element ist bereits bekannt durch ComObject, anzeigende
-     * Element muss entweder gesucht oder auch mithilfe von ComObject der Methode �bergeben werden.
-     */
-    @Override
-    public void update(Observable senderClass, ComObject comObject) {
-
-        if(senderClass instanceof Project) { // senderClass sollte von Klasse Project sein
-//			Project project = (Project) senderClass;
-////			ArrayList<Element> allModelElements = project.getAllElements(); // Hole alle Modelelemente
-//            HashMap<Integer, Element> allViewModels = project.getMapAllViewModels();
-//			String newStatusString = comObject.getStatus();
-//            //TODO Anpassung wegen neuer HashMap
-//            //int modelIndex =0;
-//			int modelIndex = allModelElements.indexOf(comObject.getView());
-//
-//			Element modelToUpdate = allModelElements.get(modelIndex); // InputElement, welches das Event ausgelöst hat (z.B. Switch)
-//
-//
-//			// TODO vorerst nur f�r BoolElement - PwmElement sp�ter
-//
-//			boolean newStatus = false;
-//			if(newStatusString.equals("1"))
-//				newStatus = true;
-//
-//			// Setzen der neuen Status im Model
-//			((BoolElement)modelToUpdate).setStatusHigh(newStatus);
-
-
-        } else
-            Log.e(LOG_TAG, "Allgemeiner Fehler - Keine Instanz von Project hat Update ausgel�st");
-
-    }
 
     // @Override
     public void update(Observable senderClass, Element modelToUpdate, int position) {
@@ -101,20 +66,29 @@ public class Gui extends View implements IObserver {
         Log.d(LOG_TAG, o.getClass().toString());
 
         if(modelToUpdate instanceof LedModel) {
-            if((Integer)imageAdapter.getItem(position) == R.drawable.lamp_off)
-                imageAdapter.Update(R.drawable.lamp_on, position);
+            if((Integer)imageAdapter.getItem(position) == imgLedOff) // TODO Abfrage ersetzen durch Abfrage von realem Status am Arduino des Ports - und diesen dann setzen
+                updateLedStatus(imageAdapter, position, true);
             else
-                imageAdapter.Update(R.drawable.lamp_off, position);
+                updateLedStatus(imageAdapter, position, false);
         }
-
-        imageAdapter.notifyDataSetChanged();
-
-
-
-        //    }
-
+        Log.d(LOG_TAG, "Gui aktualisiert");
     }
 
+
+    /**
+     * Ändern des Status einer Led und dem ImageAdapter die Änderungen mitteilen
+     * @param imageAdapter - ImageAdapter welcher die Elemente beinhaltet
+     * @param position - Position an der sich die Led befindet
+     * @param high - Status auf welchen die Led gesetzt werden soll
+     */
+    private void updateLedStatus(ImageAdapter imageAdapter, int position, boolean high) {
+        if(high)
+            imageAdapter.update(imgLedOn, position);
+        else
+            imageAdapter.update(imgLedOff, position);
+
+        imageAdapter.notifyDataSetChanged();
+    }
 
 
 
@@ -132,14 +106,14 @@ public class Gui extends View implements IObserver {
 
                 switch (imgadapt.getItemInt(position)) {
                     case R.drawable.switch_off:
-                        imgadapt.Update(R.drawable.switch_on,position);
+                        imgadapt.update(R.drawable.switch_on, position);
                         imgadapt.notifyDataSetInvalidated();
                         Log.d(LOG_TAG, "Switch off: Senden an Arduino und Updaten der Gui...");
                         project.sendDataUpdateGui(v, currentConnection, position);
                         break;
 
                     case R.drawable.switch_on:
-                        imgadapt.Update(R.drawable.switch_off,position);
+                        imgadapt.update(R.drawable.switch_off, position);
                         imgadapt.notifyDataSetInvalidated();
                         Log.d(LOG_TAG, "Switch on: Senden an Arduino und Updaten der Gui...");
                         project.sendDataUpdateGui(v, currentConnection, position);
@@ -149,16 +123,16 @@ public class Gui extends View implements IObserver {
                     //es kann auf drücken, bzw. loslassen der views geschaut werden, funktioniert derzeit noch nicht
                     //github comment
 //                    case R.drawable.button_off:
-//                        imgadapt.Update(R.drawable.button_on,position);
+//                        imgadapt.update(R.drawable.button_on,position);
 //                        imgadapt.notifyDataSetInvalidated();
 //                        project.sendDataUpdateGui(v,CurrentConnection, position);
 //                        break;
 //                        TODO ToggleButton
 //                    case R.drawable.button_on:
-//                        imgadapt.Update(R.drawable.button_off,position);
+//                        imgadapt.update(R.drawable.button_off,position);
 //                        imgadapt.notifyDataSetInvalidated();
 //
-//                        //Update an GUI funktioniert noch nicht
+//                        //update an GUI funktioniert noch nicht
 //                        project.sendDataUpdateGui(v,CurrentConnection, position);
 //                        break;
 
@@ -193,22 +167,22 @@ public class Gui extends View implements IObserver {
                 MyImageView view = (MyImageView) v;
 
                 if ((event.getAction() == MotionEvent.ACTION_DOWN) && (int) v.getId() == (int) R.drawable.switch_off) {
-                    imgadapt.Update(R.drawable.switch_on,(int) v.getId());
+                    imgadapt.update(R.drawable.switch_on,(int) v.getId());
                     imgadapt.notifyDataSetInvalidated();
                     return true;
                 }
                 if ((event.getAction() == MotionEvent.ACTION_DOWN) && (int) v.getId() == (int) R.drawable.switch_on) {
-                    imgadapt.Update(R.drawable.switch_off,(int) v.getId());
+                    imgadapt.update(R.drawable.switch_off,(int) v.getId());
                     imgadapt.notifyDataSetInvalidated();
                     return true;
                 }
                 if ((event.getAction() == MotionEvent.ACTION_DOWN)) {
-                    imgadapt.Update(R.drawable.switch_on,(int) v.getId());
+                    imgadapt.update(R.drawable.switch_on,(int) v.getId());
                     imgadapt.notifyDataSetInvalidated();
                     return true;
                 }
                 if ((event.getAction() == MotionEvent.ACTION_UP) && (int) v.getId() == (int) R.drawable.button_off) {
-                    imgadapt.Update(R.drawable.button_off,(int) v.getId());
+                    imgadapt.update(R.drawable.button_off,(int) v.getId());
                     imgadapt.notifyDataSetInvalidated();
                     return true;
                 }
@@ -237,7 +211,7 @@ public class Gui extends View implements IObserver {
                             switch (item.getItemId()) {
 
                                 case R.id.AddButton: // PushButton adden
-                                    imgadapt.Update(R.drawable.button_off, position);
+                                    imgadapt.update(R.drawable.button_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     // TODO Model für PushButton der Liste im Project adden
                                     return true;
@@ -245,7 +219,7 @@ public class Gui extends View implements IObserver {
                                 case R.id.AddLED:
                                     //es wird das Bild geändert, und dem imageadapt wir gesagt, dass sich etwas geändert hat -> er soll neu zeichnen
                                     Log.d(LOG_TAG, "Hinzufügen einer neuen LED");
-                                    imgadapt.Update(R.drawable.lamp_off, position);
+                                    imgadapt.update(R.drawable.lamp_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     // Hinzufügen eines neuen ModelElements in die Liste aller Models im Project
                                     project.addModelToMap(position, new LedModel(ELEMENT_NAME + Integer.toString(position), false));
@@ -254,7 +228,7 @@ public class Gui extends View implements IObserver {
 
                                 case R.id.AddSwitch:
                                     Log.d(LOG_TAG, "Hinzufügen eines neuen Switchs");
-                                    imgadapt.Update(R.drawable.switch_off, position);
+                                    imgadapt.update(R.drawable.switch_off, position);
                                     imgadapt.notifyDataSetChanged();
                                     project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                                     //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
@@ -440,7 +414,7 @@ public class Gui extends View implements IObserver {
 
                                 case R.id.delete:
                                     project.getMapAllViewModels().remove(position); // Model aus der HashMap entfernen
-                                    imgadapt.Update(R.drawable.add1, position);
+                                    imgadapt.update(R.drawable.add1, position);
                                     imgadapt.notifyDataSetChanged();
                                     return true;
 

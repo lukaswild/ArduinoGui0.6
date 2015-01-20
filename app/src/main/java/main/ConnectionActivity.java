@@ -259,8 +259,8 @@ public class ConnectionActivity extends Activity {
         conAddress.trim();
 
         switch (conType) { // 0 (nichts ausgewählt), 1 (BT), oder 2 (Ethernet)
-//            conAdapter.add(conName);
-//            conAdapter.add(conAddress);
+//            conAdapter.addToObservers(conName);
+//            conAdapter.addToObservers(conAddress);
 //               conAdapter.notifyDataSetChanged();
 
             case 0: // nichts ausgewählt - sollte nicht vorkommene
