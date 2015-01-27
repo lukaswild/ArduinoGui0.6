@@ -3,6 +3,7 @@ package main;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,9 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,9 +26,14 @@ import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import connection.BTConnection;
 import connection.IConnection;
+import elements.Element;
+import elements.LedModel;
+import elements.SwitchModel;
 import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
@@ -40,7 +48,10 @@ public class MainActivity extends Activity {
     private static ArrayList<IConnection> AllConnections = new ArrayList<IConnection>();
     private static IConnection currentConnection;
     private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
+    public static HashMap<Integer, String> ElementIdentifyer = new HashMap<Integer, String>();
+
     public static ImageAdapter imgadapt;
+    public static Gui gui;
 
     private MainFragment dataFragment;
     private final int REQUEST_CODE_NEW_CON = 100;
@@ -106,6 +117,7 @@ public class MainActivity extends Activity {
             popDialog.show();
 
 
+
             Button btn = (Button) popDialog.findViewById(R.id.DialogProBtnSubmit);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -115,11 +127,13 @@ public class MainActivity extends Activity {
                     currentProject.setName(edit.getText().toString());
                     AllProjects.add(currentProject);
                     popDialog.cancel();
+
                 }
 
             });
 
         }
+
 
 
         //Alle Projekte haben eine ID. Die ID wird beim Erzeugen eines neuen Projekts gesetzt (im Konstruktor
@@ -131,6 +145,7 @@ public class MainActivity extends Activity {
         }
 
         imgadapt = new ImageAdapter(this);
+
 
         Log.d(LOG_TAG,"Vor Gui");
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);

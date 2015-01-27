@@ -17,6 +17,7 @@ import elements.LedModel;
 import elements.OutputElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
+import generic.ComObject;
 import generic.ImageAdapter;
 
 public class Project extends Observable {
@@ -99,6 +100,8 @@ public class Project extends Observable {
         this.elementSwitch = new SwitchModel();
         GridView view;
         this.gui = gui;
+
+
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
     }
@@ -116,7 +119,7 @@ public class Project extends Observable {
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
     }
-
+    
     public Project(Gui gui, String name, int id, ImageAdapter imageAdapter) {
 
 //        allElementModels = new ArrayList<Element>();
@@ -137,6 +140,7 @@ public class Project extends Observable {
         this.gui =gui;
     }
 
+    
     public void addElement(int key, Element element) {
         mapAllViewModels.put(key, element);
     }
@@ -148,6 +152,7 @@ public class Project extends Observable {
         }
         return false;
     }
+
 
 
     public Element getElementByName(String name) {
@@ -246,12 +251,6 @@ public class Project extends Observable {
     public void connectWith(Element e, String identifier) {
         // TODO Momentan wird Identifier in Element definiert --> Methode w�re unn�tig
     }
-
-    /**
-     * Listener-Klasse f�r die einzelnen Views.
-     * Dieser Listener verweist auf die Methode sendDataUpdateGui.
-     * @author Simon
-     */
     //TODO Fehler
     private class ElementListener implements OnClickListener {
 

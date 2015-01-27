@@ -31,7 +31,8 @@
                 android:id="@+id/listViewAvailablePros"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal|top" />
+                android:layout_gravity="center_horizontal|top"
+                android:scrollbars="vertical"/>
 
             <Space
                 android:layout_width="20px"
