@@ -32,7 +32,7 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
     public View getGroupView(final int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         // Allgemein notwendig
         String headerTitle = (String) getGroup(groupPosition);
-        convertView = inflateLayoutGroup(convertView,R.layout.list_group);
+        convertView = inflateLayoutGroup(convertView, R.layout.list_group);
         final TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
         setListHeader(headerTitle, lblListHeader);
 
@@ -59,6 +59,14 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
                     BTConnection.closeConnection();
                     Log.d(LOG_TAG, "Verbindung wird beendet");
                 }
+            }
+        });
+
+        lblListHeader.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+               // TODO Menü anzeigen, Löschfunktion anbieten
+                return false;
             }
         });
 

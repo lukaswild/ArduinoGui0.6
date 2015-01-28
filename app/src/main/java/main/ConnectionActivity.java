@@ -1,9 +1,16 @@
 package main;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
@@ -37,17 +45,18 @@ public class ConnectionActivity extends Activity {
     private TextView tvConAddress;
     private EditText etConAddress;
     private Button btnSubmit;
+    private Button btnScanBtDevices;
     private int conType = 0; // Art der Verbindung - 0: nichts ausgew�hlt, 1: Bluetooth, 2: Ethernet
 
     // Verfügbare Verbindungen anzeigen - standardmäßig bei Start der Activity
-    Dialog dialogNewCon;
+    private Dialog dialogNewCon;
 
     // ExpandableListView
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
-    static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
-    ExpListAdapterAllCons expListAdapter;
-
+    private static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
+    private ExpListAdapterAllCons expListAdapter;
+    private AlertDialog.Builder dialogScannedDevs;
 
     public HashMap<String, ArrayList<String>> getMapListDataChild() {
         return mapListDataChild;
@@ -145,6 +154,9 @@ public class ConnectionActivity extends Activity {
 
 
     public void createNewConnection(View v) {
+
+        final Dialog dialogScanDevices = new Dialog(getBaseContext());
+
         dialogNewCon = new Dialog(this);
         dialogNewCon.setContentView(R.layout.new_connection);
         dialogNewCon.setTitle("Neue Verbindung");
@@ -152,8 +164,13 @@ public class ConnectionActivity extends Activity {
         tvConAddress = (TextView) dialogNewCon.findViewById(R.id.tvConAddress);
         etConAddress = (EditText) dialogNewCon.findViewById(R.id.etConAddress);
         btnSubmit = (Button) dialogNewCon.findViewById(R.id.btnSubmit);
+        btnScanBtDevices = (Button) dialogNewCon.findViewById(R.id.btnScanDevices);
         setSpinnerListener(dialogNewCon);
         Button btnSubmit = (Button) dialogNewCon.findViewById(R.id.btnSubmit);
+
+        dialogNewCon.show();
+
+
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,8 +185,109 @@ public class ConnectionActivity extends Activity {
                 btnCancelClicked(dialogNewCon);
             }
         });
-        dialogNewCon.show();
+
+
+        // Es soll ein weiteres Dialogfenster erscheinen, welches nach verfügbaren BT-Geräten sucht und diese auflistet.
+        btnScanBtDevices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ///// TODO Dialogfenster zum Suchen neuer Geräte //////
+
+                scanForDevicesAndList(v);
+
+                //////////////////////////////////////////////////
+
+
+
+            }
+        });
     }
+
+    // TODO Progress circle während Scannvorgang
+    private void showDialogAvCons(final ArrayAdapter<String> adapterAvCons, final HashMap<String, String> mapAllDevsWithAddresses) {
+        dialogScannedDevs = new AlertDialog.Builder( ConnectionActivity.this);
+        dialogScannedDevs.setTitle("Verfügbare Geräte");
+
+        dialogScannedDevs.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        dialogScannedDevs.setAdapter(adapterAvCons, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int index) {
+                String devName = adapterAvCons.getItem(index);
+                String devAddress = mapAllDevsWithAddresses.get(devName);
+                etConName.setText(devName);
+                etConAddress.setText(devAddress);
+            }
+        });
+        dialogScannedDevs.show();
+    }
+
+
+    private void scanForDevicesAndList(View v) {
+        final ArrayAdapter<String> adapterAvCons = new ArrayAdapter<String>(ConnectionActivity.this, android.R.layout.select_dialog_item);
+
+        /* In diese HashMap werden alle Verbindungen mit Namen und Adressen gespeichert. Im Dialog wird nur der Name angezeigt,
+        *  aus der HashMap wird von der ausgewählten Verbindung folglich die Adresse geholt
+        */
+        final HashMap<String, String> mapAllDevsWithAddresses = new HashMap<String, String>(); //Key: Name, Data: Address
+
+        final BroadcastReceiver bcFindBtDevs = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                // When discovery finds a device
+
+                if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                    // Get the BluetoothDevice object from the Intent
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    Log.d(LOG_TAG, device.getName() + " " + device.getAddress());
+                    mapAllDevsWithAddresses.put(device.getName(), device.getAddress()); //
+                    adapterAvCons.add(device.getName());
+                    adapterAvCons.notifyDataSetChanged();
+                }
+            }
+        };
+
+        final BroadcastReceiver bcScanDevFinished = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                    Toast.makeText(getApplicationContext(), "Scan beendet", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        final BroadcastReceiver bcScanDevStarted = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+
+                if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                    Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+        if (adapter.isDiscovering()) // the button is pressed when it discovers, so cancel the discovery
+            adapter.cancelDiscovery();
+        else {
+            adapter.startDiscovery();
+            registerReceiver(bcFindBtDevs, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+            registerReceiver(bcScanDevFinished, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED));
+            registerReceiver(bcScanDevStarted, new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED));
+        }
+        showDialogAvCons(adapterAvCons, mapAllDevsWithAddresses);
+    }
+
 
 
     /**
@@ -200,13 +318,16 @@ public class ConnectionActivity extends Activity {
                         tvConAddress.setVisibility(View.INVISIBLE);
                         etConAddress.setEnabled(false);
                         btnSubmit.setEnabled(false);
-
+                        btnScanBtDevices.setVisibility(View.INVISIBLE);
+                        btnScanBtDevices.setEnabled(false);
                         break;
 
                     case 1:
                         conType = 1;
                         tvConAddress.setText("MAC-Adresse des Bluetooth-Moduls");
                         etConAddress.setHint("MAC-Adresse");
+                        btnScanBtDevices.setVisibility(View.VISIBLE);
+                        btnScanBtDevices.setEnabled(true);
                         showConViews(etConName, tvConAddress, etConAddress, btnSubmit);
                         break;
 
@@ -215,6 +336,8 @@ public class ConnectionActivity extends Activity {
                         tvConAddress.setText("IP-Adresse des Arduinos");
                         etConAddress.setHint("IP-Adresse");
                         showConViews(etConName, tvConAddress, etConAddress, btnSubmit);
+                        btnScanBtDevices.setVisibility(View.INVISIBLE);
+                        btnScanBtDevices.setEnabled(true);
                         break;
                 } // es gibt kein default, da nur 0, 1 oder 2 ausgew�hlt werden kann
             }

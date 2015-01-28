@@ -22,6 +22,7 @@ public class BTConnection implements IConnection {
     private String conNameDeclaration;
     private String conAddressDeclaration;
     private static String conName;
+
     private static BluetoothAdapter adapter = null;
     private static BluetoothSocket socket = null;
     private static OutputStream streamOut = null; // TODO BufferedOutputStream
@@ -33,6 +34,17 @@ public class BTConnection implements IConnection {
 
 
     //getter und setter
+
+
+    public static BluetoothAdapter getAdapter() {
+        return adapter;
+    }
+
+    public static void setAdapter(BluetoothAdapter adapter) {
+        BTConnection.adapter = adapter;
+    }
+
+
     public int getId() {
         return id;
     }
@@ -160,6 +172,10 @@ public class BTConnection implements IConnection {
             instance = new BTConnection();
             BTConnection.isConnected = true; // Auf true setzen, wenn etwas schief gehen sollte, wird dieser Wert auf false gesetzt
             BTConnection.adapter = BluetoothAdapter.getDefaultAdapter();
+            if(BTConnection.adapter == null)
+                return false;
+
+
             BTConnection.macAddress = macAddress;
             BTConnection.conName = conName;
             BluetoothDevice remote_device = null;

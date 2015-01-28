@@ -182,6 +182,10 @@ public class MainActivity extends Activity {
 
         Toast.makeText(getBaseContext()," In der OnDestroy", Toast.LENGTH_SHORT).show();
         // dataFragment.setData(currentProject);
+
+        if(BTConnection.isConnected())
+            BTConnection.closeConnection();
+
     }
 
 

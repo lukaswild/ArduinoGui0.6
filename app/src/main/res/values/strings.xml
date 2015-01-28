@@ -39,5 +39,7 @@
     <string name="txtAllPro">Verfügbare Projekte</string>
     <string name="btnNewPro">Projekt einrichten</string>
     <string name="btnAddNewPro">Neues Projekt hinzufügen</string>
+    <string name="btnScanBTDevices">Nach Geräten suchen</string>
+    <string name="tvAvailableBtDevices">Verfügbare Geräte</string>
 
 </resources>

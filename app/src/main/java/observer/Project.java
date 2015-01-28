@@ -222,6 +222,9 @@ public class Project extends Observable {
                                 Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
 
                                 Log.d(LOG_TAG, "Position des OutputElements: " + (Integer)entry.getKey());
+
+                                // TODO Überprüfen, ob das OK von Arduino ankommt - wenn ja: Gui updaten
+
                                 notify(this, currentElement, (Integer) entry.getKey());
                             }
                         }

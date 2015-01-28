@@ -462,5 +462,4 @@ public class Gui extends View implements IObserver {
         elementIdentifier.put(R.id.a4, "A4");
         elementIdentifier.put(R.id.a5, "A5");
     }
-
 }
