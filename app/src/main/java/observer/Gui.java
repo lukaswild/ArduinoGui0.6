@@ -33,6 +33,8 @@ public class Gui extends View implements IObserver {
     private final String ELEMENT_NAME = "element";
     private int imgLedOn = R.drawable.lamp_on;
     private int imgLedOff = R.drawable.lamp_off;
+    private int imgSwitchOff = R.drawable.switch_off;
+    private int imgSwitchOn = R.drawable.switch_on;
 
 
     /**
@@ -55,21 +57,21 @@ public class Gui extends View implements IObserver {
     }
 
 
-
-    // @Override
-    public void update(Observable senderClass, Element modelToUpdate, int position) {
+    @Override
+    public void update(Observable senderClass, Element modelToUpdate, int inputElementPosition, int outputElementPosition) {
         Log.d(LOG_TAG, "Updaten der Gui...");
-        View child = gridView.getChildAt(position);
+        Log.d(LOG_TAG, "outputElementPosition: " + outputElementPosition);
+        View child = gridView.getChildAt(outputElementPosition);
         //  if(model instanceof LedModel) {
         ImageAdapter imageAdapter =  (ImageAdapter) gridView.getAdapter();
-        Integer o = (Integer) imageAdapter.getItem(position);
+        Integer o = (Integer) imageAdapter.getItem(outputElementPosition);
         Log.d(LOG_TAG, o.getClass().toString());
 
         if(modelToUpdate instanceof LedModel) {
-            if((Integer)imageAdapter.getItem(position) == imgLedOff) // TODO Abfrage ersetzen durch Abfrage von realem Status am Arduino des Ports - und diesen dann setzen
-                updateLedStatus(imageAdapter, position, true);
+            if((Integer)imageAdapter.getItem(inputElementPosition) == imgSwitchOn)
+                updateLedStatus(imageAdapter, outputElementPosition, true);
             else
-                updateLedStatus(imageAdapter, position, false);
+                updateLedStatus(imageAdapter, outputElementPosition, false);
         }
         Log.d(LOG_TAG, "Gui aktualisiert");
     }

@@ -1,0 +1,93 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerAlter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.example.arduinogui.NewConnectionActivity"
+    tools:ignore="MergeRootFrame"
+    android:background="@drawable/background1">
+
+    <ScrollView
+        android:id="@+id/scrollViewParentAlter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:id="@+id/linLayout1Alter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:isScrollContainer="true"
+                android:orientation="vertical" >
+
+
+                <TextView
+                    android:id="@+id/tvConNameAlter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tvConName" />
+
+                <!-- TODO abhängig von verwendetem Handy Name auf bestimmte Anzahl von Zeichen begrenzen, da Auswählen-Button zu langen Namen verdeckt-->
+                <EditText
+                    android:id="@+id/etConNameAlter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/etConNameHint"
+                    android:maxLength="20">
+
+                    <requestFocus />
+                </EditText>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp" />
+
+                <TextView
+                    android:id="@+id/tvConAddressAlter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <EditText
+                    android:id="@+id/etConAddressAlter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLength="17" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linLayout1Alter"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnSubmitAlter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="@string/btnSubmit" />
+
+                <Button
+                    android:id="@+id/btnCancelAlter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/btnCancel" />
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</FrameLayout>

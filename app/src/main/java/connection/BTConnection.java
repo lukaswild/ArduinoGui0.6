@@ -4,6 +4,7 @@ package connection;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.IOException;
@@ -25,8 +26,10 @@ public class BTConnection implements IConnection {
 
     private static BluetoothAdapter adapter = null;
     private static BluetoothSocket socket = null;
-    private static OutputStream streamOut = null; // TODO BufferedOutputStream
-    private static InputStream streamIn = null; // TODO BufferedInputStream
+//    private static BufferedOutputStream streamOut = null; // TODO BufferedOutputStream - Übertragung geht nicht
+//    private static BufferedInputStream streamIn = null; // TODO BufferedInputStream - Übertragung geht nicht
+    private static InputStream streamIn = null;
+    private static OutputStream streamOut = null;
 
     private static boolean isConnected = false;
     private static String macAddress; // MAC Adresse des Bluetooth Adapters
@@ -117,13 +120,15 @@ public class BTConnection implements IConnection {
     }
 
 
-    @Override
-    public String receiveData() {
+//    @Override
+    public static String receiveData() {
+        SystemClock.sleep(400); // Warten bis Bestätigungsdaten von Arduino am Smartphone angelangt sind: 200 ms sind zu wenig, 300 passen --> zur Sicherheit 400
 
         byte[] buffer = new byte[1024]; // Puffer
         int laenge; // Anzahl empf. Bytes
         String data = "";
         try {
+            Log.d(LOG_TAG, "StreamIn: " + streamIn.available());
             if (streamIn.available() > 0) {
                 laenge = streamIn.read(buffer);
                 Log.d(LOG_TAG, "Anzahl empfangener Bytes : " + String.valueOf(laenge));
@@ -144,6 +149,7 @@ public class BTConnection implements IConnection {
         return data;
 
     }
+
 
 
     public static BTConnection createAttributeCon(String conNameDeclaration, String conAddressDeclaration) {
@@ -172,8 +178,11 @@ public class BTConnection implements IConnection {
             instance = new BTConnection();
             BTConnection.isConnected = true; // Auf true setzen, wenn etwas schief gehen sollte, wird dieser Wert auf false gesetzt
             BTConnection.adapter = BluetoothAdapter.getDefaultAdapter();
-            if(BTConnection.adapter == null)
+            if(BTConnection.adapter == null) {
+                Log.e(LOG_TAG, "Bluetooth nicht unterstützt");
                 return false;
+            }
+
 
 
             BTConnection.macAddress = macAddress;
@@ -208,6 +217,7 @@ public class BTConnection implements IConnection {
         try {
             streamIn = socket.getInputStream();
             Log.d(LOG_TAG, "InputStream erzeugt");
+            Log.d(LOG_TAG, "" + streamIn.available());
         } catch (IOException e) {
             Log.e(LOG_TAG, "Fehler beim Erzeugen des InputStreams: " + e.toString());
             isConnected = false;

@@ -23,6 +23,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +40,6 @@ import generic.ExpListAdapterAllCons;
 
 public class ConnectionActivity extends Activity {
 
-    // Neue Verbindung - Dialogfenster
     private final static String LOG_TAG = "ConnectionActivity";
     private EditText etConName;
     private TextView tvConAddress;
@@ -48,12 +48,7 @@ public class ConnectionActivity extends Activity {
     private Button btnScanBtDevices;
     private int conType = 0; // Art der Verbindung - 0: nichts ausgew�hlt, 1: Bluetooth, 2: Ethernet
 
-    // Verfügbare Verbindungen anzeigen - standardmäßig bei Start der Activity
-    private Dialog dialogNewCon;
-
-    // ExpandableListView
-    private ExpandableListView expListView;
-    private ArrayList<String> listDataHeader;
+    private ExpandableListView expListView; // ExpandableListView
     private static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
     private ExpListAdapterAllCons expListAdapter;
     private AlertDialog.Builder dialogScannedDevs;
@@ -61,6 +56,9 @@ public class ConnectionActivity extends Activity {
     public HashMap<String, ArrayList<String>> getMapListDataChild() {
         return mapListDataChild;
     }
+    private Dialog dialogNewCon; // Dialog zum Hinzufügen einer neuen Verbindung
+    private Dialog dialogAlterCon; // Dialog zum Bearbeiten einer Verbindung
+
 
     public void setMapListDataChild(HashMap<String, ArrayList<String>> mapListDataChild) {
         this.mapListDataChild = mapListDataChild;
@@ -78,7 +76,7 @@ public class ConnectionActivity extends Activity {
         Intent parentIntent = getIntent();
 
         ArrayList<String> allConsType = getIntentExtra(parentIntent, "allConsType");
-        ArrayList<String> allConsHeader = getIntentExtra(parentIntent, "allConsHeader");
+        final ArrayList<String> allConsHeader = getIntentExtra(parentIntent, "allConsHeader");
         ArrayList<String> allConsAddress = getIntentExtra(parentIntent, "allConsAddress");
 
         mapListDataChild = new HashMap<String, ArrayList<String>>();
@@ -93,6 +91,63 @@ public class ConnectionActivity extends Activity {
         // der ExpandableListView den Adapter übergeben
         expListView.setAdapter(expListAdapter);
         Log.d(LOG_TAG, "Adapter wurde ListView hinzugefügt");
+
+        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                final PopupMenu popupConOptions = new PopupMenu(getApplicationContext(), view);
+                popupConOptions.inflate(R.menu.menu_popup_connection);
+                final String keyToRemove = parent.getItemAtPosition(position).toString();
+
+                if(allConsHeader.contains(keyToRemove)) {
+                    popupConOptions.show();
+
+                    Log.d(LOG_TAG, view.getClass().toString());
+                    Log.d(LOG_TAG, parent.getClass().toString());
+                    Log.d(LOG_TAG, parent.getItemAtPosition(position).getClass().toString());
+                    Log.d(LOG_TAG, keyToRemove);
+
+                    popupConOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+
+                            switch (item.getItemId()) {
+
+                                case R.id.removeCon:
+                                    if (mapListDataChild.containsKey(keyToRemove)) {
+                                        mapListDataChild.remove(keyToRemove);
+                                        allConsHeader.remove(keyToRemove);
+                                    }
+                                    Log.d(LOG_TAG, "Entfernen des Eintrags " + keyToRemove);
+                                    expListAdapter.notifyDataSetChanged();
+                                    return true;
+
+
+                                case R.id.alterCon: // TODO App stürzt ab - NullPointerException
+                                    TextView tvConAddressAlter = (TextView) findViewById(R.id.tvConAddressAlter);
+                                    EditText etConAddressAlter = (EditText) findViewById(R.id.etConAddressAlter);
+                                    dialogAlterCon = new Dialog(ConnectionActivity.this);
+                                    dialogAlterCon.setTitle("Verbindung bearbeiten");
+                                    dialogAlterCon.setContentView(R.layout.alter_connection);
+                                    dialogAlterCon.show();
+
+                                    // Überprüfung, ob BT oder Ethernet Connection
+                                    tvConAddressAlter.setText("");
+                                    etConAddressAlter.setHint("");
+
+
+                                    return true;
+
+
+                            }
+                            return false;
+                        }
+                    });
+                }
+                return false;
+            }
+        });
     }
 
 
@@ -155,8 +210,6 @@ public class ConnectionActivity extends Activity {
 
     public void createNewConnection(View v) {
 
-        final Dialog dialogScanDevices = new Dialog(getBaseContext());
-
         dialogNewCon = new Dialog(this);
         dialogNewCon.setContentView(R.layout.new_connection);
         dialogNewCon.setTitle("Neue Verbindung");
@@ -191,15 +244,7 @@ public class ConnectionActivity extends Activity {
         btnScanBtDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ///// TODO Dialogfenster zum Suchen neuer Geräte //////
-
                 scanForDevicesAndList(v);
-
-                //////////////////////////////////////////////////
-
-
-
             }
         });
     }

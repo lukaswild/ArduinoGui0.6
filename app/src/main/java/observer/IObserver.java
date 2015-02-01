@@ -10,5 +10,5 @@ public interface IObserver {
 
 //	public void update(Observable senderClass, ComObject comObject);
 
-    public void update(Observable senderClass, Element modelToUpdate, int position);
+    public void update(Observable senderClass, Element modelToUpdate, int inputElementPosition, int outputElementPosition);
 }

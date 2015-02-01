@@ -28,9 +28,9 @@ public class Observable {
 //        }
 //    }
 
-    public void notify(Observable senderClass, Element modelToUpdate, int position) {
+    public void notify(Observable senderClass, Element modelToUpdate, int inputElementPosition, int outputElementPosition) {
         for (IObserver o : observers) {
-            o.update(senderClass, modelToUpdate, position);
+            o.update(senderClass, modelToUpdate, inputElementPosition, outputElementPosition);
         }
     }
 	

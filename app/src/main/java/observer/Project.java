@@ -4,11 +4,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridView;
+import android.widget.ImageView;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import connection.BTConnection;
 import connection.IConnection;
 import elements.BoolElement;
 import elements.Element;
@@ -17,24 +19,15 @@ import elements.LedModel;
 import elements.OutputElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
-import generic.ComObject;
 import generic.ImageAdapter;
 
 public class Project extends Observable {
-
-
     private static int id=0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
-
-
 
     private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden
     private int numberOfRows; // Anzahl von Elementen in einer Reihe
     private int numberOfLines; // Anzahl von Elementen untereinander (Anzahl von Zeilen)
-    /*
-    private ArrayList<IConnection> listAllCons;
-    private IConnection currentConnection; // Je nach dem welchen Verbindungstyp Benutzer wählt BT oder Ethernet
-    */
-//    private ArrayList<Element> allElementModels;
+
     private Gui gui;
     private Db dbConnection; // TODO DB-Programmierung
     private final String LOG_TAG = "Project";
@@ -42,12 +35,8 @@ public class Project extends Observable {
     private SwitchModel elementSwitch;
     private LedModel elementLed;
     private ImageAdapter imageAdapter;
-
     private HashMap<Integer, Element> mapAllViewModels; // Speichern aller Modelelemente mit ihrer Position als Key
 
-    //  private SwitchView viewSwitch;
-
-    //	private LedView viewLed;
 
     //Getter und Setter
     public String getName() {
@@ -119,7 +108,7 @@ public class Project extends Observable {
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
     }
-    
+
     public Project(Gui gui, String name, int id, ImageAdapter imageAdapter) {
 
 //        allElementModels = new ArrayList<Element>();
@@ -140,7 +129,7 @@ public class Project extends Observable {
         this.gui =gui;
     }
 
-    
+
     public void addElement(int key, Element element) {
         mapAllViewModels.put(key, element);
     }
@@ -178,6 +167,7 @@ public class Project extends Observable {
     public void sendDataUpdateGui(View v, IConnection currentConnection, int position) {
         Element model = mapAllViewModels.get(position);
         Log.d(LOG_TAG, "Position: " + position);
+        ImageView viewAtPosition = (ImageView) imageAdapter.getItem(position);
 
         if(model != null)
             Log.d(LOG_TAG, "Modelname : " + model.getName());
@@ -186,6 +176,7 @@ public class Project extends Observable {
 
         if(model instanceof BoolElement) {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
+
             boolean curStatus = ((BoolElement) model).isStatusHigh();
             boolean newStatus = !curStatus;
 
@@ -200,14 +191,11 @@ public class Project extends Observable {
                     ((InputElement) model).sendDataToArduino(currentConnection, code); // Daten an Arduino senden
                     Log.d(LOG_TAG, "Gesendet");
 
-
-				/* TODO Status nur ändern, wenn Übertragung auch wirklich funktioniert hat:
-				 * - entweder zuerst Status des Arduino-Elements abfragen,
-				 * - oder über Arduino-Library sofort nach Aktualisieren true zur�cksenden,
-				 *   über Connection dies empfangen und zur�ckgeben.
-				 */
-                    // �nderung des Status im Model
-                    ((BoolElement) model).setStatusHigh(newStatus);
+                    // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
+                    String codeSuccessStr =  BTConnection.receiveData();
+                    Log.d(LOG_TAG, codeSuccessStr);
+                    Log.d(LOG_TAG, BTConnection.receiveData());
+                    Log.d(LOG_TAG, BTConnection.receiveData());
 
                     Iterator iterator = mapAllViewModels.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -220,15 +208,21 @@ public class Project extends Observable {
                             if(model.getIdentifier().equals(identifierCurEl)) {
                                 // Dazugehöriges OutputElement gefunden
                                 Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
+                                Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
 
-                                Log.d(LOG_TAG, "Position des OutputElements: " + (Integer)entry.getKey());
+                                codeSuccessStr.trim();
+                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
 
-                                // TODO Überprüfen, ob das OK von Arduino ankommt - wenn ja: Gui updaten
-
-                                notify(this, currentElement, (Integer) entry.getKey());
+                                if (codeSuccessStr.equals("100")) {
+                                    // �nderung des Status im Model
+                                    ((BoolElement) model).setStatusHigh(newStatus);
+                                    notify(this, currentElement, position, (Integer) entry.getKey());
+                                }
                             }
                         }
                     }
+
+
                 } else
                     Log.e(LOG_TAG, "Error - Kein InputElement");
             } else

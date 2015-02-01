@@ -33,8 +33,8 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
         // Allgemein notwendig
         String headerTitle = (String) getGroup(groupPosition);
         convertView = inflateLayoutGroup(convertView, R.layout.list_group);
-        final TextView lblListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
-        setListHeader(headerTitle, lblListHeader);
+        final TextView tvListHeader = (TextView) convertView.findViewById(R.id.tvExpListHeader);
+        setListHeader(headerTitle, tvListHeader);
 
         final ToggleButton tglBtnChooseCloseCon = getToggleButton(convertView);
         setStateTexts(tglBtnChooseCloseCon, "auswählen", "trennen"); // Text für Zustände ein und aus des ToggleButtons setzen
@@ -62,13 +62,34 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
             }
         });
 
-        lblListHeader.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-               // TODO Menü anzeigen, Löschfunktion anbieten
-                return false;
-            }
-        });
+//        tvListHeader.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                // TODO Menü anzeigen, Löschfunktion anbieten
+//
+//                PopupMenu popupConOptions = new PopupMenu(context, v);
+//                popupConOptions.inflate(R.menu.menu_popup_connection);
+//                popupConOptions.show();
+//                TextView tvClickedItem = (TextView) v;
+//                final String clickedItemHeader = tvClickedItem.getText().toString();
+//
+//                popupConOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        switch(item.getItemId()) {
+//                            case R.id.removeCon:
+//                                mapDataChild.remove(clickedItemHeader);
+//
+//                                notifyDataSetChanged();
+//                                return true;
+//                        }
+//                        return false;
+//                    }
+//                });
+//
+//                return false;
+//            }
+//        });
 
         return convertView;
     }

@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_popup_connection" >
+        <item android:id="@+id/alterCon" android:title="@string/popupMenuEntryAlterCon" android:visible="true" />
+        <item android:id="@+id/removeCon" android:title="@string/popupMenuEntryDeleteCon" android:visible="true" />
+
+    </group>
+</menu>

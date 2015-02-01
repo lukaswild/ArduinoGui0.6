@@ -4,7 +4,7 @@ public interface IConnection {
 	
 	public void sendData(String data);
 	
-	public String receiveData();
+//	public String receiveData();
 	
 //	public void closeConnection();
 

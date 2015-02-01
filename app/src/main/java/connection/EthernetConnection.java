@@ -84,7 +84,7 @@ public class EthernetConnection implements IConnection {
         new SocketOperationSend().execute(data);
     }
 
-    @Override
+//    @Override
     public String receiveData() {
 
         String message = "";

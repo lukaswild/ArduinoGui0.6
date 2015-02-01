@@ -1,6 +1,8 @@
 package elements;
 
+import connection.IConnection;
+
 public interface OutputElement {
 
-	public void receiveData();
+	public String receiveData(IConnection connection);
 }

@@ -41,5 +41,7 @@
     <string name="btnAddNewPro">Neues Projekt hinzufügen</string>
     <string name="btnScanBTDevices">Nach Geräten suchen</string>
     <string name="tvAvailableBtDevices">Verfügbare Geräte</string>
+    <string name="popupMenuEntryDeleteCon">Verbindung entfernen</string>
+    <string name="popupMenuEntryAlterCon">Bearbeiten</string>
 
 </resources>

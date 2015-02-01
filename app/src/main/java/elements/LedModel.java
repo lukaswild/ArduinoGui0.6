@@ -3,6 +3,8 @@ package elements;
 
 import com.example.arduinogui.R;
 
+import connection.IConnection;
+
 public class LedModel extends BoolElement implements OutputElement {
 
 	
@@ -15,9 +17,12 @@ public class LedModel extends BoolElement implements OutputElement {
 	public LedModel() {} 
 	
 	@Override
-	public void receiveData() {
+	public String receiveData(IConnection connection) {
 		// TODO Auto-generated method stub; überhaupt notwendig?
-		System.out.println("Nicht ausprogrammiert - Nichts geschieht");
+		System.out.println("Empfangen von Daten...");
+
+//        return connection.receiveData();
+        return ""; // TODO void
 	}
 	
 }
