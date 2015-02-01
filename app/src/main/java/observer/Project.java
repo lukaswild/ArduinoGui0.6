@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridView;
-import android.widget.ImageView;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -167,7 +166,6 @@ public class Project extends Observable {
     public void sendDataUpdateGui(View v, IConnection currentConnection, int position) {
         Element model = mapAllViewModels.get(position);
         Log.d(LOG_TAG, "Position: " + position);
-        ImageView viewAtPosition = (ImageView) imageAdapter.getItem(position);
 
         if(model != null)
             Log.d(LOG_TAG, "Modelname : " + model.getName());
