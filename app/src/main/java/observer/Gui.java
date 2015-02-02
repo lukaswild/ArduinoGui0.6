@@ -121,36 +121,11 @@ public class Gui extends View implements IObserver {
                         project.sendDataUpdateGui(v, currentConnection, position);
                         break;
 
-                    //Button funktioniert zurzeit gleich wie ein switch, -> schlecht, besser alle click im onTouchListener realisieren,
-                    //es kann auf drücken, bzw. loslassen der views geschaut werden, funktioniert derzeit noch nicht
-                    //github comment
-//                    case R.drawable.button_off:
-//                        imgadapt.update(R.drawable.button_on,position);
-//                        imgadapt.notifyDataSetInvalidated();
-//                        project.sendDataUpdateGui(v,CurrentConnection, position);
-//                        break;
-//                        TODO ToggleButton
-//                    case R.drawable.button_on:
-//                        imgadapt.update(R.drawable.button_off,position);
-//                        imgadapt.notifyDataSetInvalidated();
-//
-//                        //update an GUI funktioniert noch nicht
-//                        project.sendDataUpdateGui(v,CurrentConnection, position);
-//                        break;
-
-
                     case R.drawable.lamp_off:
-
                         Toast.makeText(getContext(), "Element " + position + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
                         break;
 
                     default:
-                        // Toast.makeText(getBaseContext(), "Fehler bei pos/" + position, Toast.LENGTH_SHORT).show();
-//                        for(Element e : CurrentProject.getAllElements()) {
-//                            Toast.makeText(getBaseContext(), e.getName(), Toast.LENGTH_SHORT).show();
-//                        }
-
-//                        Iterator iterator = CurrentProject.getMapAllViewModels().entrySet().iterator();
                         Iterator iterator = project.getMapAllViewModels().entrySet().iterator();
                         while (iterator.hasNext()) {
                             Map.Entry entry = (Map.Entry) iterator.next();

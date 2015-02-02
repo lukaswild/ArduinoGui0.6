@@ -21,9 +21,14 @@ import elements.Element;
  * Created by Lukas on 17.12.2014.
  */
 public class ImageAdapter extends BaseAdapter {
+
+    public static class ViewHolderItem {
+        MyImageView imageview;
+    }
     //Felder
     private static HashMap<Integer, Integer> imgRes = new HashMap<Integer, Integer>();
     private Context mContext;
+
 
 
     public int getLength() {
@@ -97,7 +102,10 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // ImageView imageView;
         MyImageView imageView;
+        ViewHolderItem viewHolder;
         if (convertView == null) {
+
+
             // wenn die view leer ist -> Daten sollen hineingeschrieben werden
             imageView = new MyImageView(mContext);
             imageView.setLayoutParams(new GridView.LayoutParams(length, length));
@@ -107,11 +115,26 @@ public class ImageAdapter extends BaseAdapter {
        //     if(imageView.getName() == null)
                 imageView.setName(ELEMENT_NAME + position);
 
+            viewHolder = new ViewHolderItem();
+            viewHolder.imageview = imageView;
+            convertView =imageView;
+            convertView.setTag(viewHolder);
+
         } else {
-            imageView = (MyImageView) convertView;
-            imageView.setName(ELEMENT_NAME + position);
+
+
+            imageView = (MyImageView) convertView;//auskommentieren ?
+           imageView.setName(ELEMENT_NAME + position);//auskommentierern ?
+            viewHolder = (ViewHolderItem) convertView.getTag();
         }
-        imageView.setImageResource((int) getItemInt(position));
+       // ObjectItem objectItem = data
+
+        if (imageView!=null){
+            viewHolder.imageview.setImageResource((int) getItemInt(position));
+        }
+
+
+
         return imageView;
 
     }
