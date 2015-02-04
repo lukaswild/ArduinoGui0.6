@@ -3,8 +3,8 @@ package main;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,11 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,14 +24,11 @@ import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import connection.BTConnection;
+import connection.EthernetConnection;
 import connection.IConnection;
-import elements.Element;
-import elements.LedModel;
-import elements.SwitchModel;
+import database.DatabaseHandler;
 import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
@@ -42,10 +37,10 @@ import observer.Project;
 public class MainActivity extends Activity {
 
     //Felder
-    private static ArrayList<Project> AllProjects = new ArrayList<Project>();
+    private static ArrayList<Project> allProjects = new ArrayList<Project>();
     private static Project currentProject;
 
-    private static ArrayList<IConnection> AllConnections = new ArrayList<IConnection>();
+    private static ArrayList<IConnection> allConnections = new ArrayList<IConnection>();
     private static IConnection currentConnection;
     private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
     public static HashMap<Integer, String> ElementIdentifyer = new HashMap<Integer, String>();
@@ -59,15 +54,18 @@ public class MainActivity extends Activity {
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
     private final String LOG_TAG = "MainActivity";
+    private DatabaseHandler dbHandler;
+    private SQLiteDatabase db;
+
 
     //Getter Setter
 
     public static ArrayList<IConnection> getAllConnections() {
-        return AllConnections;
+        return allConnections;
     }
 
     public static void setAllConnections(ArrayList<IConnection> allConnections) {
-        AllConnections = allConnections;
+        MainActivity.allConnections = allConnections;
     }
 
     public static Project getCurrentProject() {
@@ -103,12 +101,12 @@ public class MainActivity extends Activity {
         Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2, imgadapt);
         Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3, imgadapt);
 
-        AllProjects.add(pro1);
-        AllProjects.add(pro2);
-        AllProjects.add(pro3);
+        allProjects.add(pro1);
+        allProjects.add(pro2);
+        allProjects.add(pro3);
 
         //soll angezeigt werden wenn es noch kein einziges projekt gibt
-        if(AllProjects.isEmpty()) {
+        if(allProjects.isEmpty()) {
             final Dialog popDialog = new Dialog(this);
             popDialog.setCancelable(true);
 
@@ -125,7 +123,7 @@ public class MainActivity extends Activity {
                     String string = "";
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
                     currentProject.setName(edit.getText().toString());
-                    AllProjects.add(currentProject);
+                    allProjects.add(currentProject);
                     popDialog.cancel();
 
                 }
@@ -141,7 +139,7 @@ public class MainActivity extends Activity {
         //auf CurrentProjekt gesetzt
 
         else {
-            currentProject = AllProjects.get(AllProjects.size()-1);
+            currentProject = allProjects.get(allProjects.size()-1);
         }
 
         imgadapt = new ImageAdapter(this);
@@ -152,8 +150,12 @@ public class MainActivity extends Activity {
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();
 
-        createDummyData();
+//        createDummyData();
 
+        dbHandler = new DatabaseHandler(this);
+        db = dbHandler.getWritableDatabase();
+
+        allConnections = dbHandler.selectAllCons(db, this);
 
     }
 
@@ -178,13 +180,18 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Wenn die activity zerstört wird, soll das currentProject im Fragment gespeichert werden.
-
-        Toast.makeText(getBaseContext()," In der OnDestroy", Toast.LENGTH_SHORT).show();
-        // dataFragment.setData(currentProject);
 
         if(BTConnection.isConnected())
             BTConnection.closeConnection();
+
+        // Abspeichern der Connections in der DB
+        ArrayList<String> allConsName = new ArrayList<String>();
+        ArrayList<String> allConsType = new ArrayList<String>();
+        ArrayList<String> allConsAddress = new ArrayList<String>();
+
+
+        splitConsIntoLists(allConsType, allConsName, allConsAddress);
+        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, db);
 
     }
 
@@ -264,13 +271,7 @@ public class MainActivity extends Activity {
         ArrayList<String> allConsHeader = new ArrayList<String>(); // Name der Verbindungen - wird als aufklappbares Feld angezeigt
         ArrayList<String> allConsAddress = new ArrayList<String>();
 
-        for (IConnection c : AllConnections) {
-            if (c instanceof BTConnection) {
-                allConsType.add(getString(R.string.description_btCon));
-                allConsHeader.add(((BTConnection) c).getConNameDeclaration());
-                allConsAddress.add(((BTConnection) c).getConAddressDeclaration());
-            } // TODO else if c instanceof Ethernetconnection
-        }
+        splitConsIntoLists(allConsType, allConsHeader, allConsAddress);
 
 //        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
 
@@ -279,6 +280,21 @@ public class MainActivity extends Activity {
         newConIntent.putExtra("allConsAddress", allConsAddress);
 
         startActivityForResult(newConIntent, REQUEST_CODE_NEW_CON);
+    }
+
+    private void splitConsIntoLists(ArrayList<String> allConsType, ArrayList<String> allConsHeader, ArrayList<String> allConsAddress) {
+        for (IConnection c : allConnections) {
+            if (c instanceof BTConnection) {
+                allConsType.add(getString(R.string.description_btCon));
+                allConsHeader.add(((BTConnection) c).getConNameDeclaration());
+                allConsAddress.add(((BTConnection) c).getConAddressDeclaration());
+            }
+            else if (c instanceof EthernetConnection) {
+                allConsType.add(getString(R.string.description_ethernetCon));
+                allConsHeader.add(((EthernetConnection) c).getConNameDeclaration());
+                allConsAddress.add(((EthernetConnection)c).getConAddressDeclaration());
+            }
+        }
     }
 
     public void startActivityProject(){
@@ -290,7 +306,7 @@ public class MainActivity extends Activity {
         ArrayList<String> allProName = new ArrayList<String>();
         ArrayList<String> allProElements = new ArrayList<String>();
 
-        for (Project c : AllProjects) {
+        for (Project c : allProjects) {
 
             allProName.add(c.getName());
 //            allProElements.addToObservers(Integer.toString(c.getAllElements().size()));
@@ -450,17 +466,17 @@ public class MainActivity extends Activity {
         IConnection c4 = BTConnection.createAttributeCon("BLuggi1", "98:D3:31:B1:F4:7A");
         IConnection c5 = BTConnection.createAttributeCon("BLuggi2", "98:D3:31:B1:F4:7A");
 
-        AllConnections.add(c1);
-        AllConnections.add(c2);
-        AllConnections.add(c3);
-        AllConnections.add(c4);
-        AllConnections.add(c5);
+        allConnections.add(c1);
+        allConnections.add(c2);
+        allConnections.add(c3);
+        allConnections.add(c4);
+        allConnections.add(c5);
 
     }
 
 
     public static void SetCurrentProjByName(String name){
-        for (Project p:AllProjects   ) {
+        for (Project p: allProjects) {
             if (p.getName().equals(name)) {
                 currentProject = p;
 

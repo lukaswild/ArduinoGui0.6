@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
+import database.DatabaseHandler;
 import generic.ExpListAdapterAllCons;
 
 public class ConnectionActivity extends Activity {
@@ -49,7 +51,7 @@ public class ConnectionActivity extends Activity {
     private int conType = 0; // Art der Verbindung - 0: nichts ausgew�hlt, 1: Bluetooth, 2: Ethernet
 
     private ExpandableListView expListView; // ExpandableListView
-    private static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
+    private static HashMap<String, ArrayList<String>> mapListDataChild;
     private ExpListAdapterAllCons expListAdapter;
     private AlertDialog.Builder dialogScannedDevs;
 
@@ -58,6 +60,40 @@ public class ConnectionActivity extends Activity {
     }
     private Dialog dialogNewCon; // Dialog zum Hinzufügen einer neuen Verbindung
     private Dialog dialogAlterCon; // Dialog zum Bearbeiten einer Verbindung
+
+    // Database fields
+    private SQLiteDatabase database;
+    private DatabaseHandler dbHelper;
+//    private String[] allColumns = { DatabaseHandler.COLUMN_ID,
+//            DatabaseHandler.COLUMN_CONNECTION };
+
+    DatabaseHandler dbHandler;
+
+
+    BroadcastReceiver bcFindBtDevs;
+
+    final BroadcastReceiver bcScanDevFinished = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                Toast.makeText(getApplicationContext(), "Scan beendet", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    final BroadcastReceiver bcScanDevStarted = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
 
 
     public void setMapListDataChild(HashMap<String, ArrayList<String>> mapListDataChild) {
@@ -148,6 +184,20 @@ public class ConnectionActivity extends Activity {
                 return false;
             }
         });
+
+
+        dbHandler = new DatabaseHandler(this);
+
+
+////        dbHelper = new DatabaseHandler(this);
+//
+//        SQLiteDatabase db = this.openOrCreateDatabase("test_db_name", MODE_PRIVATE, null);
+//        db.execSQL("Create table X (id int");
+//        db.execSQL("insert into X(id) values(1)");
+//        db.execSQL("Select * from X");
+//
+//        db.close();
+
     }
 
 
@@ -206,6 +256,57 @@ public class ConnectionActivity extends Activity {
             return rootView;
         }
     }
+
+    @Override
+    public void onDestroy() {
+        //  Abspeichern der Connections in der DB
+        super.onDestroy();
+
+        try {
+            unregisterReceiver(bcFindBtDevs);
+        } catch (Exception e) {}
+        try {
+            unregisterReceiver(bcScanDevFinished);
+        } catch(Exception e) {}
+        try {
+            unregisterReceiver(bcScanDevStarted);
+        } catch(Exception e) {}
+
+
+//        Log.d(LOG_TAG, "Abspeichern der Connections in der DB...");
+//        SQLiteDatabase db = dbHandler.getWritableDatabase();
+
+//        Iterator mapIterator = mapListDataChild.entrySet().iterator();
+//        while (mapIterator.hasNext()) {
+
+//            Map.Entry entry = (Map.Entry) mapIterator.next();
+//            ArrayList<String> values = (ArrayList<String>) entry.getValue();
+//            SQLiteStatement cmdStoreCon = db.compileStatement("INSERT INTO connections VALUES (null, ?, ?, ?)");
+//            cmdStoreCon.bindString(1, values.get(0));
+//            cmdStoreCon.bindString(2, (String) entry.getKey());
+//            cmdStoreCon.bindString(3, values.get(1));
+//            cmdStoreCon.execute();
+
+//            Log.d(LOG_TAG, "Eintrag zur DB hinzugefügt");
+//        }
+
+
+//        Cursor c = db.query("connections", new String[] {"connection_id", "type", "name", "address"}, null, null, null, null, null);
+//        while(c.moveToNext()) {
+//            Log.d(LOG_TAG, "hier");
+//            int id = c.getInt(0);
+//            String type = c.getString(1);
+//            String name = c.getString(2);
+//            String address = c.getString(3);
+//            Log.d(LOG_TAG, "DB ID: " + id + " " + type + " " + name + " " + address);
+//
+//        }
+
+//        db.close();
+
+//        this.deleteDatabase("DbArduinoGui");
+    }
+
 
 
     public void createNewConnection(View v) {
@@ -282,7 +383,7 @@ public class ConnectionActivity extends Activity {
         */
         final HashMap<String, String> mapAllDevsWithAddresses = new HashMap<String, String>(); //Key: Name, Data: Address
 
-        final BroadcastReceiver bcFindBtDevs = new BroadcastReceiver() {
+        /*final BroadcastReceiver */bcFindBtDevs = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
@@ -299,27 +400,27 @@ public class ConnectionActivity extends Activity {
             }
         };
 
-        final BroadcastReceiver bcScanDevFinished = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-                if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                    Toast.makeText(getApplicationContext(), "Scan beendet", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
-
-        final BroadcastReceiver bcScanDevStarted = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-                if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                    Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
-                }
-            }
-        };
+//        final BroadcastReceiver bcScanDevFinished = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                String action = intent.getAction();
+//
+//                if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+//                    Toast.makeText(getApplicationContext(), "Scan beendet", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        };
+//
+//        final BroadcastReceiver bcScanDevStarted = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                String action = intent.getAction();
+//
+//                if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+//                    Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        };
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter.isDiscovering()) // the button is pressed when it discovers, so cancel the discovery
@@ -539,4 +640,30 @@ public class ConnectionActivity extends Activity {
 
         return initialisingSuccessful;
     }
+
+
+
+
+//    public void testDb(View v) {
+//        SQLiteDatabase db = this.openOrCreateDatabase("testDb", MODE_PRIVATE, null);
+//        db.execSQL("create table if not exists Test (" +
+//                "id int," +
+//                "value text)");
+//
+////        db.execSQL("insert into Test values (3, 'Test1')");
+////
+////        Cursor c = db.query("Test", new String[] {"id"}, null, null, null, null, null);
+////        while(c.moveToNext()) {
+////            int id = c.getInt(0);
+////            Log.d(LOG_TAG, "DB ID: " + id/* + "\tData: " + c.getString(1)*/);
+////
+////        }
+////        Toast.makeText(this, "DB erfolgreich", Toast.LENGTH_SHORT).show();
+////        db.close();
+//
+//
+//        dbHandler.onUpgrade(db, 1, 2);
+//
+//        db.close();
+//    }
 }

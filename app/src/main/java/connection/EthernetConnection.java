@@ -15,7 +15,7 @@ import main.MainActivity;
 
 public class EthernetConnection implements IConnection {
 
-    private int id = 0;
+    private int id;
 
     private String conNameDeclaration;
     private String conAddressDeclaration;
@@ -126,6 +126,11 @@ public class EthernetConnection implements IConnection {
     //    @Override
     public void closeConnection() {
         instance = null;
+    }
+
+    @Override
+    public String toString() {
+        return conName;
     }
 
 

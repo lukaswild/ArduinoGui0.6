@@ -16,6 +16,7 @@ import main.MainActivity;
 
 public class BTConnection implements IConnection {
 
+    private static int btConCount;
     private int id = 0;
     private final static UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String LOG_TAG = "BTConnection";
@@ -156,7 +157,6 @@ public class BTConnection implements IConnection {
         BTConnection conDeclaration = new BTConnection();
         conDeclaration.setConNameDeclaration(conNameDeclaration);
         conDeclaration.setConAddressDeclaration(conAddressDeclaration);
-
         return conDeclaration;
     }
 
@@ -283,5 +283,10 @@ public class BTConnection implements IConnection {
             }
         } else
             Log.e(LOG_TAG, "Trennen: Keine Verbindung zum Beenden");
+    }
+
+    @Override
+    public String toString() {
+        return conName;
     }
 }
