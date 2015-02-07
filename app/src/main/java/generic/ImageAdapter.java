@@ -65,7 +65,7 @@ public class ImageAdapter extends BaseAdapter {
         //sollte verhindern, dass buttons nach dem Drehen, sprich wenn der standardkonstruktor wieder aufgerufen wird, wieder neu gezeichnet werden
         //wenn etwas vorhanden, dass soll das gezeichnet werden -> intialisierung soll nur einmal passieren.
         for (int i =0;i<40;i++){
-            imgRes.put(i,R.drawable.add1);
+            imgRes.put(i,R.drawable.add1); // TODO in die gui !!
         }
     }
 
@@ -102,7 +102,7 @@ public class ImageAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // ImageView imageView;
         MyImageView imageView;
-        ViewHolderItem viewHolder;
+        //ViewHolderItem viewHolder;
         if (convertView == null) {
 
 
@@ -115,25 +115,27 @@ public class ImageAdapter extends BaseAdapter {
        //     if(imageView.getName() == null)
                 imageView.setName(ELEMENT_NAME + position);
 
-            viewHolder = new ViewHolderItem();
-            viewHolder.imageview = imageView;
-            convertView =imageView;
-            convertView.setTag(viewHolder);
+           // viewHolder = new ViewHolderItem();
+           // viewHolder.imageview = imageView;
+           // convertView =imageView;
+          //  convertView.setTag(viewHolder);
 
         } else {
 
 
             imageView = (MyImageView) convertView;//auskommentieren ?
-           imageView.setName(ELEMENT_NAME + position);//auskommentierern ?
-            viewHolder = (ViewHolderItem) convertView.getTag();
+            //imageView.setName(ELEMENT_NAME + position);//auskommentierern ?
+            //viewHolder = (ViewHolderItem) convertView.getTag();
+          //  return viewHolder.imageview;
         }
        // ObjectItem objectItem = data
 
-        if (imageView!=null){
-            viewHolder.imageview.setImageResource((int) getItemInt(position));
-        }
+       // if (imageView!=null){
+         //   viewHolder.imageview.setImageResource((int) getItemInt(position));
+          //  return viewHolder.imageview;
+       // }
 
-
+        imageView.setImageResource((getItemInt(position)));
 
         return imageView;
 

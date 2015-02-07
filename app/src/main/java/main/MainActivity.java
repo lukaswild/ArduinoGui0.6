@@ -56,6 +56,7 @@ public class MainActivity extends Activity {
     private final String LOG_TAG = "MainActivity";
     private DatabaseHandler dbHandler;
     private SQLiteDatabase db;
+    private boolean editmode = false;
 
 
     //Getter Setter
@@ -146,7 +147,7 @@ public class MainActivity extends Activity {
 
 
         Log.d(LOG_TAG,"Vor Gui");
-        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);
+        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();
 
@@ -164,7 +165,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         ShowName();
-        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);
+        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 
     }
@@ -240,6 +241,21 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+
+    }
+
+    public void EditMode(View view) {
+        if (editmode ==true){
+            editmode =false;
+            //Beim Ändern des editmode muss die initialize ui neu aufgerufen werden, da sonst die initilize ui mit dem "alte" edit mode arbietet,
+            //mitdem sie vorher aufgerufen wurde, das produziert fehler
+            currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+
+        }
+         else{
+            editmode =true;
+            currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+        }
 
     }
 
@@ -399,7 +415,7 @@ public class MainActivity extends Activity {
                 imgadapt.notifyDataSetChanged();
                 currentProject.getGui().getGridView().clearAnimation();
                 popDialog.cancel();
-                currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection);
+                currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
 
             }
         });
@@ -457,6 +473,7 @@ public class MainActivity extends Activity {
         }
 
     }
+
 
     public void createDummyData(){
         // Dummy Daten für ExpandableListView

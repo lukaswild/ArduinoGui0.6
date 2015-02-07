@@ -58,7 +58,8 @@
             android:layout_height="wrap_content"
             android:text="Edit"
             android:id="@+id/switch1"
-            android:layout_gravity="center_vertical|center" />
+            android:layout_gravity="center_vertical|center"
+            android:onClick="EditMode"/>
 
     </FrameLayout>
 </FrameLayout>
