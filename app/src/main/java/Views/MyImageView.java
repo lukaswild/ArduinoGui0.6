@@ -9,6 +9,10 @@ import android.widget.ImageView;
 public class MyImageView extends ImageView {
     private String name;
 
+
+
+    private int id;
+
     public MyImageView(Context context) {
         super(context);
     }
@@ -24,5 +28,15 @@ public class MyImageView extends ImageView {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

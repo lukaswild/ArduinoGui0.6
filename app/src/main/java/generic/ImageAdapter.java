@@ -136,6 +136,10 @@ public class ImageAdapter extends BaseAdapter {
        // }
 
         imageView.setImageResource((getItemInt(position)));
+        imageView.setId(position);
+        if (getItemInt(position)==R.drawable.button_off){
+            imageView.setName("button");
+        }
 
         return imageView;
 

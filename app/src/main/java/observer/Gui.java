@@ -152,12 +152,44 @@ public class Gui extends View implements IObserver {
                 }
 
             });
+            project.getGui().getGridView().setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if ((v instanceof MyImageView )&& (event.getAction() == MotionEvent.ACTION_DOWN)){
+                        MyImageView view = (MyImageView) v;
+                        if (view.getName().equals("button")){
+                            Log.d(LOG_TAG, "Button angeklickt");
+                            Toast.makeText(getContext(), "button ausgewählt", Toast.LENGTH_SHORT).show();
+                            imgadapt.update(R.drawable.button_on, v.getId());
+                            imgadapt.notifyDataSetChanged();
+                            imgadapt.notifyDataSetInvalidated();
+                        }
+                    }
+
+                    if ((v instanceof MyImageView )&& (event.getAction() == MotionEvent.ACTION_UP)){
+                        MyImageView view = (MyImageView) v;
+                        if (view.getName().equals("button")){
+                            Log.d(LOG_TAG, "Button losgelassen");
+                            Toast.makeText(getContext(), "button abgewählt", Toast.LENGTH_SHORT).show();
+                            imgadapt.update(R.drawable.button_off, v.getId());
+                            imgadapt.notifyDataSetChanged();
+                            imgadapt.notifyDataSetInvalidated();
+                        }
+                    }
+
+
+                    return false;
+                }
+            });
+
 
         }
         else if (editmode){
             project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, final View v, final int position, long id) {
+
+                    //Ist das elemtn ein plus, wenn ja popup mit neuen elementen zeigen
                     if (imgadapt.getItemInt(position) == R.drawable.add1) {
                         PopupMenu popupMenu = new PopupMenu(getContext(), v);
                         popupMenu.inflate(R.menu.menu_popup);
@@ -169,16 +201,12 @@ public class Gui extends View implements IObserver {
                                 return AddButtonPressed(item, imgadapt, position, project);
                             }
                         });
-                    } else {
-                        project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    }
 
+                    //wenn nicht popup mit identifyer, delete zeigen
+                    else {
 
-
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, final View v, final int position, long id) {
-                                final Context context = getContext();
-
-                                if (imgadapt.getItemInt(position) != R.drawable.add1) {
+                                    final Context context = getContext();
                                     final PopupMenu popupMenu = new PopupMenu(context, v);
                                     popupMenu.inflate(R.menu.menu_popup_clickoptions);
                                     popupMenu.show();
@@ -209,133 +237,121 @@ public class Gui extends View implements IObserver {
                                                                         project.getElementByName("element" + position).setIdentifier("P1");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p2:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P2");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p3:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P3");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p4:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P4");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p5:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P5");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p6:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P6");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p7:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P7");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p8:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P8");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p9:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P9");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p10:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P10");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p11:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P11");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p12:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P12");
                                                                         return true;
                                                                     }
-                                                                    return false;
 
                                                                 case R.id.p13:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P13");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.p14:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P14");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.p15:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P15");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.a1:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("A1");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.a2:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("A2");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.a3:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("A3");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.a4:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("A4");
                                                                         return true;
                                                                     }
-                                                                    return false;
+
                                                                 case R.id.a5:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("A5");
                                                                         return true;
                                                                     }
-                                                                    return false;
+                                                                    imgadapt.notifyDataSetChanged();
 
                                                                 default:
                                                                     return false;
@@ -369,10 +385,6 @@ public class Gui extends View implements IObserver {
 
                                         }
                                     });
-
-                                }
-                            }
-                        });
 
                     }
 
