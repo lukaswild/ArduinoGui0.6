@@ -5,6 +5,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,11 +24,16 @@ import generic.CodeGenerator;
 import generic.ImageAdapter;
 
 public class Project extends Observable {
-    private static int id=0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
+    private int id = 0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
+    private static int count = 0;
 
     private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden
     private int numberOfRows; // Anzahl von Elementen in einer Reihe
     private int numberOfLines; // Anzahl von Elementen untereinander (Anzahl von Zeilen)
+
+    private Calendar creationDate = Calendar.getInstance();
+    private Calendar lastModifiedDate;
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH/mm");
 
     private Gui gui;
     private Db dbConnection; // TODO DB-Programmierung
@@ -43,13 +51,12 @@ public class Project extends Observable {
     }
 
     public void setName(String name) {
-        this.name =name;
+        this.name = name;
     }
 
     public Gui getGui() {
         return gui;
     }
-
 
     public int getId() {
         return id;
@@ -61,12 +68,27 @@ public class Project extends Observable {
 
     public HashMap<Integer, Element> getMapAllViewModels() {
         return mapAllViewModels;
-    }
+}
 
     public void setMapAllViewModels(HashMap<Integer, Element> mapAllViewModels) {
         this.mapAllViewModels = mapAllViewModels;
     }
 
+    public Calendar getCreationDate() {
+        return creationDate;
+    }
+
+    public Calendar getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(Calendar lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public void setGui(Gui gui) {
+        this.gui =gui;
+    }
 
     //Dinge wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondern neu erzeugt werden, da
     //sie auf dem aktuellen Context beruhen
@@ -88,10 +110,10 @@ public class Project extends Observable {
         this.elementSwitch = new SwitchModel();
         GridView view;
         this.gui = gui;
-
-
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
+        lastModifiedDate = creationDate;
+        id = ++count;
     }
 
     public Project(Gui gui, String name) {
@@ -106,9 +128,11 @@ public class Project extends Observable {
         this.name =name;
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
+        lastModifiedDate = creationDate;
+        id = ++count;
     }
 
-    public Project(Gui gui, String name, int id, ImageAdapter imageAdapter) {
+    public Project(Gui gui, String name, ImageAdapter imageAdapter) { // TODO neuen Konstruktor schreiben, mit allen Elementen übergeben wie in DB
 
 //        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
@@ -116,26 +140,39 @@ public class Project extends Observable {
         this.elementLed = new LedModel();
         this.elementSwitch = new SwitchModel();
         GridView view;
-        this.gui =gui;
+        this.gui = gui;
         this.name =name;
-        this.id=id;
         this.mapAllViewModels = new HashMap<Integer, Element>();
         this.imageAdapter = imageAdapter;
         addToObservers(gui); // Gui zur Liste der Observers hinzufügen - damit werden Updates an die Gui gesendet
+        lastModifiedDate = creationDate;
+        id = ++count;
     }
 
-    public void setGui(Gui gui) {
-        this.gui =gui;
+    public Project(Gui gui, int internalId, String name, Calendar creationDate, Calendar lastModifiedDate, HashMap<Integer, Element> mapAllViewModels) {
+        this.id = internalId;
+        this.name = name;
+        this.creationDate = creationDate;
+        this.lastModifiedDate = lastModifiedDate;
+        this.mapAllViewModels = mapAllViewModels;
+        this.imageAdapter = imageAdapter;
+        this.gui = gui;
+        addToObservers(gui); // Gui zur Liste der Observers hinzufügen - damit werden Updates an die Gui gesendet
+        numberOfRows = 2;
+        numberOfLines = 3;
     }
+
 
 
     public void addElement(int key, Element element) {
         mapAllViewModels.put(key, element);
+        setLastModifiedDate(Calendar.getInstance());
     }
 
     public boolean removeElement(int key) {
         if(mapAllViewModels.containsKey(key)) {
             mapAllViewModels.remove(key);
+            setLastModifiedDate(Calendar.getInstance());
             return true;
         }
         return false;
@@ -155,6 +192,10 @@ public class Project extends Observable {
         return null;
     }
 
+
+    public String getDateString(Calendar date) {
+        return dateFormat.format(date.getTime());
+    }
 
     /**
      * Wenn eine View durch ihren Listener ein Event liefert, so wird diese Methode ausgef�hrt.
@@ -176,7 +217,7 @@ public class Project extends Observable {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
 
             boolean curStatus = ((BoolElement) model).isStatusHigh();
-            boolean newStatus = !curStatus;
+            boolean newStatus = !curStatus; // TODO wenn Schalter betätigt wird, bevor Elemente verknüpft sind, so wird der falsche Status gesendet, da der Status einfach immer negiert wird
 
             if(model.getIdentifier() != null) {
                 String code = CodeGenerator.generateCodeToSend(newStatus, model.getIdentifier());
@@ -232,6 +273,7 @@ public class Project extends Observable {
 
     public void addModelToMap(int position, Element model) {
         mapAllViewModels.put(position, model);
+        setLastModifiedDate(Calendar.getInstance());
         Log.d(LOG_TAG, "Model wurde Map hinzugefügt");
         Log.d(LOG_TAG, "Größe der Map: " + mapAllViewModels.size());
     }
@@ -246,6 +288,7 @@ public class Project extends Observable {
     public void connectWith(Element e, String identifier) {
         // TODO Momentan wird Identifier in Element definiert --> Methode w�re unn�tig
     }
+
     //TODO Fehler
     private class ElementListener implements OnClickListener {
 

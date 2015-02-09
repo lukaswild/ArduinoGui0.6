@@ -89,10 +89,10 @@ public class ConnectionActivity extends Activity {
             String action = intent.getAction();
 
             if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
+        Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
+    }
+}
+};
 
 
 
@@ -101,7 +101,7 @@ public class ConnectionActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { // TODO ToggleButton von  currentConnection sofort auf "ein" setzen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection);
 

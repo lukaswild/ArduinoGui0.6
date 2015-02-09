@@ -49,6 +49,10 @@ public class ImageAdapter extends BaseAdapter {
         imgRes.put(id,name);
     }
 
+    public void setMap(HashMap<Integer, Integer> imgRes) {
+        this.imgRes = imgRes;
+    }
+
     public void remove(int key) {
         imgRes.remove(key);
     }
