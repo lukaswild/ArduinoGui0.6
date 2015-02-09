@@ -103,15 +103,12 @@ public class MainActivity extends Activity {
         // Auslesen aus der Datenbank
         dbHandler = new DatabaseHandler(this);
         db = dbHandler.getWritableDatabase();
-
-        allConnections = dbHandler.selectAllCons(db, this); // funktioniert
-        dbHandler.selectAllPros(db, this);
-
+//        allConnections = dbHandler.selectAllCons(db, this); // funktioniert
+//        allProjects = dbHandler.selectAllPros(db, this);
 
         Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1", imgadapt);
         Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2", imgadapt);
         Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3", imgadapt);
-
         allProjects.add(pro1);
         allProjects.add(pro2);
         allProjects.add(pro3);
@@ -194,6 +191,10 @@ public class MainActivity extends Activity {
 
         // Eintragen der Projekte in die DB
         dbHandler.updateProjects(allProjects, db);
+
+//        db.execSQL("DROP TABLE IF EXISTS connections");
+//        db.execSQL("DROP TABLE IF EXISTS projects");
+//        db.execSQL("DROP TABLE IF EXISTS elements");
     }
 
 

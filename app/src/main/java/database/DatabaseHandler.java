@@ -284,6 +284,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "from elements " +
                 "where project_fk = ?";
 
+        // Alle Projekte aus DB holen
         Cursor cProjects = db.query(TABLE_PROJECTS, new String[] {"_id", "projName", "internal_id", "creationDate", "lastModifiedDate"}, null, null, null, null, null);
         while (cProjects.moveToNext()) {
 
@@ -302,6 +303,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             HashMap<Integer, Element> mapAllViewModels = new HashMap<Integer, Element>();
 
+            // Alle zugehörigen Elemente zu diesem Projekt holen
             Cursor cElements = db.rawQuery(queryAllElements, new String[] {Integer.toString(pInternalId)});
             while ((cElements.moveToNext())) {
                 int eId = cElements.getInt(0);
@@ -330,14 +332,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 mapAllViewModels.put(position, e);
                 Log.d(LOG_TAG, eType + " auf Position " + position + " aus DB geholt");
-
             }
 
             Project p = new Project(null, pInternalId, pName, calCreationDate, calLastModifiedDate, mapAllViewModels);
             allProjsFromDb.add(p);
             Log.d(LOG_TAG, "Projekt " + pName + " aus DB geholt");
         }
-
         return allProjsFromDb;
     }
 
