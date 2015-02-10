@@ -47,6 +47,7 @@ public class ImageAdapter extends BaseAdapter {
     public void update(int name, int id) {
 
         imgRes.put(id,name);
+
     }
 
     public void remove(int key) {

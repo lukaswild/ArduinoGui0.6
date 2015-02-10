@@ -2,6 +2,8 @@ package elements;
 
 import android.util.Log;
 
+import com.example.arduinogui.R;
+
 import connection.IConnection;
 
 public class SwitchModel extends BoolElement implements InputElement {
@@ -12,6 +14,7 @@ public class SwitchModel extends BoolElement implements InputElement {
     public SwitchModel(String name, boolean statusHigh) {
 		super.name = name;
 		super.statusHigh = statusHigh;
+        super.setRessource(R.drawable.switch_off);
 	}
 	
 	public SwitchModel() {} 

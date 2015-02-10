@@ -29,6 +29,8 @@ import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
 import database.DatabaseHandler;
+import elements.Element;
+import elements.EmptyElement;
 import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
@@ -252,7 +254,7 @@ public class MainActivity extends Activity {
             currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
 
         }
-         else{
+        else{
             editmode =true;
             currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         }
@@ -472,6 +474,27 @@ public class MainActivity extends Activity {
             }
         }
 
+    }
+
+    public static void loadImgRes(){
+        //Zuerst muss die hashmap aus dem projekt(int, element) zu einer hashmap im imgadapt(int, int) gecastet werden
+
+        HashMap<Integer,Integer> cast = new HashMap<Integer, Integer>();
+
+        for (int i=0;i<imgadapt.getCount();i++){
+            imgadapt.update(R.drawable.add1,i);
+        }
+
+        for (int i=0;i<currentProject.getMapAllViewModels().size();i++){
+            //Plus hinzuzufügen wäre ja unnötgi, da die hashmap im imagedapter beim Erzeugen sowieso mit plus befüllt wird
+            //es soll nur ausgetauscht werden, was kein Plus ist.
+
+            if (!(currentProject.getElementFromMap(i) instanceof EmptyElement)){
+                imgadapt.update(currentProject.getRessourceFromMap(i),i);
+
+            }
+        }
+        imgadapt.notifyDataSetChanged();
     }
 
 

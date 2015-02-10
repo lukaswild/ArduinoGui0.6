@@ -19,9 +19,12 @@ import java.util.Map;
 import Views.MyImageView;
 import connection.IConnection;
 import elements.Element;
+import elements.EmptyElement;
 import elements.LedModel;
 import elements.SwitchModel;
 import generic.ImageAdapter;
+
+import static android.widget.AdapterView.OnItemSelectedListener;
 
 
 /* 
@@ -152,7 +155,7 @@ public class Gui extends View implements IObserver {
                 }
 
             });
-            project.getGui().getGridView().setOnTouchListener(new OnTouchListener() {
+          /*  project.getGui().getGridView().setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
                     if ((v instanceof MyImageView )&& (event.getAction() == MotionEvent.ACTION_DOWN)){
@@ -174,14 +177,30 @@ public class Gui extends View implements IObserver {
                             imgadapt.update(R.drawable.button_off, v.getId());
                             imgadapt.notifyDataSetChanged();
                             imgadapt.notifyDataSetInvalidated();
+
                         }
                     }
-
+                    Toast.makeText(getContext(), "ID"+event.getDeviceId(), Toast.LENGTH_SHORT).show();
 
                     return false;
                 }
-            });
+            });*/
 
+            project.getGui().getGridView().setOnItemSelectedListener (new OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    if (imgadapt.getItemInt(position)==R.drawable.button_off) {
+                        imgadapt.update(R.drawable.button_on, position);
+                        imgadapt.notifyDataSetChanged();
+                        // TODO Model für PushButton der Liste im Project adden
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
 
         }
         else if (editmode){
@@ -233,14 +252,15 @@ public class Gui extends View implements IObserver {
 
                                                             switch (item2.getItemId()) {
                                                                 case R.id.p1:
-                                                                    if (project.getElementByName("element" + position) != null) {
-                                                                        project.getElementByName("element" + position).setIdentifier("P1");
+                                                                    if (!(project.getElementFromMap(position) instanceof EmptyElement)) {
+                                                                        project.getElementFromMap(position).setIdentifier("P1");
                                                                         return true;
                                                                     }
 
                                                                 case R.id.p2:
                                                                     if (project.getElementByName("element" + position) != null) {
                                                                         project.getElementByName("element" + position).setIdentifier("P2");
+
                                                                         return true;
                                                                     }
 

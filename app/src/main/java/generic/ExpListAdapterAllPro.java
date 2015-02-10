@@ -40,8 +40,10 @@ public class ExpListAdapterAllPro extends ExpandableListAdapterGeneric {
             @Override
             public void onClick(View v) {
                 String key = listDataHeader.get(groupPosition).toString();
+                //Das ausgewählte Projekt wird als Current Projekt gesetzt
                 MainActivity.SetCurrentProjByName(key);
                 Toast.makeText(context,"jo", Toast.LENGTH_LONG).show();
+                MainActivity.loadImgRes();
 
             }
         });

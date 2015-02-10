@@ -1,2 +1,2 @@
 C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\classes\debug
-C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-8fb8c268772962085051b2e297b04c9689332dd1.jar
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-0b60dbb7cc328a309f0bc03338ef16f27909232b.jar

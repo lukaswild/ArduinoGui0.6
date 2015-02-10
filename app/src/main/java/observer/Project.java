@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.GridView;
 
+import com.example.arduinogui.R;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -13,6 +15,7 @@ import connection.BTConnection;
 import connection.IConnection;
 import elements.BoolElement;
 import elements.Element;
+import elements.EmptyElement;
 import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
@@ -67,6 +70,25 @@ public class Project extends Observable {
         this.mapAllViewModels = mapAllViewModels;
     }
 
+    public int getRessourceFromMap(int key){
+        //Die ID der Elemnte ist eine aufsteigende Nummer. Deshalb ist die Size gleich der höchsten nummer
+        if (mapAllViewModels.containsKey(key)){
+            return mapAllViewModels.get(key).getRessource();
+        }
+        else {
+            return R.drawable.add1;
+        }
+    }
+    public Element getElementFromMap(int key){
+        //Die ID der Elemnte ist eine aufsteigende Nummer. Deshalb ist die Size gleich der höchsten nummer
+        if (mapAllViewModels.containsKey(key)){
+            return mapAllViewModels.get(key);
+        }
+        else {
+           return null;
+        }
+    }
+
 
     //Dinge wie Views, Imageadapter, usw. sollten nicht gespeichert werden, sondern neu erzeugt werden, da
     //sie auf dem aktuellen Context beruhen
@@ -92,6 +114,7 @@ public class Project extends Observable {
 
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
+        setMap();
     }
 
     public Project(Gui gui, String name) {
@@ -106,6 +129,8 @@ public class Project extends Observable {
         this.name =name;
         this.mapAllViewModels = new HashMap<Integer, Element>();
         addToObservers(gui);
+        setMap();
+
     }
 
     public Project(Gui gui, String name, int id, ImageAdapter imageAdapter) {
@@ -122,6 +147,7 @@ public class Project extends Observable {
         this.mapAllViewModels = new HashMap<Integer, Element>();
         this.imageAdapter = imageAdapter;
         addToObservers(gui); // Gui zur Liste der Observers hinzufügen - damit werden Updates an die Gui gesendet
+        setMap();
     }
 
     public void setGui(Gui gui) {
@@ -148,8 +174,10 @@ public class Project extends Observable {
         while (iterator.hasNext()) {
             Map.Entry entry = (Map.Entry) iterator.next();
             Element e = (Element) entry.getValue();
-            if(e.getName().equals(name)) {
-                return e;
+            if (e.getName() != null) {
+                if (e.getName().equals(name)) {
+                    return e;
+                }
             }
         }
         return null;
@@ -252,6 +280,12 @@ public class Project extends Observable {
         @Override
         public void onClick(View v) {
             //	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Instanz
+        }
+    }
+
+    private void setMap(){
+        for (int i=0;i<40;i++){
+            mapAllViewModels.put(i,new EmptyElement());
         }
     }
 }
