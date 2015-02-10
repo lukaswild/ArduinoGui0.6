@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
     private final int REQUEST_CODE_NEW_PRO = 120;
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
-    private final String LOG_TAG = "MainActivity";
+    private final static String LOG_TAG = "MainActivity";
     private DatabaseHandler dbHandler;
     private SQLiteDatabase db;
     private boolean editmode = false;
@@ -97,16 +97,24 @@ public class MainActivity extends Activity {
                     .add(R.id.container, new PlaceholderFragment()).commit();
 
         }
+//        db.execSQL("DROP TABLE IF EXISTS connections");
+//        db.execSQL("DROP TABLE IF EXISTS projects");
+//        db.execSQL("DROP TABLE IF EXISTS elements");
+        currentProject = new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt);
 
-        currentProject =new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X", 11, imgadapt);
+        // Auslesen aus der Datenbank
+        dbHandler = new DatabaseHandler(this);
+        db = dbHandler.getWritableDatabase();
+        allConnections = dbHandler.selectAllCons(db, this); // funktioniert
+        allProjects = dbHandler.selectAllPros(db, this);
+        Log.d(LOG_TAG, "Größe von allProjects: " + allProjects.size());
 
-        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1",1, imgadapt);
-        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2",2, imgadapt);
-        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3",3, imgadapt);
-
-        allProjects.add(pro1);
-        allProjects.add(pro2);
-        allProjects.add(pro3);
+//        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1", imgadapt);
+//        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2", imgadapt);
+//        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3", imgadapt);
+//        allProjects.add(pro1);
+//        allProjects.add(pro2);
+//        allProjects.add(pro3);
 
         //soll angezeigt werden wenn es noch kein einziges projekt gibt
         if(allProjects.isEmpty()) {
@@ -135,14 +143,8 @@ public class MainActivity extends Activity {
 
         }
 
-
-
-        //Alle Projekte haben eine ID. Die ID wird beim Erzeugen eines neuen Projekts gesetzt (im Konstruktor
-        //von Projekt), das heißt das letute erzeuget Projekt hat die höchste ID. Diese projekt wird gesucht und
-        //auf CurrentProjekt gesetzt
-
         else {
-            currentProject = allProjects.get(allProjects.size()-1);
+            // TODO Projekt setzten, welches als letztes editiert wurde oder welches als letztes geöffnet war?
         }
 
         imgadapt = new ImageAdapter(this);
@@ -155,10 +157,6 @@ public class MainActivity extends Activity {
 
 //        createDummyData();
 
-        dbHandler = new DatabaseHandler(this);
-        db = dbHandler.getWritableDatabase();
-
-        allConnections = dbHandler.selectAllCons(db, this);
 
     }
 
@@ -191,11 +189,15 @@ public class MainActivity extends Activity {
         ArrayList<String> allConsName = new ArrayList<String>();
         ArrayList<String> allConsType = new ArrayList<String>();
         ArrayList<String> allConsAddress = new ArrayList<String>();
-
-
         splitConsIntoLists(allConsType, allConsName, allConsAddress);
         dbHandler.updateConnections(allConsName, allConsType, allConsAddress, db);
 
+        // Eintragen der Projekte in die DB
+        dbHandler.updateProjects(allProjects, db, this);
+
+//        db.execSQL("DROP TABLE IF EXISTS connections");
+//        db.execSQL("DROP TABLE IF EXISTS projects");
+//        db.execSQL("DROP TABLE IF EXISTS elements");
     }
 
 
@@ -339,6 +341,18 @@ public class MainActivity extends Activity {
     }
 
 
+    public static boolean removeConnection(String conName) {
+        for (IConnection c: allConnections) {
+            if(c.getConNameDeclaration().equals(conName)) {
+                if(allConnections.remove(c) == true) {
+                    Log.d(LOG_TAG, "Connection " + conName + " von Liste entfernt");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public void ShowDialog(){
 
@@ -453,7 +467,6 @@ public class MainActivity extends Activity {
                         //  BTConnection btConnection = BTConnection.initialiseConnection(name, address); // TODO wenn Verbindung am Arduino unterbrochen --> wird nicht mehr aufgebaut, da bei App bereits instantiiert
                         // currentProject.setCurrentConnection(btConnection);
 
-
                     }
                     if (conTypeInt == 2) { // Ethernet
 //                        EthernetConnection ethernetConnection = EthernetConnection.initialiseConnection(name, address);
@@ -464,16 +477,17 @@ public class MainActivity extends Activity {
                 }
             }
 
-            if (requestCode == REQUEST_CODE_NEW_PRO) {
+            else if (requestCode == REQUEST_CODE_NEW_PRO) {
                 String proName = "";
                 if (data.getExtras().containsKey("name")) {
                     proName = data.getExtras().getString("name");
+                    Project newProj = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))), proName, imgadapt); // TODO hier darf nicht der mit Elementen versehene imgadapt übergeben werden
+                    allProjects.add(newProj);
+                    currentProject = newProj;
                     currentProject.setName(proName);
                 }
-
             }
         }
-
     }
 
     public static void loadImgRes(){

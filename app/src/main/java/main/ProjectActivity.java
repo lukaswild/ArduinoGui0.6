@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
@@ -21,7 +20,6 @@ import com.example.arduinogui.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import generic.ExpListAdapterAllCons;
 import generic.ExpListAdapterAllPro;
 
 /**
@@ -148,6 +146,7 @@ public class ProjectActivity extends  Activity {
 
         if (ProName != "") { // Bluetooth oder Ethernet
             // Log.d(LOG_TAG, Integer.toString(conType));
+            dialogNewPro.dismiss();
             setResultToActivity(ProName); // Variablen conType, strConName und address zur�ckliefern
         }
         else // nichts ausgew�hlt - sollte �berhaupt nicht vorkommen (als Absicherung wird es abgefangen)
@@ -175,6 +174,11 @@ public class ProjectActivity extends  Activity {
         if(intent.getExtras().containsKey(key))
             listExtra = intent.getExtras().getStringArrayList(key);
         return listExtra;
+    }
+
+
+    public static void dismiss() {
+
     }
 
 }

@@ -3,9 +3,8 @@ package elements;
 
 public class Element {
 
-	protected String name;
+	protected String name;  // TODO notwendig?
 	protected String identifier;
-
 
 
     protected int ressource;

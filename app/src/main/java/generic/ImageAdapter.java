@@ -30,7 +30,6 @@ public class ImageAdapter extends BaseAdapter {
     private Context mContext;
 
 
-
     public int getLength() {
         return length;
     }
@@ -48,6 +47,10 @@ public class ImageAdapter extends BaseAdapter {
 
         imgRes.put(id,name);
 
+    }
+
+    public void setMap(HashMap<Integer, Integer> imgRes) {
+        this.imgRes = imgRes;
     }
 
     public void remove(int key) {

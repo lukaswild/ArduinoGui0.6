@@ -42,7 +42,8 @@ public class ExpListAdapterAllPro extends ExpandableListAdapterGeneric {
                 String key = listDataHeader.get(groupPosition).toString();
                 //Das ausgewählte Projekt wird als Current Projekt gesetzt
                 MainActivity.SetCurrentProjByName(key);
-                Toast.makeText(context,"jo", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Projekt ausgewählt: " + key, Toast.LENGTH_LONG).show();
+                // TODO zu Main zuückkehren          
                 MainActivity.loadImgRes();
 
             }
