@@ -46,5 +46,10 @@
     <string name="popupMenuEntryAlterCon">Bearbeiten</string>
     <string name="classSwitchModel">class elements.SwitchModel</string>
     <string name="classLedModel">"class elements.LedModel"</string>
+    <string name="txtAddress">Adresse</string>
+    <string name="txtMacAddressBT">MAC-Adresse des Bluetooth-Moduls</string>
+    <string name="txtMacAddress">MAC-Adresse</string>
+    <string name="txtIpAddressArduino">IP-Adresse des Arduinos</string>
+    <string name="txtIpAddress">IP-Adresse</string>
 
 </resources>

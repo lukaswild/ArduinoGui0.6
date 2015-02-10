@@ -16,6 +16,10 @@ public interface IConnection {
 
     public String getConAddressDeclaration();
 
+    public void setConNameDeclaration(String name);
+
+    public void setConAddressDeclaration(String address);
+
     public void setAddress(String address);
 
     public String getAddress();

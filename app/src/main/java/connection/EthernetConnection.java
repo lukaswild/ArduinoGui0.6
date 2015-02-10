@@ -35,18 +35,22 @@ public class EthernetConnection implements IConnection {
         this.id = id;
     }
 
+    @Override
     public String getConNameDeclaration() {
         return conNameDeclaration;
     }
 
+    @Override
     public void setConNameDeclaration(String conNameDeclaration) {
         this.conNameDeclaration = conNameDeclaration;
     }
 
+    @Override
     public String getConAddressDeclaration() {
         return conAddressDeclaration;
     }
 
+    @Override
     public void setConAddressDeclaration(String conAddressDeclaration) {
         this.conAddressDeclaration = conAddressDeclaration;
     }

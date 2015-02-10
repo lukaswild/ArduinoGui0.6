@@ -180,9 +180,14 @@ public final class R {
         public static final int title_activity_new_project=0x7f060020;
         public static final int tvAvailableBtDevices=0x7f060021;
         public static final int tvConName=0x7f060022;
-        public static final int txtAllCons=0x7f060023;
-        public static final int txtAllPro=0x7f060024;
-        public static final int txtConType=0x7f060025;
+        public static final int txtAddress=0x7f060023;
+        public static final int txtAllCons=0x7f060024;
+        public static final int txtAllPro=0x7f060025;
+        public static final int txtConType=0x7f060026;
+        public static final int txtIpAddress=0x7f060027;
+        public static final int txtIpAddressArduino=0x7f060028;
+        public static final int txtMacAddress=0x7f060029;
+        public static final int txtMacAddressBT=0x7f06002a;
     }
     public static final class style {
         /** 

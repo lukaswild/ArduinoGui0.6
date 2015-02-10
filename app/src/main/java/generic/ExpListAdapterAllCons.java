@@ -23,9 +23,13 @@ import main.ConnectionActivity;
 public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
 
     private final String LOG_TAG = "ExpListAdapterAllCons";
+    private ArrayList<String> listDataHeader;
+    private int currentConPosition;
 
-    public ExpListAdapterAllCons(Context context, ArrayList<String> listDataHeader, HashMap<String, ArrayList<String>> listChildData) {
+    public ExpListAdapterAllCons(Context context, ArrayList<String> listDataHeader, HashMap<String, ArrayList<String>> listChildData, int currentConPosition) {
         super(context, listDataHeader, listChildData);
+        this.listDataHeader = listDataHeader;
+        this.currentConPosition = currentConPosition;
     }
 
     @Override
@@ -38,6 +42,14 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
 
         final ToggleButton tglBtnChooseCloseCon = getToggleButton(convertView);
         setStateTexts(tglBtnChooseCloseCon, "auswählen", "trennen"); // Text für Zustände ein und aus des ToggleButtons setzen
+
+        if(currentConPosition != -1) {
+            if(groupPosition == currentConPosition) {
+                tglBtnChooseCloseCon.toggle();
+            }
+        }
+
+
 
         // Listener zu ToggleButton hinzufügen
         tglBtnChooseCloseCon.setOnClickListener(new View.OnClickListener() {

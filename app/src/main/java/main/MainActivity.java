@@ -29,7 +29,6 @@ import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
 import database.DatabaseHandler;
-import elements.Element;
 import elements.EmptyElement;
 import generic.ImageAdapter;
 import observer.Gui;
@@ -293,11 +292,22 @@ public class MainActivity extends Activity {
 
         splitConsIntoLists(allConsType, allConsHeader, allConsAddress);
 
-//        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
-
         newConIntent.putExtra("allConsType", allConsType);
         newConIntent.putExtra("allConsHeader", allConsHeader);
         newConIntent.putExtra("allConsAddress", allConsAddress);
+
+        try {
+            Log.d(LOG_TAG, "Current connection name: " + currentConnection.getConName());
+            int currentConPosition;
+            for(int i = 0; i < allConsHeader.size(); i++) {
+                if(currentConnection.getConName().equals(allConsHeader.get(i))) {
+                    newConIntent.putExtra("currentConPosition", i);
+                }
+            }
+
+        } catch  (Exception e) {
+            Log.d(LOG_TAG, "Es gibt aktuell keine aufgebaute Verbindung");
+        }
 
         startActivityForResult(newConIntent, REQUEST_CODE_NEW_CON);
     }
@@ -344,7 +354,7 @@ public class MainActivity extends Activity {
     public static boolean removeConnection(String conName) {
         for (IConnection c: allConnections) {
             if(c.getConNameDeclaration().equals(conName)) {
-                if(allConnections.remove(c) == true) {
+                if(allConnections.remove(c)) {
                     Log.d(LOG_TAG, "Connection " + conName + " von Liste entfernt");
                     return true;
                 }
@@ -419,7 +429,6 @@ public class MainActivity extends Activity {
                                              }
                                          }
         );
-
 
 
         final Button button = (Button)Viewlayout.findViewById(R.id.buttonOK);

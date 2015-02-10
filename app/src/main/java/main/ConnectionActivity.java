@@ -67,6 +67,7 @@ public class ConnectionActivity extends Activity {
 //    private String[] allColumns = { DatabaseHandler.COLUMN_ID,
 //            DatabaseHandler.COLUMN_CONNECTION };
 
+
     DatabaseHandler dbHandler;
 
 
@@ -89,10 +90,10 @@ public class ConnectionActivity extends Activity {
             String action = intent.getAction();
 
             if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-        Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
-    }
-}
-};
+                Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
 
 
@@ -109,11 +110,15 @@ public class ConnectionActivity extends Activity {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment()).commit();
         }
-        Intent parentIntent = getIntent();
 
-        ArrayList<String> allConsType = getIntentExtra(parentIntent, "allConsType");
+        Intent parentIntent = getIntent();
+        final ArrayList<String> allConsType = getIntentExtra(parentIntent, "allConsType");
         final ArrayList<String> allConsHeader = getIntentExtra(parentIntent, "allConsHeader");
-        ArrayList<String> allConsAddress = getIntentExtra(parentIntent, "allConsAddress");
+        final ArrayList<String> allConsAddress = getIntentExtra(parentIntent, "allConsAddress");
+        int currentConPosition = -1;
+        if(parentIntent.getExtras().containsKey("currentConPosition")) {
+            currentConPosition = parentIntent.getExtras().getInt("currentConPosition");
+        }
 
         mapListDataChild = new HashMap<String, ArrayList<String>>();
 
@@ -121,7 +126,7 @@ public class ConnectionActivity extends Activity {
         fillHashMap(allConsType, allConsHeader, allConsAddress, mapListDataChild);
 
         expListView = (ExpandableListView) findViewById(R.id.listViewAvailableCons);
-        expListAdapter = new ExpListAdapterAllCons(this, allConsHeader, mapListDataChild);
+        expListAdapter = new ExpListAdapterAllCons(this, allConsHeader, mapListDataChild, currentConPosition);
 
 
         // der ExpandableListView den Adapter übergeben
@@ -130,8 +135,9 @@ public class ConnectionActivity extends Activity {
 
         expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
+                final int positionFinal = position;
                 final PopupMenu popupConOptions = new PopupMenu(getApplicationContext(), view);
                 popupConOptions.inflate(R.menu.menu_popup_connection);
                 final String keyChosen = parent.getItemAtPosition(position).toString();
@@ -161,21 +167,80 @@ public class ConnectionActivity extends Activity {
                                     return true;
 
 
-                                case R.id.alterCon: // TODO App stürzt ab - NullPointerException
-                                    TextView tvConAddressAlter = (TextView) findViewById(R.id.tvConAddressAlter);
-                                    EditText etConAddressAlter = (EditText) findViewById(R.id.etConAddressAlter);
+                                case R.id.alterCon:
+
+                                    IConnection con = null;
+
+                                    for (IConnection c : MainActivity.getAllConnections()) {
+                                        if (c.getConNameDeclaration().equals(keyChosen))
+                                            con = c;
+                                    }
+
+                                    if(con == null) {
+                                        Toast.makeText(getBaseContext(), "Es ist leider ein Fehler aufgetreten", Toast.LENGTH_SHORT).show();
+                                        Log.e(LOG_TAG, "Bearbeiten nicht möglich, kein passender Eintrag in Liste gefunden");
+                                        return false;
+                                    }
+
                                     dialogAlterCon = new Dialog(ConnectionActivity.this);
                                     dialogAlterCon.setTitle("Verbindung bearbeiten");
                                     dialogAlterCon.setContentView(R.layout.alter_connection);
+
+                                    final IConnection conFinal = con;
+                                    TextView tvConAddressAlter = (TextView) dialogAlterCon.findViewById(R.id.tvConAddressAlter);
+                                    TextView tvConNameAlter = (TextView) dialogAlterCon.findViewById(R.id.tvConNameAlter);
+                                    final EditText etConNameAlter = (EditText) dialogAlterCon.findViewById(R.id.etConNameAlter);
+                                    final EditText etConAddressAlter = (EditText) dialogAlterCon.findViewById(R.id.etConAddressAlter);
+                                    Button btnSubmitAlter = (Button) dialogAlterCon.findViewById(R.id.btnSubmitAlter);
+                                    Button btnCancelAlter = (Button) dialogAlterCon.findViewById(R.id.btnCancelAlter);
+
+                                    if(conFinal instanceof BTConnection) {
+                                        tvConAddressAlter.setText(getBaseContext().getString(R.string.txtMacAddressBT));
+                                        etConAddressAlter.setHint(getBaseContext().getString(R.string.txtMacAddress));
+                                    }
+                                    else {
+                                        tvConAddressAlter.setText(getBaseContext().getString(R.string.txtIpAddressArduino));
+                                        etConAddressAlter.setHint(getBaseContext().getString(R.string.txtIpAddress));
+                                    }
+
+                                    etConNameAlter.setText(con.getConNameDeclaration());
+                                    etConAddressAlter.setText(con.getConAddressDeclaration());
+
+
+                                    btnSubmitAlter.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            String newConName = etConNameAlter.getText().toString();
+                                            String newConAddress = etConAddressAlter.getText().toString();
+
+                                            conFinal.setConNameDeclaration(newConName);
+                                            conFinal.setConAddressDeclaration(newConAddress);
+
+                                            MainActivity.getAllConnections().set(position, conFinal);
+
+                                            // Ändern in allConsHeader und mapListDataChild
+                                            Log.d(LOG_TAG, positionFinal + "");
+                                            Log.d(LOG_TAG, allConsHeader.get(position));
+                                            allConsHeader.set(position, newConName);
+                                            allConsAddress.set(position, newConAddress);
+                                            mapListDataChild.remove(keyChosen);
+
+                                            ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+                                            child.add(allConsType.get(position));
+                                            child.add(newConAddress);
+                                            mapListDataChild.put(newConName, child);
+
+                                            expListAdapter.notifyDataSetChanged();
+                                            dialogAlterCon.dismiss();
+                                        }
+                                    });
+
+
+                                    btnCancelAlterSetOnClickListener(btnCancelAlter);
+
+
                                     dialogAlterCon.show();
-
-                                    // Überprüfung, ob BT oder Ethernet Connection
-                                    tvConAddressAlter.setText("");
-                                    etConAddressAlter.setHint("");
-
-
                                     return true;
-
 
                             }
                             return false;
@@ -185,6 +250,16 @@ public class ConnectionActivity extends Activity {
                 return false;
             }
         });
+
+//        if(!(currentConName.equals(""))) {
+//            for(int i = 0; i < allConsHeader.size(); i++) {
+//                if(allConsHeader.get(i).equals(currentConName)) {
+//                    Toast.makeText(this, "Verbindung " + currentConName + " auf Position " + i + " ist aufgebaut", Toast.LENGTH_LONG).show();
+//
+//
+//                }
+//            }
+//        }
 
 
         dbHandler = new DatabaseHandler(this);
@@ -201,6 +276,15 @@ public class ConnectionActivity extends Activity {
 
     }
 
+
+    private void btnCancelAlterSetOnClickListener(Button btnCancelAlter) {
+        btnCancelAlter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogAlterCon.cancel();
+            }
+        });
+    }
 
 
     private ArrayList<String> getIntentExtra(Intent intent, String key) {
@@ -272,40 +356,6 @@ public class ConnectionActivity extends Activity {
         try {
             unregisterReceiver(bcScanDevStarted);
         } catch(Exception e) {}
-
-
-//        Log.d(LOG_TAG, "Abspeichern der Connections in der DB...");
-//        SQLiteDatabase db = dbHandler.getWritableDatabase();
-
-//        Iterator mapIterator = mapListDataChild.entrySet().iterator();
-//        while (mapIterator.hasNext()) {
-
-//            Map.Entry entry = (Map.Entry) mapIterator.next();
-//            ArrayList<String> values = (ArrayList<String>) entry.getValue();
-//            SQLiteStatement cmdStoreCon = db.compileStatement("INSERT INTO connections VALUES (null, ?, ?, ?)");
-//            cmdStoreCon.bindString(1, values.get(0));
-//            cmdStoreCon.bindString(2, (String) entry.getKey());
-//            cmdStoreCon.bindString(3, values.get(1));
-//            cmdStoreCon.execute();
-
-//            Log.d(LOG_TAG, "Eintrag zur DB hinzugefügt");
-//        }
-
-
-//        Cursor c = db.query("connections", new String[] {"connection_id", "type", "name", "address"}, null, null, null, null, null);
-//        while(c.moveToNext()) {
-//            Log.d(LOG_TAG, "hier");
-//            int id = c.getInt(0);
-//            String type = c.getString(1);
-//            String name = c.getString(2);
-//            String address = c.getString(3);
-//            Log.d(LOG_TAG, "DB ID: " + id + " " + type + " " + name + " " + address);
-//
-//        }
-
-//        db.close();
-
-//        this.deleteDatabase("DbArduinoGui");
     }
 
 
@@ -471,8 +521,8 @@ public class ConnectionActivity extends Activity {
 
                     case 1:
                         conType = 1;
-                        tvConAddress.setText("MAC-Adresse des Bluetooth-Moduls");
-                        etConAddress.setHint("MAC-Adresse");
+                        tvConAddress.setText(getString(R.string.txtMacAddressBT));
+                        etConAddress.setHint(getString(R.string.txtMacAddress));
                         btnScanBtDevices.setVisibility(View.VISIBLE);
                         btnScanBtDevices.setEnabled(true);
                         showConViews(etConName, tvConAddress, etConAddress, btnSubmit);
@@ -480,8 +530,8 @@ public class ConnectionActivity extends Activity {
 
                     case 2:
                         conType = 2;
-                        tvConAddress.setText("IP-Adresse des Arduinos");
-                        etConAddress.setHint("IP-Adresse");
+                        tvConAddress.setText(getString(R.string.txtIpAddressArduino));
+                        etConAddress.setHint(getString(R.string.txtIpAddress));
                         showConViews(etConName, tvConAddress, etConAddress, btnSubmit);
                         btnScanBtDevices.setVisibility(View.INVISIBLE);
                         btnScanBtDevices.setEnabled(true);
@@ -529,9 +579,6 @@ public class ConnectionActivity extends Activity {
         conAddress.trim();
 
         switch (conType) { // 0 (nichts ausgewählt), 1 (BT), oder 2 (Ethernet)
-//            conAdapter.addToObservers(conName);
-//            conAdapter.addToObservers(conAddress);
-//               conAdapter.notifyDataSetChanged();
 
             case 0: // nichts ausgewählt - sollte nicht vorkommene
                 Toast.makeText(getApplicationContext(), "Es wurde nichts ausgewählt. ", Toast.LENGTH_SHORT).show();
@@ -542,12 +589,17 @@ public class ConnectionActivity extends Activity {
                 strConType = "Bluetooth-Verbindung";
                 IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
                 addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddB);
+
+//                finish(); // TODO gleich Verbindug aufbauen, sobald angelegt?
+//                chooseConnection(conName);
                 break;
 
             case 2: // Ethernet-Verbindung ausgewählt
                 strConType = "Ethernet-Verbindung";
                 IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
                 addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddE);
+//                chooseConnection(conName);
+//                finish();
                 break;
         }
 
@@ -629,7 +681,7 @@ public class ConnectionActivity extends Activity {
         String clickedConType = clickedEntry.get(0);
         String clickedConName = key;
         String clickedConAddress = clickedEntry.get(1);
-        boolean initialisingSuccessful = false;
+        boolean initialisingSuccessful;
         Log.d(LOG_TAG, clickedConType);
         Log.d(LOG_TAG, clickedConName);
 
@@ -641,30 +693,4 @@ public class ConnectionActivity extends Activity {
 
         return initialisingSuccessful;
     }
-
-
-
-
-//    public void testDb(View v) {
-//        SQLiteDatabase db = this.openOrCreateDatabase("testDb", MODE_PRIVATE, null);
-//        db.execSQL("create table if not exists Test (" +
-//                "id int," +
-//                "value text)");
-//
-////        db.execSQL("insert into Test values (3, 'Test1')");
-////
-////        Cursor c = db.query("Test", new String[] {"id"}, null, null, null, null, null);
-////        while(c.moveToNext()) {
-////            int id = c.getInt(0);
-////            Log.d(LOG_TAG, "DB ID: " + id/* + "\tData: " + c.getString(1)*/);
-////
-////        }
-////        Toast.makeText(this, "DB erfolgreich", Toast.LENGTH_SHORT).show();
-////        db.close();
-//
-//
-//        dbHandler.onUpgrade(db, 1, 2);
-//
-//        db.close();
-//    }
 }

@@ -41,7 +41,6 @@
                     android:hint="@string/etConNameHint"
                     android:maxLength="20">
 
-                    <requestFocus />
                 </EditText>
 
                 <Space
