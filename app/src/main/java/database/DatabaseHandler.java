@@ -87,10 +87,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private void createTableElements(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_ELEMENTS + " (" +
                 COLUMN_ID + " integer PRIMARY KEY AUTOINCREMENT," +
-                "kind text NOT NULL," +
-                "type text NOT NULL," +
+                "kind text NOT NULL," + // Bool oder Pwm
+                "type text NOT NULL," + // z.B. SwitchModel, LedModel,...
                 "position integer NOT NULL," +
                 "status integer NOT NULL," +
+                "identifier integer NULL," + // Wenn identifier noch nicht gesetzt wurde, so darf er null sein
                 "project_fk int NOT NULL," +
                 "CONSTRAINT project_fk FOREIGN KEY (project_fk) " +
                 "REFERENCES projects (project_id)" +
@@ -123,12 +124,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public void updateProjects(ArrayList<Project> allProjects, SQLiteDatabase db) {
+    public void updateProjects(ArrayList<Project> allProjects, SQLiteDatabase db, Context context) {
 //        db.delete("projects", "", null);
 //        db.delete("elements", "", null);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS); // TODO nur Daten löschen oder ganze Tabelle löschen? Vorteil ganze Tabelle: id beginnt von vorne
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
         onCreate(db);
+
+//        allProjects.clear();
 
         for(Project p : allProjects) {
             // Projekt eintragen
@@ -164,17 +167,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     status = ((PwmElement) element).getCurrentPwm();
                 }
 
-                SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ? )" );
+                SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ? )" );
                 cmdInsertElements.bindString(1, elementKind); // Bool- oder Pwm-Element
                 cmdInsertElements.bindString(2, elementType); // z.B. Switch, Led,...
                 cmdInsertElements.bindLong(3, key);
                 cmdInsertElements.bindLong(4, status);
-                cmdInsertElements.bindLong(5, p.getId());
+                if(element.getIdentifier() != null)
+                    cmdInsertElements.bindString(5, element.getIdentifier());
+                else
+                    cmdInsertElements.bindNull(5);
+                cmdInsertElements.bindLong(6, p.getId());
                 cmdInsertElements.execute();
                 Log.d(LOG_TAG, "Element eingetragen: " + elementType + " Position: " + key + " Projekt: " + p.getId());
             }
         }
-//        selectAllPros(db);
+//        ArrayList<Project> allProsFromDb = selectAllPros(db, context);
     }
 
 
@@ -184,14 +191,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO projects VALUES (null, 'test3', '2014-2-7', '2015-2-6')");
         db.execSQL("INSERT INTO projects VALUES (null, 'test4', '2015-2-7', '2015-2-6')");
         db.execSQL("INSERT INTO projects VALUES (null, 'test5', '2055-2-7', '2015-2-6')");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest1', 2, 'on', 1)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest2', 3, 'off', 2)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest3', 4, 'on', 1)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest4', 10, 'off', 2)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest5', 1, 'off', 1)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest6', 5, 'off', 3)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest7', 15, 'off', 3)");
-        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest8', 13, 'off', 1)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest1', 2, 'on', 'P1', 1)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest2', 3, 'off', 'P1', 2)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest3', 4, 'on', 'P2', 1)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest4', 10, 'off', 'A5', 2)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest5', 1, 'off', 'A5', 1)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest6', 5, 'off', 'P5', 3)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest7', 15, 'off', 'P5', 3)");
+        db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest8', 13, 'off', 'P6', 1)");
 
 
         Cursor c = db.query(TABLE_PROJECTS, new String[]{"_id, projName, creationDate, lastModifiedDate"}, null, null, null, null, null);
@@ -311,10 +318,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 String eType = cElements.getString(2);
                 int position = cElements.getInt(3); // Key in HashMap
                 int status = cElements.getInt(4);
-                int project_fk = cElements.getInt(5);
+                String identifier = cElements.getString(5);
+                int project_fk = cElements.getInt(6);
 
-                Log.d(LOG_TAG, pName + " ID: " + eId + " Art: " + eKind + " Typ: " + eType + " Position: " + position + " Status: " + status + " ProjectFk: " + project_fk);
+                Log.d(LOG_TAG, pName + " ID: " + eId + " Art: " + eKind + " Typ: " + eType + " Position: " + position + " Status: " + status + "Identifier: " + identifier + " ProjectFk: " + project_fk);
+
+                // Erzeugen eines neuen Elements mit genau diesen Daten, um die HashMap zu füllen
                 Element e = new Element();
+                e.setIdentifier(identifier);
 
                 if(eType.equals(context.getString(R.string.classSwitchModel)))
                     e = new SwitchModel();
@@ -329,6 +340,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 }
                 else
                     ((PwmElement)e).setCurrentPwm(status);
+
 
                 mapAllViewModels.put(position, e);
                 Log.d(LOG_TAG, eType + " auf Position " + position + " aus DB geholt");

@@ -1,21 +1,17 @@
 package generic;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import connection.BTConnection;
-import main.ConnectionActivity;
 import main.MainActivity;
 
 /**
@@ -41,8 +37,8 @@ public class ExpListAdapterAllPro extends ExpandableListAdapterGeneric {
             public void onClick(View v) {
                 String key = listDataHeader.get(groupPosition).toString();
                 MainActivity.SetCurrentProjByName(key);
-                Toast.makeText(context,"jo", Toast.LENGTH_LONG).show();
-
+                Toast.makeText(context, "Projekt ausgewählt: " + key, Toast.LENGTH_LONG).show();
+                // TODO zu Main zuückkehren
             }
         });
 

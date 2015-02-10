@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
     private final int REQUEST_CODE_NEW_PRO = 120;
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
-    private final String LOG_TAG = "MainActivity";
+    private final static String LOG_TAG = "MainActivity";
     private DatabaseHandler dbHandler;
     private SQLiteDatabase db;
     private boolean editmode = false;
@@ -103,15 +103,16 @@ public class MainActivity extends Activity {
         // Auslesen aus der Datenbank
         dbHandler = new DatabaseHandler(this);
         db = dbHandler.getWritableDatabase();
-//        allConnections = dbHandler.selectAllCons(db, this); // funktioniert
-//        allProjects = dbHandler.selectAllPros(db, this);
+        allConnections = dbHandler.selectAllCons(db, this); // funktioniert
+        allProjects = dbHandler.selectAllPros(db, this);
+        Log.d(LOG_TAG, "Größe von allProjects: " + allProjects.size());
 
-        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1", imgadapt);
-        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2", imgadapt);
-        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3", imgadapt);
-        allProjects.add(pro1);
-        allProjects.add(pro2);
-        allProjects.add(pro3);
+//        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1", imgadapt);
+//        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2", imgadapt);
+//        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3", imgadapt);
+//        allProjects.add(pro1);
+//        allProjects.add(pro2);
+//        allProjects.add(pro3);
 
         //soll angezeigt werden wenn es noch kein einziges projekt gibt
         if(allProjects.isEmpty()) {
@@ -190,7 +191,7 @@ public class MainActivity extends Activity {
         dbHandler.updateConnections(allConsName, allConsType, allConsAddress, db);
 
         // Eintragen der Projekte in die DB
-        dbHandler.updateProjects(allProjects, db);
+        dbHandler.updateProjects(allProjects, db, this);
 
 //        db.execSQL("DROP TABLE IF EXISTS connections");
 //        db.execSQL("DROP TABLE IF EXISTS projects");
@@ -337,6 +338,18 @@ public class MainActivity extends Activity {
         startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
     }
 
+
+    public static boolean removeConnection(String conName) {
+        for (IConnection c: allConnections) {
+            if(c.getConNameDeclaration().equals(conName)) {
+                if(allConnections.remove(c) == true) {
+                    Log.d(LOG_TAG, "Connection " + conName + " von Liste entfernt");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     public void ShowDialog(){

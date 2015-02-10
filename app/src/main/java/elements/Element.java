@@ -7,7 +7,6 @@ public class Element {
 	protected String identifier;
 
 
-
     protected int ressource;
 	
 	public void setName(String name) {

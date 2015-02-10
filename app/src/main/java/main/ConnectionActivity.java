@@ -134,15 +134,15 @@ public class ConnectionActivity extends Activity {
 
                 final PopupMenu popupConOptions = new PopupMenu(getApplicationContext(), view);
                 popupConOptions.inflate(R.menu.menu_popup_connection);
-                final String keyToRemove = parent.getItemAtPosition(position).toString();
+                final String keyChosen = parent.getItemAtPosition(position).toString();
 
-                if(allConsHeader.contains(keyToRemove)) {
+                if(allConsHeader.contains(keyChosen)) {
                     popupConOptions.show();
 
                     Log.d(LOG_TAG, view.getClass().toString());
                     Log.d(LOG_TAG, parent.getClass().toString());
                     Log.d(LOG_TAG, parent.getItemAtPosition(position).getClass().toString());
-                    Log.d(LOG_TAG, keyToRemove);
+                    Log.d(LOG_TAG, keyChosen);
 
                     popupConOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
@@ -151,11 +151,12 @@ public class ConnectionActivity extends Activity {
                             switch (item.getItemId()) {
 
                                 case R.id.removeCon:
-                                    if (mapListDataChild.containsKey(keyToRemove)) {
-                                        mapListDataChild.remove(keyToRemove);
-                                        allConsHeader.remove(keyToRemove);
+                                    if (mapListDataChild.containsKey(keyChosen)) {
+                                        mapListDataChild.remove(keyChosen);
+                                        allConsHeader.remove(keyChosen);
+                                        MainActivity.removeConnection(keyChosen);
                                     }
-                                    Log.d(LOG_TAG, "Entfernen des Eintrags " + keyToRemove);
+                                    Log.d(LOG_TAG, "Entfernen des Eintrags " + keyChosen);
                                     expListAdapter.notifyDataSetChanged();
                                     return true;
 

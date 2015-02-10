@@ -30,7 +30,6 @@ public class ImageAdapter extends BaseAdapter {
     private Context mContext;
 
 
-
     public int getLength() {
         return length;
     }
