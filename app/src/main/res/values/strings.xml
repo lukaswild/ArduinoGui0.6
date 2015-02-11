@@ -46,6 +46,7 @@
     <string name="popupMenuEntryAlterCon">Bearbeiten</string>
     <string name="classSwitchModel">class elements.SwitchModel</string>
     <string name="classLedModel">"class elements.LedModel"</string>
+    <string name="classEmptyElement">"class elements.EmptyElement"</string>
     <string name="txtAddress">Adresse</string>
     <string name="txtMacAddressBT">MAC-Adresse des Bluetooth-Moduls</string>
     <string name="txtMacAddress">MAC-Adresse</string>

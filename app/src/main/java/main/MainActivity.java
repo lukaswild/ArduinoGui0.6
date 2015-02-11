@@ -141,6 +141,7 @@ public class MainActivity extends Activity {
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
                     currentProject.setName(edit.getText().toString());
                     allProjects.add(currentProject);
+                   SetCurrentProjByName(edit.getText().toString());
                     popDialog.cancel();
 
                 }
@@ -171,6 +172,7 @@ public class MainActivity extends Activity {
         super.onResume();
 
         ShowName();
+        loadImgRes();
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 

@@ -21,6 +21,7 @@ import connection.EthernetConnection;
 import connection.IConnection;
 import elements.BoolElement;
 import elements.Element;
+import elements.EmptyElement;
 import elements.LedModel;
 import elements.PwmElement;
 import elements.SwitchModel;
@@ -167,6 +168,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 else if(element instanceof PwmElement) {
                     elementKind = "Pwm";
                     status = ((PwmElement) element).getCurrentPwm();
+                }
+
+                else if (element instanceof EmptyElement){
+                    elementKind="NULL";
                 }
 
                 SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ? )" );
@@ -333,6 +338,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     e = new SwitchModel();
                 else if (eType.equals(context.getString(R.string.classLedModel)))
                     e = new LedModel(); // TODO mehrere Elemente
+                else if(eType.equals(context.getString(R.string.classEmptyElement))){
+                    e=new EmptyElement();
+                }
 
                 if(eKind.equals("Bool")) {
                     boolean boolStatus = false;
@@ -340,8 +348,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         boolStatus = true;
                     ((BoolElement)e).setStatusHigh(boolStatus);
                 }
-                else
+
+                if (eKind.equals("Pwm")){
                     ((PwmElement)e).setCurrentPwm(status);
+                }
+
+                else {
+                    //TODO es ist ein empty emelemnt. Status ??
+                }
+
 
 
                 mapAllViewModels.put(position, e);
