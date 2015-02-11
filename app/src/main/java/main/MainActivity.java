@@ -539,8 +539,6 @@ Log.d(LOG_TAG, "EEEEEEEEEEE");
     public static void loadImgRes(){
         //Zuerst muss die hashmap aus dem projekt(int, element) zu einer hashmap im imgadapt(int, int) gecastet werden
 
-        HashMap<Integer,Integer> cast = new HashMap<Integer, Integer>();
-
         for (int i=0;i<imgadapt.getCount();i++){
             imgadapt.update(R.drawable.add1,i);
         }

@@ -2,6 +2,7 @@ package observer;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -114,7 +115,8 @@ public class Gui extends View implements IObserver {
                     switch (imgadapt.getItemInt(position)) {
 
                         case R.drawable.add1:
-                            PopupMenu popupMenu = new PopupMenu(getContext(), v);
+                            Context wrapper = new ContextThemeWrapper(getContext(),R.style.MyAwesomeBackground_PopupStyle);
+                            final PopupMenu popupMenu = new PopupMenu(wrapper, v);
                             popupMenu.inflate(R.menu.menu_popup);
                             popupMenu.show();
                             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -207,7 +209,8 @@ public class Gui extends View implements IObserver {
 
                     //Ist das elemtn ein plus, wenn ja popup mit neuen elementen zeigen
                     if (imgadapt.getItemInt(position) == R.drawable.add1) {
-                        PopupMenu popupMenu = new PopupMenu(getContext(), v);
+                        Context wrapper = new ContextThemeWrapper(getContext(),R.style.MyAwesomeBackground_PopupStyle);
+                        final PopupMenu popupMenu = new PopupMenu(wrapper, v);
                         popupMenu.inflate(R.menu.menu_popup);
                         popupMenu.show();
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -223,7 +226,8 @@ public class Gui extends View implements IObserver {
                     else {
 
                                     final Context context = getContext();
-                                    final PopupMenu popupMenu = new PopupMenu(context, v);
+                                    Context wrapper = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
+                                    final PopupMenu popupMenu = new PopupMenu(wrapper, v);
                                     popupMenu.inflate(R.menu.menu_popup_clickoptions);
                                     popupMenu.show();
                                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -235,7 +239,8 @@ public class Gui extends View implements IObserver {
 
                                                 case R.id.identifyer:
                                                     popupMenu.dismiss();
-                                                    PopupMenu popupMenu2 = new PopupMenu(getContext(), v);
+                                                    Context wrapper = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
+                                                    final PopupMenu popupMenu2 = new PopupMenu(wrapper, v);
                                                     popupMenu2.inflate(R.menu.menu_popup_identifyer);
                                                     popupMenu2.show();
                                                     popupMenu2.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

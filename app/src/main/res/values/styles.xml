@@ -16,22 +16,24 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:popupMenuStyle">@style/MyAwesomeBackground.PopupStyle</item>
-        <item name="android:popupWindowStyle">@style/MyAwesomeBackground.PopupStyle</item>
+       <item name="android:popupWindowStyle">@style/MyAwesomeBackground.PopupStyle</item>
         <item name="android:textAppearanceLargePopupMenu">@style/CustomTextStyle</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/CustomTextStyle</item>
+
         <item name="android:seekBarStyle">@style/MyAwesomeBackground.SeekBarStyle</item>
+
     </style>
 
     <style name="MyAwesomeBackground.PopupStyle" parent="android:Widget.PopupMenu">
-        <item name="android:background">#ffffffff</item>
-        <item name="android:textColor">#ff000000</item>
+        <item name="android:popupBackground">#ffffffff</item>
+        <item name="android:textColor">#ff3691ff</item>
         <item name="android:textSize">20sp</item>
     </style>
 
     <style name="CustomTextStyle">
-        <item name="android:background">#ffffffff</item>
+        <item name="android:popupBackground">#ffffffff</item>
        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColor">#ff3691ff</item>
     </style>
 
     <style name="MyAwesomeBackground.SeekBarStyle" parent="android:Widget.SeekBar">
