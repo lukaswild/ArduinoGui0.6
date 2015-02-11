@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -102,10 +103,14 @@ public class MainActivity extends Activity {
         currentProject = new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt);
 
         // Auslesen aus der Datenbank
-        dbHandler = new DatabaseHandler(this);
-        db = dbHandler.getWritableDatabase();
-        allConnections = dbHandler.selectAllCons(db, this); // funktioniert
-        allProjects = dbHandler.selectAllPros(db, this);
+        try {
+            dbHandler = new DatabaseHandler(this);
+            db = dbHandler.getWritableDatabase();
+            allConnections = dbHandler.selectAllCons(db, this); // funktioniert
+            allProjects = dbHandler.selectAllPros(db, this);
+        } catch (SQLiteException e) {
+            Log.d(LOG_TAG, "Datenbank bzw. Tabellen nicht gefunden");
+        }
         Log.d(LOG_TAG, "Größe von allProjects: " + allProjects.size());
 
 //        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1", imgadapt);
