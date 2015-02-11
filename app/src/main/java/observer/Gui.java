@@ -106,7 +106,7 @@ public class Gui extends View implements IObserver {
         project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
 
-        //Edit Modus ausgeschaltet, Benutzer will schalter einschalten usw.
+        ////Edit Modus ausgeschaltet, Benutzer will schalter einschalten usw.
         if (!editmode){
             project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

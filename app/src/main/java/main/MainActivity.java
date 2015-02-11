@@ -173,7 +173,8 @@ public class MainActivity extends Activity {
 
         ShowName();
         loadImgRes();
-        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+
+       // currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 
     }
@@ -501,8 +502,9 @@ public class MainActivity extends Activity {
                     proName = data.getExtras().getString("name");
                     Project newProj = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))), proName, imgadapt); // TODO hier darf nicht der mit Elementen versehene imgadapt übergeben werden
                     allProjects.add(newProj);
-                    currentProject = newProj;
                     currentProject.setName(proName);
+                    currentProject = newProj;
+
                 }
             }
         }
