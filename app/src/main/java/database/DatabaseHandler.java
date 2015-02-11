@@ -83,7 +83,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "projName text," +
                 "internal_id integer," +
                 "creationDate text NOT NULL," +
-                "lastModifiedDate text NOT NULL" +
+                "lastModifiedDate text NOT NULL," +
+                "lastOpenedDate text NOT NULL" +
                 ")" );
     }
 
@@ -138,14 +139,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         for(Project p : allProjects) {
             // Projekt eintragen
-            SQLiteStatement cmdInsertProj = db.compileStatement("INSERT INTO " + TABLE_PROJECTS + " VALUES ( null, ?, ?, ?, ? )");
+            SQLiteStatement cmdInsertProj = db.compileStatement("INSERT INTO " + TABLE_PROJECTS + " VALUES ( null, ?, ?, ?, ?, ? )");
             cmdInsertProj.bindString(1, p.getName());
             cmdInsertProj.bindLong(2, p.getId());
             cmdInsertProj.bindString(3, p.getDateString(p.getCreationDate()));
             cmdInsertProj.bindString(4, p.getDateString(p.getLastModifiedDate()));
+            cmdInsertProj.bindString(5, p.getDateString(p.getLastOpenedDate()));
             cmdInsertProj.execute();
             Log.d(LOG_TAG, "Projekt eingetragen: " + p.getName() + " Id: " + p.getId() + " Creation date: " +
-                    p.getDateString(p.getCreationDate()) + " Last modified: " + p.getDateString(p.getLastModifiedDate()));
+                    p.getDateString(p.getCreationDate()) + " Last modified: " + p.getDateString(p.getLastModifiedDate()) +
+                    " Last opened: " + p.getDateString(p.getLastOpenedDate()));
 
             // Zugehörige Elemente eintragen
             HashMap<Integer, Element> mapAllViewModels = p.getMapAllViewModels();
@@ -193,11 +196,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
     private void testTableProjects(SQLiteDatabase db) {
-        db.execSQL("INSERT INTO projects VALUES (null, 'test1', '2015-2-7', '2015-2-6')");
-        db.execSQL("INSERT INTO projects VALUES (null, 'test2', '2065-2-7', '2015-2-6')");
-        db.execSQL("INSERT INTO projects VALUES (null, 'test3', '2014-2-7', '2015-2-6')");
-        db.execSQL("INSERT INTO projects VALUES (null, 'test4', '2015-2-7', '2015-2-6')");
-        db.execSQL("INSERT INTO projects VALUES (null, 'test5', '2055-2-7', '2015-2-6')");
+        db.execSQL("INSERT INTO projects VALUES (null, 'test1', '2015-2-7', '2015-2-6', '2015-2-6')");
+        db.execSQL("INSERT INTO projects VALUES (null, 'test2', '2065-2-7', '2015-2-6', '2015-2-6')");
+        db.execSQL("INSERT INTO projects VALUES (null, 'test3', '2014-2-7', '2015-2-6', '2015-2-8')");
+        db.execSQL("INSERT INTO projects VALUES (null, 'test4', '2015-2-7', '2015-2-6', '2015-2-6')");
+        db.execSQL("INSERT INTO projects VALUES (null, 'test5', '2055-2-7', '2015-2-6', '2015-2-11')");
         db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest1', 2, 'on', 'P1', 1)");
         db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest2', 3, 'off', 'P1', 2)");
         db.execSQL("INSERT INTO elements VALUES (null, 'Bool', 'elementTest3', 4, 'on', 'P2', 1)");
@@ -299,7 +302,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "where project_fk = ?";
 
         // Alle Projekte aus DB holen
-        Cursor cProjects = db.query(TABLE_PROJECTS, new String[] {"_id", "projName", "internal_id", "creationDate", "lastModifiedDate"}, null, null, null, null, null);
+        Cursor cProjects = db.query(TABLE_PROJECTS, new String[] {"_id", "projName", "internal_id", "creationDate", "lastModifiedDate", "lastOpenedDate"}, null, null, null, null, null);
         while (cProjects.moveToNext()) {
 
             int pId = cProjects.getInt(0);
@@ -307,13 +310,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             int pInternalId = cProjects.getInt(2);
             String creationDate = cProjects.getString(3);
             String lastModifiedDate = cProjects.getString(4);
-            Log.d(LOG_TAG, pId + " " + pName + " " + creationDate + " " + lastModifiedDate);
+            String lastOpenedDate = cProjects.getString(5);
+            Log.d(LOG_TAG, pId + " " + pName + " " + creationDate + " " + lastModifiedDate + " " + lastOpenedDate);
 
             String[] creationDateSplit = creationDate.split("/");
             String[] lastModifiedDateSplit = lastModifiedDate.split("/");
+            String[] lastOpenedDateSplit = lastOpenedDate.split("/");
             Calendar calCreationDate = Calendar.getInstance();
             Calendar calLastModifiedDate = Calendar.getInstance();
-            setCorrectDatesFromDb(creationDateSplit, lastModifiedDateSplit, calCreationDate, calLastModifiedDate);
+            Calendar calLastOpenedDate = Calendar.getInstance();
+            setCorrectDatesFromDb(creationDateSplit, lastModifiedDateSplit, lastOpenedDateSplit, calCreationDate, calLastModifiedDate, calLastOpenedDate);
 
             HashMap<Integer, Element> mapAllViewModels = new HashMap<Integer, Element>();
 
@@ -358,13 +364,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 }
 
 
-
                 mapAllViewModels.put(position, e);
                 Log.d(LOG_TAG, eType + " auf Position " + position + " aus DB geholt");
             }
 
             Gui pGui = new Gui(context, 2, gridView);
-            Project p = new Project(pGui, pInternalId, pName, calCreationDate, calLastModifiedDate, mapAllViewModels);
+            Project p = new Project(pGui, pInternalId, pName, calCreationDate, calLastModifiedDate, calLastOpenedDate, mapAllViewModels);
             allProjsFromDb.add(p);
             Log.d(LOG_TAG, "Projekt " + pName + " aus DB geholt");
         }
@@ -372,7 +377,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    private void setCorrectDatesFromDb(String[] creationDateSplit, String[] lastModifiedDateSplit, Calendar calCreationDate, Calendar calLastModifiedDate) {
+    private void setCorrectDatesFromDb(String[] creationDateSplit, String[] lastModifiedDateSplit, String[] lastOpenedDateSplit,
+                                       Calendar calCreationDate, Calendar calLastModifiedDate, Calendar calLastOpenedDate) {
+
         calCreationDate.set(Integer.parseInt(creationDateSplit[0]), Integer.parseInt(creationDateSplit[1]) - 1,
                 Integer.parseInt(creationDateSplit[2]), Integer.parseInt(creationDateSplit[3]),
                 Integer.parseInt(creationDateSplit[4]));
@@ -380,5 +387,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         calLastModifiedDate.set(Integer.parseInt(lastModifiedDateSplit[0]), Integer.parseInt(lastModifiedDateSplit[1]) - 1,
                 Integer.parseInt(lastModifiedDateSplit[2]), Integer.parseInt(lastModifiedDateSplit[3]),
                 Integer.parseInt(lastModifiedDateSplit[4]));
+
+        calLastOpenedDate.set(Integer.parseInt(lastOpenedDateSplit[0]), Integer.parseInt(lastOpenedDateSplit[1]) - 1,
+                Integer.parseInt(lastOpenedDateSplit[2]), Integer.parseInt(lastOpenedDateSplit[3]),
+                Integer.parseInt(lastOpenedDateSplit[4]));
     }
 }

@@ -36,6 +36,8 @@ public class Project extends Observable {
 
     private Calendar creationDate = Calendar.getInstance();
     private Calendar lastModifiedDate;
+
+    private Calendar lastOpenedDate;
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH/mm");
 
     private Gui gui;
@@ -108,6 +110,14 @@ public class Project extends Observable {
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public Calendar getLastOpenedDate() {
+        return lastOpenedDate;
+    }
+
+    public void setLastOpenedDate(Calendar lastOpenedDate) {
+        this.lastOpenedDate = lastOpenedDate;
+    }
+
     public void setGui(Gui gui) {
         this.gui =gui;
     }
@@ -138,6 +148,7 @@ public class Project extends Observable {
         addToObservers(gui);
         setMap();
         lastModifiedDate = creationDate;
+        lastOpenedDate = creationDate;
         id = ++count;
     }
 
@@ -156,6 +167,7 @@ public class Project extends Observable {
         setMap();
 
         lastModifiedDate = creationDate;
+        lastOpenedDate = creationDate;
         id = ++count;
     }
 
@@ -175,14 +187,16 @@ public class Project extends Observable {
         addToObservers(gui); // Gui zur Liste der Observers hinzufügen - damit werden Updates an die Gui gesendet
         setMap();
         lastModifiedDate = creationDate;
+        lastOpenedDate = creationDate;
         id = ++count;
     }
 
-    public Project(Gui gui, int internalId, String name, Calendar creationDate, Calendar lastModifiedDate, HashMap<Integer, Element> mapAllViewModels) {
+    public Project(Gui gui, int internalId, String name, Calendar creationDate, Calendar lastModifiedDate, Calendar lastOpenedDate, HashMap<Integer, Element> mapAllViewModels) {
         this.id = internalId;
         this.name = name;
         this.creationDate = creationDate;
         this.lastModifiedDate = lastModifiedDate;
+        this.lastOpenedDate = lastOpenedDate;
         this.mapAllViewModels = mapAllViewModels;
         this.imageAdapter = imageAdapter;
         this.gui = gui;
