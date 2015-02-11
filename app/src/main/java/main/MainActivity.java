@@ -32,7 +32,9 @@ import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
 import database.DatabaseHandler;
+import elements.Element;
 import elements.EmptyElement;
+import elements.LedModel;
 import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
@@ -100,9 +102,7 @@ public class MainActivity extends Activity {
                     .add(R.id.container, new PlaceholderFragment()).commit();
 
         }
-//        db.execSQL("DROP TABLE IF EXISTS connections");
-//        db.execSQL("DROP TABLE IF EXISTS projects");
-//        db.execSQL("DROP TABLE IF EXISTS elements");
+
         imgadapt = new ImageAdapter(this);
         setCurrentProject(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt));
 
@@ -114,7 +114,9 @@ public class MainActivity extends Activity {
             allConnections = dbHandler.selectAllCons(db, this); // funktioniert
             allProjects = dbHandler.selectAllPros(db, this, gridView);
         } catch (SQLiteException e) {
-            Log.d(LOG_TAG, "Datenbank bzw. Tabellen nicht gefunden");
+            Log.e(LOG_TAG, "Datenbank bzw. Tabellen nicht gefunden");
+        } catch(Exception ex) {
+            Log.e(LOG_TAG, "Fehler");
         }
         Log.d(LOG_TAG, "Größe von allProjects: " + allProjects.size());
 
@@ -154,22 +156,8 @@ public class MainActivity extends Activity {
         }
 
         else {
-            // TODO Projekt setzten, welches als letztes editiert wurde oder welches als letztes geöffnet war?
-
-            ArrayList<Calendar> allLastOpenedDates = new ArrayList<Calendar>();
-            for(Project p : allProjects) {
-                allLastOpenedDates.add(p.getLastOpenedDate());
-            }
-            Calendar maxDate = Collections.max(allLastOpenedDates);
-
-            for(Project p : allProjects) {
-                Log.d(LOG_TAG, p.getName() + " " + p.getDateString(p.getLastOpenedDate()));
-                if(p.getLastOpenedDate().equals(maxDate)) {
-                    setCurrentProject(p);
-                    loadImgRes();
-                    Log.d(LOG_TAG, "Current Project gesetzt: " + p.getName() + ", zuletzt geöffnet: " + p.getDateString(maxDate));
-                }
-            }
+            // Current Projekt setzen, welches zuletzt geöffnet war
+            setProjectLastOpened();
         }
 
 //
@@ -183,14 +171,36 @@ public class MainActivity extends Activity {
 
     }
 
+    private void setProjectLastOpened() {
+        ArrayList<Calendar> allLastOpenedDates = new ArrayList<Calendar>();
+        for(Project p : allProjects) {
+            allLastOpenedDates.add(p.getLastOpenedDate());
+        }
+        Calendar maxDate = Collections.max(allLastOpenedDates);
+Log.d(LOG_TAG, "EEEEEEEEEEE");
+        for(Project p : allProjects) {
+            Log.d(LOG_TAG, p.getName() + " " + p.getDateString(p.getLastOpenedDate()));
+            if(p.getLastOpenedDate().equals(maxDate)) {
+                setCurrentProject(p);
+                loadImgRes();
+                Log.d(LOG_TAG, "Current Project gesetzt: " + p.getName() + ", zuletzt geöffnet: " + p.getDateString(maxDate));
+            }
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         ShowName();
-        loadImgRes();
+//        setProjectLastOpened();
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+        loadImgRes();
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
+
+        Element l = new Element();
+        l = new LedModel("ne", false);
+        Log.d(LOG_TAG, "DDDDD " + l.getRessource());
 
     }
 
@@ -205,7 +215,7 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        Toast.makeText(this, "In der onDestroy", Toast.LENGTH_SHORT).show();
         if(BTConnection.isConnected())
             BTConnection.closeConnection();
 
@@ -219,6 +229,7 @@ public class MainActivity extends Activity {
         // Eintragen der Projekte in die DB
         dbHandler.updateProjects(allProjects, db, this);
 
+//        allProjects.clear();
 //        db.execSQL("DROP TABLE IF EXISTS connections");
 //        db.execSQL("DROP TABLE IF EXISTS projects");
 //        db.execSQL("DROP TABLE IF EXISTS elements");
@@ -540,6 +551,9 @@ public class MainActivity extends Activity {
 
             if (!(currentProject.getElementFromMap(i) instanceof EmptyElement)){
                 imgadapt.update(currentProject.getRessourceFromMap(i),i);
+                Log.d(LOG_TAG, "Ressource: " + currentProject.getRessourceFromMap(i));
+                Log.d(LOG_TAG, "Led: " + R.drawable.lamp_off + " " + R.drawable.lamp_on);
+                Log.d(LOG_TAG, "Led: " + R.drawable.switch_off + " " + R.drawable.switch_on);
 
             }
         }

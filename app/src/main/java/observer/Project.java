@@ -38,7 +38,7 @@ public class Project extends Observable {
     private Calendar lastModifiedDate;
 
     private Calendar lastOpenedDate;
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH/mm");
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH/mm/ss");
 
     private Gui gui;
     private Db dbConnection; // TODO DB-Programmierung

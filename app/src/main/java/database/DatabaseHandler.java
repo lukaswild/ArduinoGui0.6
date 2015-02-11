@@ -96,6 +96,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 "position integer NOT NULL," +
                 "status integer NOT NULL," +
                 "identifier integer NULL," + // Wenn identifier noch nicht gesetzt wurde, so darf er null sein
+                "resource int NULL," + // EmptyElement hat keine Ressource
                 "project_fk int NOT NULL," +
                 "CONSTRAINT project_fk FOREIGN KEY (project_fk) " +
                 "REFERENCES projects (project_id)" +
@@ -177,7 +178,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     elementKind="NULL";
                 }
 
-                SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ? )" );
+                SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ?, ? )" );
                 cmdInsertElements.bindString(1, elementKind); // Bool- oder Pwm-Element
                 cmdInsertElements.bindString(2, elementType); // z.B. Switch, Led,...
                 cmdInsertElements.bindLong(3, key);
@@ -186,7 +187,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     cmdInsertElements.bindString(5, element.getIdentifier());
                 else
                     cmdInsertElements.bindNull(5);
-                cmdInsertElements.bindLong(6, p.getId());
+                cmdInsertElements.bindLong(6, element.getRessource());
+                cmdInsertElements.bindLong(7, p.getId());
                 cmdInsertElements.execute();
                 Log.d(LOG_TAG, "Element eingetragen: " + elementType + " Position: " + key + " Projekt: " + p.getId());
             }
@@ -332,21 +334,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int position = cElements.getInt(3); // Key in HashMap
                 int status = cElements.getInt(4);
                 String identifier = cElements.getString(5);
-                int project_fk = cElements.getInt(6);
+                int resource = cElements.getInt(6);
+                int project_fk = cElements.getInt(7);
 
-                Log.d(LOG_TAG, pName + " ID: " + eId + " Art: " + eKind + " Typ: " + eType + " Position: " + position + " Status: " + status + "Identifier: " + identifier + " ProjectFk: " + project_fk);
+                Log.d(LOG_TAG, pName + " ID: " + eId + " Art: " + eKind + " Typ: " + eType + " Position: " + position +
+                        " Status: " + status + "Identifier: " + identifier + " Ressource: " + resource + " ProjectFk: " + project_fk);
 
                 // Erzeugen eines neuen Elements mit genau diesen Daten, um die HashMap zu füllen
                 Element e = new Element();
-                e.setIdentifier(identifier);
 
                 if(eType.equals(context.getString(R.string.classSwitchModel)))
                     e = new SwitchModel();
                 else if (eType.equals(context.getString(R.string.classLedModel)))
                     e = new LedModel(); // TODO mehrere Elemente
-                else if(eType.equals(context.getString(R.string.classEmptyElement))){
+                else if(eType.equals(context.getString(R.string.classEmptyElement)))
                     e=new EmptyElement();
-                }
+                e.setIdentifier(identifier);
+                e.setRessource(resource);
 
                 if(eKind.equals("Bool")) {
                     boolean boolStatus = false;
@@ -382,14 +386,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         calCreationDate.set(Integer.parseInt(creationDateSplit[0]), Integer.parseInt(creationDateSplit[1]) - 1,
                 Integer.parseInt(creationDateSplit[2]), Integer.parseInt(creationDateSplit[3]),
-                Integer.parseInt(creationDateSplit[4]));
+                Integer.parseInt(creationDateSplit[4]), Integer.parseInt(creationDateSplit[5]));
 
         calLastModifiedDate.set(Integer.parseInt(lastModifiedDateSplit[0]), Integer.parseInt(lastModifiedDateSplit[1]) - 1,
                 Integer.parseInt(lastModifiedDateSplit[2]), Integer.parseInt(lastModifiedDateSplit[3]),
-                Integer.parseInt(lastModifiedDateSplit[4]));
+                Integer.parseInt(lastModifiedDateSplit[4]), Integer.parseInt(lastModifiedDateSplit[5]));
 
         calLastOpenedDate.set(Integer.parseInt(lastOpenedDateSplit[0]), Integer.parseInt(lastOpenedDateSplit[1]) - 1,
                 Integer.parseInt(lastOpenedDateSplit[2]), Integer.parseInt(lastOpenedDateSplit[3]),
-                Integer.parseInt(lastOpenedDateSplit[4]));
+                Integer.parseInt(lastOpenedDateSplit[4]), Integer.parseInt(lastOpenedDateSplit[5]));
     }
 }
