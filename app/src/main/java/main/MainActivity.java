@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 
 import connection.BTConnection;
@@ -77,6 +79,7 @@ public class MainActivity extends Activity {
 
     public static void setCurrentProject(Project currentProject) {
         MainActivity.currentProject = currentProject;
+        currentProject.setLastOpenedDate(Calendar.getInstance()); // Aktuelles Datum setzen
     }
 
     public static IConnection getCurrentConnection() {
@@ -101,7 +104,7 @@ public class MainActivity extends Activity {
 //        db.execSQL("DROP TABLE IF EXISTS projects");
 //        db.execSQL("DROP TABLE IF EXISTS elements");
         imgadapt = new ImageAdapter(this);
-        currentProject = new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt);
+        setCurrentProject(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt));
 
         // Auslesen aus der Datenbank
         GridView gridView = (GridView) findViewById(R.id.gridview);
@@ -152,10 +155,23 @@ public class MainActivity extends Activity {
 
         else {
             // TODO Projekt setzten, welches als letztes editiert wurde oder welches als letztes geöffnet war?
-            currentProject = allProjects.get(allProjects.size()-1);
-            Log.d(LOG_TAG, "Current Project gesetzt");
-            loadImgRes();
+
+            ArrayList<Calendar> allLastOpenedDates = new ArrayList<Calendar>();
+            for(Project p : allProjects) {
+                allLastOpenedDates.add(p.getLastOpenedDate());
+            }
+            Calendar maxDate = Collections.max(allLastOpenedDates);
+
+            for(Project p : allProjects) {
+                Log.d(LOG_TAG, p.getName() + " " + p.getDateString(p.getLastOpenedDate()));
+                if(p.getLastOpenedDate().equals(maxDate)) {
+                    setCurrentProject(p);
+                    loadImgRes();
+                    Log.d(LOG_TAG, "Current Project gesetzt: " + p.getName() + ", zuletzt geöffnet: " + p.getDateString(maxDate));
+                }
+            }
         }
+
 //
 //        Log.d(LOG_TAG,"Vor Gui");
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
@@ -173,8 +189,7 @@ public class MainActivity extends Activity {
 
         ShowName();
         loadImgRes();
-
-       // currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+        currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 
     }
@@ -461,7 +476,8 @@ public class MainActivity extends Activity {
      * Diese Methode wird immer aufgerufen, wenn eine von dieser Activity aufgerufene Activity ein Result zurückliefert.
      * Beim Aufrufen einer Activity, die ein Result liefern soll, wird ein request code angegeben. Hier muss abgefragt werden,
      * ob dieser Code die Methode ausgelöst hat (bei mehreren Activities wird auch immer diese eine Methode aufgerufen).
-     * REQUEST_CODE_NEW_CON: Code der NewConnectionActivity
+     * REQUEST_CODE_NEW_CON: Code der ConnectionActivity
+     * REQUEST_CODE_NEW_PRO: Code der ProjectActivity
      * @param requestCode
      * @param resultCode
      * @param data
@@ -502,9 +518,8 @@ public class MainActivity extends Activity {
                     proName = data.getExtras().getString("name");
                     Project newProj = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))), proName, imgadapt); // TODO hier darf nicht der mit Elementen versehene imgadapt übergeben werden
                     allProjects.add(newProj);
+                    setCurrentProject(newProj);
                     currentProject.setName(proName);
-                    currentProject = newProj;
-
                 }
             }
         }
@@ -552,7 +567,7 @@ public class MainActivity extends Activity {
     public static void SetCurrentProjByName(String name){
         for (Project p: allProjects) {
             if (p.getName().equals(name)) {
-                currentProject = p;
+                setCurrentProject(p);
 
             } else {
                 //es wird kein Projekt gefunden
