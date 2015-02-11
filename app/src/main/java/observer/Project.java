@@ -177,6 +177,7 @@ public class Project extends Observable {
         lastModifiedDate = creationDate;
         id = ++count;
     }
+
     public Project(Gui gui, int internalId, String name, Calendar creationDate, Calendar lastModifiedDate, HashMap<Integer, Element> mapAllViewModels) {
         this.id = internalId;
         this.name = name;
@@ -334,4 +335,6 @@ public class Project extends Observable {
             mapAllViewModels.put(i,new EmptyElement());
         }
     }
+
+
 }

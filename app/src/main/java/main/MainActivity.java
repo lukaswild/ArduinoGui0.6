@@ -100,14 +100,16 @@ public class MainActivity extends Activity {
 //        db.execSQL("DROP TABLE IF EXISTS connections");
 //        db.execSQL("DROP TABLE IF EXISTS projects");
 //        db.execSQL("DROP TABLE IF EXISTS elements");
+        imgadapt = new ImageAdapter(this);
         currentProject = new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt);
 
         // Auslesen aus der Datenbank
+        GridView gridView = (GridView) findViewById(R.id.gridview);
         try {
             dbHandler = new DatabaseHandler(this);
             db = dbHandler.getWritableDatabase();
             allConnections = dbHandler.selectAllCons(db, this); // funktioniert
-            allProjects = dbHandler.selectAllPros(db, this);
+            allProjects = dbHandler.selectAllPros(db, this, gridView);
         } catch (SQLiteException e) {
             Log.d(LOG_TAG, "Datenbank bzw. Tabellen nicht gefunden");
         }
@@ -149,12 +151,12 @@ public class MainActivity extends Activity {
 
         else {
             // TODO Projekt setzten, welches als letztes editiert wurde oder welches als letztes geöffnet war?
+            currentProject = allProjects.get(allProjects.size()-1);
+            Log.d(LOG_TAG, "Current Project gesetzt");
+            loadImgRes();
         }
-
-        imgadapt = new ImageAdapter(this);
-
-
-        Log.d(LOG_TAG,"Vor Gui");
+//
+//        Log.d(LOG_TAG,"Vor Gui");
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         ShowName();

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
+import android.widget.GridView;
 
 import com.example.arduinogui.R;
 
@@ -23,6 +24,7 @@ import elements.Element;
 import elements.LedModel;
 import elements.PwmElement;
 import elements.SwitchModel;
+import observer.Gui;
 import observer.Project;
 
 
@@ -283,7 +285,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<Project> selectAllPros(SQLiteDatabase db, Context context) {
+    public ArrayList<Project> selectAllPros(SQLiteDatabase db, Context context, GridView gridView) {
         Log.d(LOG_TAG, "ABFRAGE PROJEKTE MIT ELEMENTEN");
         ArrayList<Project> allProjsFromDb = new ArrayList<Project>();
 
@@ -346,7 +348,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 Log.d(LOG_TAG, eType + " auf Position " + position + " aus DB geholt");
             }
 
-            Project p = new Project(null, pInternalId, pName, calCreationDate, calLastModifiedDate, mapAllViewModels);
+            Gui pGui = new Gui(context, 2, gridView);
+            Project p = new Project(pGui, pInternalId, pName, calCreationDate, calLastModifiedDate, mapAllViewModels);
             allProjsFromDb.add(p);
             Log.d(LOG_TAG, "Projekt " + pName + " aus DB geholt");
         }

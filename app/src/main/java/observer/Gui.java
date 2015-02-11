@@ -3,7 +3,6 @@ package observer;
 import android.content.Context;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -13,10 +12,7 @@ import android.widget.Toast;
 import com.example.arduinogui.R;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-import Views.MyImageView;
 import connection.IConnection;
 import elements.Element;
 import elements.EmptyElement;
@@ -49,6 +45,7 @@ public class Gui extends View implements IObserver {
      */
     public Gui(Context context, int numberOfRows,GridView gridView) {
         super(context);
+
 
         if(numberOfRows <= 0)
             numberOfRows = 3;
