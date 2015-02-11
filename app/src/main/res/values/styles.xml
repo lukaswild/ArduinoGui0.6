@@ -23,11 +23,13 @@
     </style>
 
     <style name="MyAwesomeBackground.PopupStyle" parent="android:Widget.PopupMenu">
+        <item name="android:background">#ffffffff</item>
         <item name="android:textColor">#ff000000</item>
         <item name="android:textSize">20sp</item>
     </style>
 
     <style name="CustomTextStyle">
+        <item name="android:background">#ffffffff</item>
        <item name="android:textSize">18sp</item>
         <item name="android:textColor">#ff000000</item>
     </style>
