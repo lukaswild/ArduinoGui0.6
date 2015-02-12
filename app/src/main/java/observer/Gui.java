@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,24 +15,21 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
+
 import java.util.HashMap;
 
-import Views.MyTextView;
-import Views.PwmView;
 import connection.IConnection;
 import elements.Element;
 import elements.EmptyElement;
 import elements.LedModel;
+import elements.PushButtonModel;
 import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
 import generic.ImageAdapter;
-
-import static android.widget.AdapterView.OnItemSelectedListener;
 
 
 /* 
@@ -117,7 +115,7 @@ public class Gui extends View implements IObserver {
         project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
 
-        ////Edit Modus ausgeschaltet, Benutzer will schalter einschalten usw.
+        ////Edit Modus ausgeschaltet, Benutzer will Schalter einschalten usw.
         if (!editmode){
             project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -202,7 +200,7 @@ public class Gui extends View implements IObserver {
 
 
                             );
-                      final Button button = (Button)Viewlayout.findViewById(R.id.buttonOKPWM);
+                            final Button button = (Button)Viewlayout.findViewById(R.id.buttonOKPWM);
 
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -221,13 +219,27 @@ public class Gui extends View implements IObserver {
                             Toast.makeText(getContext(), "Element " + position + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
                             break;
 
+////////// sollte aktiviert bleiben, solange angeklickt ////////////////
+                        case R.drawable.button_off:
 
+                            break;
+
+                        case R.drawable.button_on:
+//                            Toast.makeText(getContext(), "Button aus", Toast.LENGTH_SHORT).show();
+//                            imgadapt.update(R.drawable.button_off, position);
+//                            imgadapt.notifyDataSetChanged();
+                            break;
+//////////
                     }
 
 
                 }
 
             });
+
+
+
+
           /*  project.getGui().getGridView().setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -259,21 +271,6 @@ public class Gui extends View implements IObserver {
                 }
             });*/
 
-            project.getGui().getGridView().setOnItemSelectedListener (new OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    if (imgadapt.getItemInt(position)==R.drawable.button_off) {
-                        imgadapt.update(R.drawable.button_on, position);
-                        imgadapt.notifyDataSetChanged();
-                        // TODO Model für PushButton der Liste im Project adden
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-
-                }
-            });
 
         }
         else if (editmode){
@@ -488,17 +485,67 @@ public class Gui extends View implements IObserver {
         }
     }
 
+    private void setTouchListenerForButtons(Project project, final ImageAdapter imgadapt) {
+        for(int i = 0; i < imgadapt.getCount(); i++) {
+            View v = project.getGui().getGridView().getChildAt(i);
+            try {
+                Object tag = v.getTag();
+
+                int p = 0;
+
+                if (tag != null) { // Button
+                    p = (Integer) tag;
+
+                    final int btnPosition = p;
+                    project.getGui().getGridView().getChildAt(btnPosition).setOnTouchListener(new OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+
+                            switch (event.getAction()) {
+
+                                case MotionEvent.ACTION_DOWN:
+                                    Toast.makeText(getContext(), "Button unten", Toast.LENGTH_SHORT).show();
+                                    imgadapt.update(R.drawable.button_on, btnPosition);
+                                    imgadapt.notifyDataSetChanged();
+                                    return true;
+
+                                case MotionEvent.ACTION_UP:
+                                    Toast.makeText(getContext(), "TouchListener oben", Toast.LENGTH_SHORT).show();
+                                    imgadapt.update(R.drawable.button_off, btnPosition);
+                                    imgadapt.notifyDataSetChanged();
+                                    return true;
+                            }
+
+                            return false;
+                        }
+                    });
+
+                }
+            } catch (NullPointerException e) {
+                // Kein PushButton
+            }
+
+        }
+    }
+
     private void makeToastNoConnection() {
         Toast.makeText(getContext(), "Bitte zuerst eine Verbindung auswählen", Toast.LENGTH_LONG).show();
     }
 
 
-    private boolean AddButtonPressed(MenuItem item, ImageAdapter imgadapt, int position, Project project) {
+    private boolean AddButtonPressed(MenuItem item, final ImageAdapter imgadapt, int position, Project project) {
         switch (item.getItemId()) {
 
             case R.id.AddButton: // PushButton adden
+
+                final int positionFinal = position;
+
                 imgadapt.update(R.drawable.button_off, position);
                 imgadapt.notifyDataSetChanged();
+                project.addModelToMap(position, new PushButtonModel("Button"));
+                project.getGui().getGridView().getChildAt(position).setTag(position);
+//                setTouchListenerForButtons(project, imgadapt);
+
                 // TODO Model für PushButton der Liste im Project adden
                 return true;
 
@@ -526,7 +573,7 @@ public class Gui extends View implements IObserver {
                 imgadapt.update(R.drawable.pwm_0, position);
                 imgadapt.notifyDataSetChanged();
                 project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
-                imgadapt.updateTextRes("0",position);
+                imgadapt.updateTextRes("0", position);
                 imgadapt.notifyDataSetChanged();
                 return true;
 
@@ -536,7 +583,7 @@ public class Gui extends View implements IObserver {
                 imgadapt.notifyDataSetChanged();
                 project.addModelToMap(position, new PwmInputModel(ELEMENT_NAME + Integer.toString(position)));
 
-               // TextView txtView2 = (TextView) gridView.findViewById(R.id.textView5);
+                // TextView txtView2 = (TextView) gridView.findViewById(R.id.textView5);
                 imgadapt.updateTextRes("0",position);
 
                 imgadapt.notifyDataSetChanged();

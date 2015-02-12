@@ -22,6 +22,7 @@ import com.example.arduinogui.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import generic.ExpListAdapterAllPro;
 
@@ -39,7 +40,7 @@ public class ProjectActivity extends  Activity {
 
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
-    static HashMap<String, ArrayList<String>> mapListDataChild; // TODO passt static ??
+    static HashMap<String, ArrayList<String>> mapListDataChild;
     ExpListAdapterAllPro expListAdapter;
 
 
@@ -60,12 +61,14 @@ public class ProjectActivity extends  Activity {
         Intent parentIntent = getIntent();
 
         final ArrayList<String> allProName = getIntentExtra(parentIntent, "allProName");
-        ArrayList<String> allProElements = getIntentExtra(parentIntent, "allProElements");
+        ArrayList<String> allProCreationDates = getIntentExtra(parentIntent, "allProCreationDates");
+        ArrayList<String> allProLastModifiedDates = getIntentExtra(parentIntent, "allProLastModifiedDates");
+
 
         mapListDataChild = new HashMap<String, ArrayList<String>>();
 
         // Für jede Kindview eine eigene Liste anlegen und zur Liste listChildren hinzufügen
-        fillHashMap(allProElements, allProName, mapListDataChild);
+        fillHashMap(allProName, allProCreationDates, allProLastModifiedDates, mapListDataChild);
 
         expListView=(ExpandableListView) findViewById(R.id.listViewAvailablePros);
         expListAdapter=new ExpListAdapterAllPro(this,allProName,mapListDataChild);
@@ -152,10 +155,15 @@ public class ProjectActivity extends  Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void fillHashMap(ArrayList<String> allProElements, ArrayList<String> allProName, HashMap<String, ArrayList<String>> mapListDataChild) {
-        for(int i = 0; i < allProElements.size(); i++) {
+    private void fillHashMap(ArrayList<String> allProName, ArrayList<String> allProCreationDates,
+                             ArrayList<String> allProLastModifiedDates, HashMap<String, ArrayList<String>> mapListDataChild) {
+        for(int i = 0; i < allProName.size(); i++) {
             ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
-            child.add(allProElements.get(i));
+            Iterator mapIterator = mapListDataChild.entrySet().iterator();
+
+            child.add("Erstellt am: " + allProCreationDates.get(i));
+            child.add("Zuletzt geändert: " + allProLastModifiedDates.get(i));
+
 
             mapListDataChild.put(allProName.get(i), child);
         }

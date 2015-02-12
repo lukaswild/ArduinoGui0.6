@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
                     currentProject.setName(edit.getText().toString());
                     allProjects.add(currentProject);
-                   SetCurrentProjByName(edit.getText().toString());
+                    SetCurrentProjByName(edit.getText().toString());
                     popDialog.cancel();
 
                 }
@@ -381,18 +381,20 @@ public class MainActivity extends Activity {
 //        newConIntent.putExtra("listAvailableCons", currentProject.getListAllCons()); // ArrayList<String> mitgeben
 
         ArrayList<String> allProName = new ArrayList<String>();
-        ArrayList<String> allProElements = new ArrayList<String>();
+        ArrayList<String> allProCreationDates = new ArrayList<String>();
+        ArrayList<String> allProLastModifiedDates = new ArrayList<String>();
+
 
         for (Project c : allProjects) {
-
             allProName.add(c.getName());
-//            allProElements.addToObservers(Integer.toString(c.getAllElements().size()));
-            allProElements.add(Integer.toString(c.getMapAllViewModels().size()));
+            allProCreationDates.add(c.getDateStringFormatted(c.getCreationDate()));
+            allProLastModifiedDates.add(c.getDateStringFormatted(c.getLastModifiedDate()));
         }
 //        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
 
         newProIntent.putExtra("allProName", allProName);
-        newProIntent.putExtra("allProElements", allProElements);
+        newProIntent.putExtra("allProCreationDates", allProCreationDates);
+        newProIntent.putExtra("allProLastModifiedDates", allProLastModifiedDates);
 
         startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
     }

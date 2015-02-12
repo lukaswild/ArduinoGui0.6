@@ -1,12 +1,10 @@
 package generic;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Views.MyImageView;
-import Views.MyTextView;
-import Views.PwmView;
 import elements.Element;
 
 //import com.example.test.R;
@@ -134,7 +130,7 @@ public class ImageAdapter extends BaseAdapter {
             view = convertView;
         }
 
-        ImageView imgView = (ImageView) view.findViewById(R.id.imageview);
+        final ImageView imgView = (ImageView) view.findViewById(R.id.imageview);
         imgView.setLayoutParams(new LinearLayout.LayoutParams(length, length));
         imgView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imgView.setPadding(10, 10, 10, 3);
@@ -158,6 +154,25 @@ public class ImageAdapter extends BaseAdapter {
         else {
             txtView.setVisibility(View.INVISIBLE);
         }
+
+
+//        imgView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                switch(event.getAction()) {
+//
+//                    case MotionEvent.ACTION_DOWN:
+//
+//                        return true;
+//
+//                    case MotionEvent.ACTION_UP:
+//
+//                        return true;
+//                }
+//                return false;
+//            }
+//        });
 
         return view;
 

@@ -39,6 +39,7 @@ public class Project extends Observable {
 
     private Calendar lastOpenedDate;
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH/mm/ss");
+    private DateFormat dateFormatFormatted = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     private Gui gui;
     private Db dbConnection; // TODO DB-Programmierung
@@ -241,6 +242,10 @@ public class Project extends Observable {
 
     public String getDateString(Calendar date) {
         return dateFormat.format(date.getTime());
+    }
+
+    public String getDateStringFormatted(Calendar date) {
+        return dateFormatFormatted.format(date.getTime());
     }
 
     /**
