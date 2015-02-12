@@ -42,8 +42,8 @@
     <string name="btnAddNewPro">Neues Projekt hinzufügen</string>
     <string name="btnScanBTDevices">Nach Geräten suchen</string>
     <string name="tvAvailableBtDevices">Verfügbare Geräte</string>
-    <string name="popupMenuEntryDeleteCon">Verbindung entfernen</string>
-    <string name="popupMenuEntryAlterCon">Bearbeiten</string>
+    <string name="popupMenuEntryDeleteEntry">Eintrag entfernen</string>
+    <string name="popupMenuEntryAlterEntry">Bearbeiten</string>
     <string name="classSwitchModel">class elements.SwitchModel</string>
     <string name="classLedModel">"class elements.LedModel"</string>
     <string name="classEmptyElement">"class elements.EmptyElement"</string>

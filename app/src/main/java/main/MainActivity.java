@@ -177,7 +177,7 @@ public class MainActivity extends Activity {
             allLastOpenedDates.add(p.getLastOpenedDate());
         }
         Calendar maxDate = Collections.max(allLastOpenedDates);
-Log.d(LOG_TAG, "EEEEEEEEEEE");
+
         for(Project p : allProjects) {
             Log.d(LOG_TAG, p.getName() + " " + p.getDateString(p.getLastOpenedDate()));
             if(p.getLastOpenedDate().equals(maxDate)) {
@@ -215,11 +215,34 @@ Log.d(LOG_TAG, "EEEEEEEEEEE");
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "In der onDestroy", Toast.LENGTH_SHORT).show();
+
         if(BTConnection.isConnected())
             BTConnection.closeConnection();
+        currentConnection = null;
 
         // Abspeichern der Connections in der DB
+        storeDataInDb();
+
+//        allProjects.clear();
+//        db.execSQL("DROP TABLE IF EXISTS connections");
+//        db.execSQL("DROP TABLE IF EXISTS projects");
+//        db.execSQL("DROP TABLE IF EXISTS elements");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Toast.makeText(this, "in onPause", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Toast.makeText(this, "in onStop", Toast.LENGTH_SHORT).show();
+//        storeDataInDb();
+    }
+
+    private void storeDataInDb() {
         ArrayList<String> allConsName = new ArrayList<String>();
         ArrayList<String> allConsType = new ArrayList<String>();
         ArrayList<String> allConsAddress = new ArrayList<String>();
@@ -228,11 +251,6 @@ Log.d(LOG_TAG, "EEEEEEEEEEE");
 
         // Eintragen der Projekte in die DB
         dbHandler.updateProjects(allProjects, db, this);
-
-//        allProjects.clear();
-//        db.execSQL("DROP TABLE IF EXISTS connections");
-//        db.execSQL("DROP TABLE IF EXISTS projects");
-//        db.execSQL("DROP TABLE IF EXISTS elements");
     }
 
 
@@ -392,6 +410,18 @@ Log.d(LOG_TAG, "EEEEEEEEEEE");
             if(c.getConNameDeclaration().equals(conName)) {
                 if(allConnections.remove(c)) {
                     Log.d(LOG_TAG, "Connection " + conName + " von Liste entfernt");
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean removeProject(String proName) {
+        for(Project p : allProjects) {
+            if(p.getName().equals(proName)) {
+                if(allProjects.remove(p)) {
+                    Log.d(LOG_TAG, "Projekt " + proName + " von Liste entfernt");
                     return true;
                 }
             }

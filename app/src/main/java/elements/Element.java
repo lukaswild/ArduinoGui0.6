@@ -37,4 +37,8 @@ public class Element {
         this.ressource = ressource;
     }
 
+    public void setRessource(boolean status) {
+        // TODO muss unterklasse überschreiben
+    }
+
 }

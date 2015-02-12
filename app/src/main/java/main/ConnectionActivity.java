@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -61,16 +60,7 @@ public class ConnectionActivity extends Activity {
     private Dialog dialogNewCon; // Dialog zum Hinzufügen einer neuen Verbindung
     private Dialog dialogAlterCon; // Dialog zum Bearbeiten einer Verbindung
 
-    // Database fields
-    private SQLiteDatabase database;
-    private DatabaseHandler dbHelper;
-//    private String[] allColumns = { DatabaseHandler.COLUMN_ID,
-//            DatabaseHandler.COLUMN_CONNECTION };
-
-
     DatabaseHandler dbHandler;
-
-
     BroadcastReceiver bcFindBtDevs;
 
     final BroadcastReceiver bcScanDevFinished = new BroadcastReceiver() {
@@ -139,7 +129,7 @@ public class ConnectionActivity extends Activity {
 
                 final int positionFinal = position;
                 final PopupMenu popupConOptions = new PopupMenu(getApplicationContext(), view);
-                popupConOptions.inflate(R.menu.menu_popup_connection);
+                popupConOptions.inflate(R.menu.menu_popup_entries);
                 final String keyChosen = parent.getItemAtPosition(position).toString();
 
                 if(allConsHeader.contains(keyChosen)) {
@@ -156,7 +146,7 @@ public class ConnectionActivity extends Activity {
 
                             switch (item.getItemId()) {
 
-                                case R.id.removeCon:
+                                case R.id.removeEntry:
                                     if (mapListDataChild.containsKey(keyChosen)) {
                                         mapListDataChild.remove(keyChosen);
                                         allConsHeader.remove(keyChosen);
@@ -167,7 +157,7 @@ public class ConnectionActivity extends Activity {
                                     return true;
 
 
-                                case R.id.alterCon:
+                                case R.id.alterEntry: // TODO Fehler u.a. bei frisch angelegter Connection,...
 
                                     IConnection con = null;
 
@@ -235,13 +225,10 @@ public class ConnectionActivity extends Activity {
                                         }
                                     });
 
-
                                     btnCancelAlterSetOnClickListener(btnCancelAlter);
-
 
                                     dialogAlterCon.show();
                                     return true;
-
                             }
                             return false;
                         }
@@ -251,29 +238,7 @@ public class ConnectionActivity extends Activity {
             }
         });
 
-//        if(!(currentConName.equals(""))) {
-//            for(int i = 0; i < allConsHeader.size(); i++) {
-//                if(allConsHeader.get(i).equals(currentConName)) {
-//                    Toast.makeText(this, "Verbindung " + currentConName + " auf Position " + i + " ist aufgebaut", Toast.LENGTH_LONG).show();
-//
-//
-//                }
-//            }
-//        }
-
-
         dbHandler = new DatabaseHandler(this);
-
-
-////        dbHelper = new DatabaseHandler(this);
-//
-//        SQLiteDatabase db = this.openOrCreateDatabase("test_db_name", MODE_PRIVATE, null);
-//        db.execSQL("Create table X (id int");
-//        db.execSQL("insert into X(id) values(1)");
-//        db.execSQL("Select * from X");
-//
-//        db.close();
-
     }
 
 
@@ -372,9 +337,7 @@ public class ConnectionActivity extends Activity {
         btnScanBtDevices = (Button) dialogNewCon.findViewById(R.id.btnScanDevices);
         setSpinnerListener(dialogNewCon);
         Button btnSubmit = (Button) dialogNewCon.findViewById(R.id.btnSubmit);
-
         dialogNewCon.show();
-
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -382,7 +345,6 @@ public class ConnectionActivity extends Activity {
                 btnSubmitClicked(v);
             }
         });
-
         Button btnCancel = (Button) dialogNewCon.findViewById(R.id.btnCancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -390,7 +352,6 @@ public class ConnectionActivity extends Activity {
                 btnCancelClicked(dialogNewCon);
             }
         });
-
 
         // Es soll ein weiteres Dialogfenster erscheinen, welches nach verfügbaren BT-Geräten sucht und diese auflistet.
         btnScanBtDevices.setOnClickListener(new View.OnClickListener() {
@@ -450,28 +411,6 @@ public class ConnectionActivity extends Activity {
                 }
             }
         };
-
-//        final BroadcastReceiver bcScanDevFinished = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                String action = intent.getAction();
-//
-//                if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-//                    Toast.makeText(getApplicationContext(), "Scan beendet", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        };
-//
-//        final BroadcastReceiver bcScanDevStarted = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context context, Intent intent) {
-//                String action = intent.getAction();
-//
-//                if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-//                    Toast.makeText(getApplicationContext(), "Nach Geräten scannen...", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        };
 
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter.isDiscovering()) // the button is pressed when it discovers, so cancel the discovery
@@ -651,25 +590,6 @@ public class ConnectionActivity extends Activity {
         finish();
     }
 
-    String isActivatedStr = "aus";
-
-//    public void tglBtnChooseCloseConClicked(View v) {
-//        ToggleButton tglBtnChooseCon = (ToggleButton) findViewById(R.id.tglBtnChooseCon);
-//        boolean isChecked = tglBtnChooseCon.isChecked();
-//
-//        if(isChecked)
-//            isActivatedStr = "ein";
-//        else
-//            isActivatedStr = "aus";
-//
-//        Toast.makeText(this, isActivatedStr, Toast.LENGTH_SHORT).show();
-//
-////        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayoutListGroup);
-////        for(int i = 0; i < relativeLayout.getChildCount(); i++) {
-////            View child = relativeLayout.getChildAt(i);
-////            Log.d(LOG_TAG, child.getClass().toString() + " " +  child.getId());
-////        }
-//    }
 
     /**
      * Hiermit wird eine Verbindung aufgebaut, wenn ein Schalter (ToggleButton) neben einer
@@ -693,4 +613,6 @@ public class ConnectionActivity extends Activity {
 
         return initialisingSuccessful;
     }
+
+
 }

@@ -168,6 +168,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         status = 1;
                     else
                         status = 0;
+                    Log.d(LOG_TAG, "ELEMENT STATUS " + status);
                 }
                 else if(element instanceof PwmElement) {
                     elementKind = "Pwm";
@@ -188,6 +189,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 else
                     cmdInsertElements.bindNull(5);
                 cmdInsertElements.bindLong(6, element.getRessource());
+                Log.d(LOG_TAG, "Ressource: " + element.getRessource());
                 cmdInsertElements.bindLong(7, p.getId());
                 cmdInsertElements.execute();
                 Log.d(LOG_TAG, "Element eingetragen: " + elementType + " Position: " + key + " Projekt: " + p.getId());
@@ -359,7 +361,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     ((BoolElement)e).setStatusHigh(boolStatus);
                 }
 
-                if (eKind.equals("Pwm")){
+                else if (eKind.equals("Pwm")) {
                     ((PwmElement)e).setCurrentPwm(status);
                 }
 

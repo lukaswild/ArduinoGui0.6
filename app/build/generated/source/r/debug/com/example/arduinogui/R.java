@@ -40,7 +40,7 @@ public final class R {
         public static final int a4=0x7f090054;
         public static final int a5=0x7f090055;
         public static final int action_settings=0x7f090034;
-        public static final int alterCon=0x7f09003f;
+        public static final int alterEntry=0x7f09003f;
         public static final int btnCancel=0x7f090029;
         public static final int btnCancelAlter=0x7f090014;
         public static final int btnNewCon=0x7f090004;
@@ -94,7 +94,7 @@ public final class R {
         public static final int proNamePopup=0x7f090017;
         public static final int pro_action_settings=0x7f090056;
         public static final int relativeLayoutListGroup=0x7f090019;
-        public static final int removeCon=0x7f090040;
+        public static final int removeEntry=0x7f090040;
         public static final int scrollViewParent=0x7f09001f;
         public static final int scrollViewParentAlter=0x7f09000d;
         public static final int seekBar1=0x7f090030;
@@ -139,7 +139,7 @@ public final class R {
         public static final int main=0x7f080000;
         public static final int menu_popup=0x7f080001;
         public static final int menu_popup_clickoptions=0x7f080002;
-        public static final int menu_popup_connection=0x7f080003;
+        public static final int menu_popup_entries=0x7f080003;
         public static final int menu_popup_identifyer=0x7f080004;
         public static final int new_connection=0x7f080005;
         public static final int new_project=0x7f080006;
@@ -170,8 +170,8 @@ public final class R {
         public static final int mennu_popup_identifyer=0x7f060016;
         public static final int menu_popup_addbutton=0x7f060017;
         public static final int menu_popup_addswitch=0x7f060018;
-        public static final int popupMenuEntryAlterCon=0x7f060019;
-        public static final int popupMenuEntryDeleteCon=0x7f06001a;
+        public static final int popupMenuEntryAlterEntry=0x7f060019;
+        public static final int popupMenuEntryDeleteEntry=0x7f06001a;
         public static final int projName=0x7f06001b;
         public static final int settings_buttons=0x7f06001c;
         public static final int settings_ok=0x7f06001d;

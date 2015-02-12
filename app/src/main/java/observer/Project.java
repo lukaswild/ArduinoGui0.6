@@ -250,7 +250,7 @@ public class Project extends Observable {
      * Ebenso wird mithilfe des Observer-Patterns die Gui aktualisiert, also z.B. das Feedbackelement Led auf High gesetzt.
      * @param v - View des das Event ausl�senden Elements
      */
-    public void sendDataUpdateGui(View v, IConnection currentConnection, int position) {
+    public void sendDataUpdateGui(View v, IConnection currentConnection, int position, boolean newStatus) {
         Element model = mapAllViewModels.get(position);
         Log.d(LOG_TAG, "Position: " + position);
 
@@ -262,11 +262,11 @@ public class Project extends Observable {
         if(model instanceof BoolElement) {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
 
-            boolean curStatus = ((BoolElement) model).isStatusHigh();
-            boolean newStatus = !curStatus; // TODO wenn Schalter betätigt wird, bevor Elemente verknüpft sind, so wird der falsche Status gesendet, da der Status einfach immer negiert wird
+//            boolean curStatus = ((BoolElement) model).isStatusHigh();
+//            boolean newStatus = !curStatus; // TODO wenn Schalter betätigt wird, bevor Elemente verknüpft sind, so wird der falsche Status gesendet, da der Status einfach immer negiert wird
 
             if(model.getIdentifier() != null) {
-                String code = CodeGenerator.generateCodeToSend(newStatus, model.getIdentifier());
+                String code = CodeGenerator.generateCodeToSend(!newStatus, model.getIdentifier()); //////////////////////////
                 Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
                 // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
@@ -300,13 +300,17 @@ public class Project extends Observable {
 
                                 if (codeSuccessStr.equals("100")) {
                                     // �nderung des Status im Model
-                                    ((BoolElement) model).setStatusHigh(newStatus);
-                                    notify(this, currentElement, position, (Integer) entry.getKey());
+                                    if(model instanceof BoolElement && currentElement instanceof BoolElement) {
+                                        ((BoolElement) model).setStatusHigh(newStatus);
+                                        ((BoolElement)currentElement).setStatusHigh(newStatus);
+                                        model.setRessource(newStatus);
+                                        currentElement.setRessource(newStatus);
+                                        notify(this, currentElement, position, (Integer) entry.getKey());
+                                    }
                                 }
                             }
                         }
                     }
-
 
                 } else
                     Log.e(LOG_TAG, "Error - Kein InputElement");

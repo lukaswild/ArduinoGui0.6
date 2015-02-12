@@ -5,14 +5,17 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
@@ -56,7 +59,7 @@ public class ProjectActivity extends  Activity {
 
         Intent parentIntent = getIntent();
 
-        ArrayList<String> allProName = getIntentExtra(parentIntent, "allProName");
+        final ArrayList<String> allProName = getIntentExtra(parentIntent, "allProName");
         ArrayList<String> allProElements = getIntentExtra(parentIntent, "allProElements");
 
         mapListDataChild = new HashMap<String, ArrayList<String>>();
@@ -68,6 +71,49 @@ public class ProjectActivity extends  Activity {
         expListAdapter=new ExpListAdapterAllPro(this,allProName,mapListDataChild);
 
         expListView.setAdapter(expListAdapter);
+
+        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                final int positionFinal = position;
+                final PopupMenu popupProOptions = new PopupMenu(getApplicationContext(), view);
+                popupProOptions.inflate(R.menu.menu_popup_entries);
+                final String keyChosen = parent.getItemAtPosition(position).toString();
+                Log.d(LOG_TAG, "keyChosen: " + keyChosen);
+
+                if(allProName.contains(keyChosen)) {
+                    popupProOptions.show();
+
+                    popupProOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+
+                            switch (item.getItemId()) {
+
+                                case R.id.removeEntry :
+                                    if(mapListDataChild.containsKey(keyChosen)) {
+                                        mapListDataChild.remove(keyChosen);
+                                        allProName.remove(keyChosen);
+                                        MainActivity.removeProject(keyChosen);
+                                    }
+                                    expListAdapter.notifyDataSetChanged();
+                                    return true;
+
+                                case R.id.alterEntry:
+                                    // TODO
+                            }
+
+                            return false;
+                        }
+                    });
+
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
 
