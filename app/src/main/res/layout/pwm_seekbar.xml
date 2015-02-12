@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/dialog_seekbarPWM"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal|top">
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBarPWM"
+        android:max="255"
+        android:indeterminate="false"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_ok"
+        android:id="@+id/buttonOKPWM"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>
+
+</TableLayout>

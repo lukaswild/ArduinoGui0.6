@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import Views.MyImageView;
+import Views.MyTextView;
 import Views.PwmView;
 import elements.Element;
 
@@ -32,12 +33,8 @@ public class ImageAdapter extends BaseAdapter {
     }
     //Felder
     private static HashMap<Integer, Integer> imgRes = new HashMap<Integer, Integer>();
+    private static HashMap<Integer, String> textRes = new HashMap<Integer, String>();
     private Context mContext;
-
-
-    public int getLength() {
-        return length;
-    }
 
     //vorher, war langth und width angegeben, da die symbole quadratisc sind, ist das nicht gut
     //jetzt wird nurmehr die länge lenght angegeben, und diese dann für breite und länge verwendet
@@ -52,7 +49,19 @@ public class ImageAdapter extends BaseAdapter {
 
         imgRes.put(id,name);
 
+    }
 
+    //das gleiche wie update
+    public void updateTextRes(String element, int key){
+        textRes.put(key, element);
+    }
+    public String getTextRes(int key){
+        return  textRes.get(key);
+    }
+
+
+    public int getLength() {
+        return length;
     }
 
     public void setMap(HashMap<Integer, Integer> imgRes) {
@@ -129,7 +138,7 @@ public class ImageAdapter extends BaseAdapter {
         imgView.setLayoutParams(new LinearLayout.LayoutParams(length, length));
         imgView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imgView.setPadding(10, 10, 10, 3);
-        TextView albNameView = (TextView) view.findViewById(R.id.textView5);
+        TextView txtView = (TextView)view.findViewById(R.id.textView5);
 
         /*if (imgRes.size() > 0) {
 
@@ -137,7 +146,7 @@ public class ImageAdapter extends BaseAdapter {
 
                 //imgView.setBackgroundResource(getItemInt(i));
                 imgView.setImageResource(getItemInt(i));
-                albNameView.setText("0");
+                txtView.setText("0");
 
 
             }
@@ -145,8 +154,28 @@ public class ImageAdapter extends BaseAdapter {
         }*/
         imgView.setImageResource(getItemInt(position));
         if (getItemInt(position)==R.drawable.pwm_0){
-            albNameView.setVisibility(View.VISIBLE);
-            albNameView.setText("0");
+            //txtView.setText("0");
+            if (getTextRes(position).equals(null)) {
+                updateTextRes("0", position);
+                txtView.setVisibility(View.VISIBLE);
+            }
+            else {
+                txtView.setText(getTextRes(position));
+                txtView.setVisibility(View.VISIBLE);
+            }
+
+        }
+        if (getItemInt(position)==R.drawable.pwm_slider){
+            //txtView.setText("0");
+            if (getTextRes(position).equals(null)) {
+                updateTextRes("0", position);
+                txtView.setVisibility(View.VISIBLE);
+            }
+            else {
+                txtView.setText(getTextRes(position));
+                txtView.setVisibility(View.VISIBLE);
+            }
+
         }
 
         return view;

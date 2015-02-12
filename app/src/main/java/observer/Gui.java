@@ -1,24 +1,32 @@
 package observer;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.PopupMenu;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
 import java.util.HashMap;
 
+import Views.MyTextView;
 import Views.PwmView;
 import connection.IConnection;
 import elements.Element;
 import elements.EmptyElement;
 import elements.LedModel;
+import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
 import generic.ImageAdapter;
@@ -113,7 +121,7 @@ public class Gui extends View implements IObserver {
         if (!editmode){
             project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick(AdapterView<?> parent, View v, final int position, long id) {
+                public void onItemClick(AdapterView<?> parent, final View v, final int position, long id) {
                     switch (imgadapt.getItemInt(position)) {
 
                         case R.drawable.add1:
@@ -150,6 +158,63 @@ public class Gui extends View implements IObserver {
                             } catch (NullPointerException e) {
                                 makeToastNoConnection();
                             }
+                            break;
+
+                        case R.drawable.pwm_slider:
+                            //wenn es ein pwm_slider ist, dann muss das elemnt ein PWmInput sein.
+                            final PwmInputModel pwm = (PwmInputModel)project.getElementFromMap(position);
+
+
+                            final Dialog popDialog = new Dialog(getContext());
+                            popDialog.setCancelable(true);
+                            LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                            final  View Viewlayout = inflater.inflate(R.layout.pwm_seekbar,(ViewGroup)findViewById(R.id.seekBarPWM));
+
+                            popDialog.setContentView(Viewlayout);
+                            popDialog.setTitle("Einstellungen");
+                            popDialog.show();
+
+                            final SeekBar seek1 = (SeekBar)Viewlayout.findViewById(R.id.seekBarPWM);
+                            seek1.setProgress(pwm.getCurrentPwm());
+                            seek1.setDrawingCacheBackgroundColor(Color.DKGRAY);
+
+                            seek1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                                                 @Override
+                                                                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                                                                     pwm.setCurrentPwm(progress);
+                                                                     imgadapt.updateTextRes(Integer.toString(progress),position);
+                                                                     imgadapt.notifyDataSetChanged();
+
+                                                                 }
+
+                                                                 @Override
+                                                                 public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                                                 }
+
+                                                                 @Override
+                                                                 public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                                                 }
+                                                             }
+
+
+                            );
+                      final Button button = (Button)Viewlayout.findViewById(R.id.buttonOKPWM);
+
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+
+                                    popDialog.cancel();
+                                    //Wert des bild setzen
+                                    imgadapt.notifyDataSetChanged();
+
+                                }
+                            });
                             break;
 
                         case R.drawable.lamp_off:
@@ -461,11 +526,20 @@ public class Gui extends View implements IObserver {
                 imgadapt.update(R.drawable.pwm_0, position);
                 imgadapt.notifyDataSetChanged();
                 project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
+                imgadapt.updateTextRes("0",position);
                 imgadapt.notifyDataSetChanged();
                 return true;
 
             case R.id.AddPWMView:
-                //TODO der Schieberegler zum EInstellen des PWM Wertes
+                Log.d(LOG_TAG, "Hinzufügen eines PWM Reglers");
+                imgadapt.update(R.drawable.pwm_slider, position);
+                imgadapt.notifyDataSetChanged();
+                project.addModelToMap(position, new PwmInputModel(ELEMENT_NAME + Integer.toString(position)));
+
+               // TextView txtView2 = (TextView) gridView.findViewById(R.id.textView5);
+                imgadapt.updateTextRes("0",position);
+
+                imgadapt.notifyDataSetChanged();
                 return true;
 
 

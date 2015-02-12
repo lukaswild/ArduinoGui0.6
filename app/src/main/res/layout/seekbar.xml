@@ -60,7 +60,6 @@
             android:text="@string/settings_ok"
             android:id="@+id/buttonOK"
             android:layout_gravity="center_horizontal" />
-
-
     </LinearLayout>
+
 </TableLayout>
