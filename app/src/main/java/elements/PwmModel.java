@@ -22,6 +22,7 @@ public class PwmModel extends PwmElement implements OutputElement{
     @Override
     public String receiveData(IConnection connection) {
         return null;//TODO Daten receiven
+
     }
 
 }

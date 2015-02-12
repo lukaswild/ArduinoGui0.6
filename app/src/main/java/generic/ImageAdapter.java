@@ -140,47 +140,29 @@ public class ImageAdapter extends BaseAdapter {
         imgView.setPadding(10, 10, 10, 3);
         TextView txtView = (TextView)view.findViewById(R.id.textView5);
 
-        /*if (imgRes.size() > 0) {
-
-            for (int i = 0; i < imgRes.size(); i++) {
-
-                //imgView.setBackgroundResource(getItemInt(i));
-                imgView.setImageResource(getItemInt(i));
-                txtView.setText("0");
-
-
-            }
-
-        }*/
         imgView.setImageResource(getItemInt(position));
         if (getItemInt(position)==R.drawable.pwm_0){
-            //txtView.setText("0");
-            if (getTextRes(position).equals(null)) {
-                updateTextRes("0", position);
-                txtView.setVisibility(View.VISIBLE);
-            }
-            else {
+
                 txtView.setText(getTextRes(position));
                 txtView.setVisibility(View.VISIBLE);
-            }
+
 
         }
-        if (getItemInt(position)==R.drawable.pwm_slider){
-            //txtView.setText("0");
-            if (getTextRes(position).equals(null)) {
-                updateTextRes("0", position);
-                txtView.setVisibility(View.VISIBLE);
-            }
-            else {
+         else if (getItemInt(position)==R.drawable.pwm_slider){
+
                 txtView.setText(getTextRes(position));
                 txtView.setVisibility(View.VISIBLE);
-            }
 
+
+        }
+        else {
+            txtView.setVisibility(View.INVISIBLE);
         }
 
         return view;
 
 
+        ///ALTER IMAGEADAPTER///
         /*
         // ImageView imageView;
         MyImageView imageView;
