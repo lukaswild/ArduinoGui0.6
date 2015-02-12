@@ -11,7 +11,6 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
-
 import java.util.HashMap;
 
 import connection.IConnection;
