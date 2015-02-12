@@ -2,6 +2,9 @@ package Views;
 
 import android.content.Context;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.example.arduinogui.R;
 
 /**
  * Created by Lukas on 26.12.2014.
@@ -9,7 +12,7 @@ import android.widget.ImageView;
 public class MyImageView extends ImageView {
     private String name;
 
-
+    public TextView txtview = (TextView) findViewById(R.id.textPWM);
 
     private int id;
 

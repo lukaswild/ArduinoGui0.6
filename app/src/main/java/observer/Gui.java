@@ -8,15 +8,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.arduinogui.R;
 import java.util.HashMap;
 
+import Views.PwmView;
 import connection.IConnection;
 import elements.Element;
 import elements.EmptyElement;
 import elements.LedModel;
+import elements.PwmModel;
 import elements.SwitchModel;
 import generic.ImageAdapter;
 
@@ -452,6 +455,19 @@ public class Gui extends View implements IObserver {
                 project.addModelToMap(position, new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                 //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                 return true;
+
+            case R.id.AddPWMCol:
+                Log.d(LOG_TAG, "Hinzufügen einer PWM Säule");
+                imgadapt.update(R.drawable.pwm_0, position);
+                imgadapt.notifyDataSetChanged();
+                project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
+                imgadapt.notifyDataSetChanged();
+                return true;
+
+            case R.id.AddPWMView:
+                //TODO der Schieberegler zum EInstellen des PWM Wertes
+                return true;
+
 
             default:
                 return false;

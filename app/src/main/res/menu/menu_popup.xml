@@ -3,5 +3,7 @@
     <item android:id="@+id/AddLED" android:title="@string/mennu_popup_addled" android:visible="true" />
     <item android:id="@+id/AddSwitch" android:title="@string/menu_popup_addswitch" android:visible="true" />
     <item android:id="@+id/AddButton" android:title="@string/menu_popup_addbutton" android:visible="true" />
+    <item android:id="@+id/AddPWMCol" android:title="@string/addPwmCol" android:visible="true" />
+    <item android:id="@+id/AddPWMView" android:title="@string/addPwmView" android:visible="true" />
 </group>
 </menu>
