@@ -1,13 +1,13 @@
 package elements;
 
 
-public class Element {
+public abstract class Element {
 
 	protected String name;  // TODO notwendig?
 	protected String identifier;
 
 
-    protected int ressource;
+    protected int resource;
 	
 	public void setName(String name) {
 		this.name = name;
@@ -29,16 +29,14 @@ public class Element {
 		return identifier; 
 	}
 
-    public int getRessource() {
-        return ressource;
+    public int getResource() {
+        return resource;
     }
 
-    public void setRessource(int ressource) {
-        this.ressource = ressource;
+    public void setResource(int resource) {
+        this.resource = resource;
     }
 
-    public void setRessource(boolean status) {
-        // TODO muss unterklasse überschreiben
-    }
+//    public abstract void setResource(boolean status);
 
 }

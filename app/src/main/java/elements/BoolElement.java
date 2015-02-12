@@ -11,5 +11,7 @@ public abstract class BoolElement extends Element {
 
 	public void setStatusHigh(boolean statusHigh) {
 		this.statusHigh = statusHigh;
-	} 
+	}
+
+    public abstract void setResource(boolean statusHigh);
 }

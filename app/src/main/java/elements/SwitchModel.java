@@ -18,19 +18,19 @@ public class SwitchModel extends BoolElement implements InputElement {
         super.name = name;
         super.statusHigh = statusHigh;
         if(statusHigh)
-            super.setRessource(resourceSwitchOn);
+            super.setResource(resourceSwitchOn);
         else
-            super.setRessource(resourceSwitchOff);
+            super.setResource(resourceSwitchOff);
     }
 
     public SwitchModel() {}
 
     @Override
-    public void setRessource(boolean status) {
+    public void setResource(boolean status) {
         if(status)
-            super.setRessource(resourceSwitchOn);
+            super.setResource(resourceSwitchOn);
         else
-            super.setRessource(resourceSwitchOff);
+            super.setResource(resourceSwitchOff);
     }
 
     public int getResourceSwitchOff() {

@@ -32,9 +32,7 @@ import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
 import database.DatabaseHandler;
-import elements.Element;
 import elements.EmptyElement;
-import elements.LedModel;
 import generic.ImageAdapter;
 import observer.Gui;
 import observer.Project;
@@ -197,11 +195,6 @@ public class MainActivity extends Activity {
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         loadImgRes();
         Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
-
-        Element l = new Element();
-        l = new LedModel("ne", false);
-        Log.d(LOG_TAG, "DDDDD " + l.getRessource());
-
     }
 
    /* @Override

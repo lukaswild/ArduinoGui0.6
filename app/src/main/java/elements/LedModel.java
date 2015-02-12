@@ -14,19 +14,19 @@ public class LedModel extends BoolElement implements OutputElement {
         super.name = name;
         super.statusHigh = statusHigh;
         if(statusHigh)
-            super.setRessource(R.drawable.lamp_on);
+            super.setResource(R.drawable.lamp_on);
         else
-            super.setRessource(R.drawable.lamp_off);
+            super.setResource(R.drawable.lamp_off);
     }
 
     public LedModel() {}
 
     @Override
-    public void setRessource(boolean status) {
+    public void setResource(boolean status) {
         if(status)
-            super.setRessource(resourceLedOn);
+            super.setResource(resourceLedOn);
         else
-            super.setRessource(resourceLedOff);
+            super.setResource(resourceLedOff);
     }
 
     public int getResourceLedOn() {

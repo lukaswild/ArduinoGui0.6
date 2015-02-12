@@ -188,8 +188,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     cmdInsertElements.bindString(5, element.getIdentifier());
                 else
                     cmdInsertElements.bindNull(5);
-                cmdInsertElements.bindLong(6, element.getRessource());
-                Log.d(LOG_TAG, "Ressource: " + element.getRessource());
+                cmdInsertElements.bindLong(6, element.getResource());
+                Log.d(LOG_TAG, "Ressource: " + element.getResource());
                 cmdInsertElements.bindLong(7, p.getId());
                 cmdInsertElements.execute();
                 Log.d(LOG_TAG, "Element eingetragen: " + elementType + " Position: " + key + " Projekt: " + p.getId());
@@ -343,16 +343,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                         " Status: " + status + "Identifier: " + identifier + " Ressource: " + resource + " ProjectFk: " + project_fk);
 
                 // Erzeugen eines neuen Elements mit genau diesen Daten, um die HashMap zu füllen
-                Element e = new Element();
+                Element e;
 
                 if(eType.equals(context.getString(R.string.classSwitchModel)))
                     e = new SwitchModel();
                 else if (eType.equals(context.getString(R.string.classLedModel)))
                     e = new LedModel(); // TODO mehrere Elemente
-                else if(eType.equals(context.getString(R.string.classEmptyElement)))
-                    e=new EmptyElement();
+                else
+                    e = new EmptyElement();
                 e.setIdentifier(identifier);
-                e.setRessource(resource);
+                e.setResource(resource);
 
                 if(eKind.equals("Bool")) {
                     boolean boolStatus = false;

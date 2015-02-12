@@ -83,7 +83,7 @@ public class Project extends Observable {
     public int getRessourceFromMap(int key){
         //Die ID der Elemnte ist eine aufsteigende Nummer. Deshalb ist die Size gleich der höchsten nummer
         if (mapAllViewModels.containsKey(key)){
-            return mapAllViewModels.get(key).getRessource();
+            return mapAllViewModels.get(key).getResource();
         }
         else {
             return R.drawable.add1;
@@ -303,8 +303,8 @@ public class Project extends Observable {
                                     if(model instanceof BoolElement && currentElement instanceof BoolElement) {
                                         ((BoolElement) model).setStatusHigh(newStatus);
                                         ((BoolElement)currentElement).setStatusHigh(newStatus);
-                                        model.setRessource(newStatus);
-                                        currentElement.setRessource(newStatus);
+                                        ((BoolElement)model).setResource(newStatus);
+                                        ((BoolElement)currentElement).setResource(newStatus);
                                         notify(this, currentElement, position, (Integer) entry.getKey());
                                     }
                                 }

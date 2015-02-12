@@ -83,7 +83,7 @@ public class ImageAdapter extends BaseAdapter {
         for (int i =0;i<elements.size();i++){
 
             if (elements.get(i)!=null){
-                imgRes.put(i,elements.get(i).getRessource());
+                imgRes.put(i,elements.get(i).getResource());
             }
         }
 
