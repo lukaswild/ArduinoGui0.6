@@ -30,7 +30,7 @@ public class Project extends Observable {
     private int id = 0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
     private static int count = 0;
 
-    private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden
+    private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden // TODO Name muss unique sein und nicht ""
     private int numberOfRows; // Anzahl von Elementen in einer Reihe
     private int numberOfLines; // Anzahl von Elementen untereinander (Anzahl von Zeilen)
 

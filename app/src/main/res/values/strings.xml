@@ -54,5 +54,7 @@
     <string name="txtIpAddress">IP-Adresse</string>
     <string name="addPwmView">PWM - Regler hinzufügen</string>
     <string name="addPwmCol">PWM - Anzeige hinzufügen</string>
+    <string name="errorNameEmpty">Name darf nicht leer sein</string>
+    <string name="errorNameNotUnique">Name bereits vorhanden</string>
 
 </resources>

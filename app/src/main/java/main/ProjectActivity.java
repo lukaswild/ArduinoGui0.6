@@ -164,7 +164,6 @@ public class ProjectActivity extends  Activity {
             child.add("Erstellt am: " + allProCreationDates.get(i));
             child.add("Zuletzt geändert: " + allProLastModifiedDates.get(i));
 
-
             mapListDataChild.put(allProName.get(i), child);
         }
     }

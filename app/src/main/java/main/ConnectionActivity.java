@@ -92,7 +92,7 @@ public class ConnectionActivity extends Activity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) { // TODO ToggleButton von  currentConnection sofort auf "ein" setzen
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connection);
 
@@ -157,10 +157,12 @@ public class ConnectionActivity extends Activity {
                                     return true;
 
 
-                                case R.id.alterEntry: // TODO Fehler u.a. bei frisch angelegter Connection,...
+                                case R.id.alterEntry:
+
+                                    refreshListData(allConsType, allConsAddress, allConsHeader);
 
                                     IConnection con = null;
-
+                                    Log.d(LOG_TAG, MainActivity.getAllConnections().size() + "ddd");
                                     for (IConnection c : MainActivity.getAllConnections()) {
                                         if (c.getConNameDeclaration().equals(keyChosen))
                                             con = c;
@@ -197,36 +199,10 @@ public class ConnectionActivity extends Activity {
                                     etConAddressAlter.setText(con.getConAddressDeclaration());
 
 
-                                    btnSubmitAlter.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            String newConName = etConNameAlter.getText().toString();
-                                            String newConAddress = etConAddressAlter.getText().toString();
-
-                                            conFinal.setConNameDeclaration(newConName);
-                                            conFinal.setConAddressDeclaration(newConAddress);
-
-                                            MainActivity.getAllConnections().set(position, conFinal);
-
-                                            // Ändern in allConsHeader und mapListDataChild
-                                            Log.d(LOG_TAG, positionFinal + "");
-                                            Log.d(LOG_TAG, allConsHeader.get(position));
-                                            allConsHeader.set(position, newConName);
-                                            allConsAddress.set(position, newConAddress);
-                                            mapListDataChild.remove(keyChosen);
-
-                                            ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
-                                            child.add(allConsType.get(position));
-                                            child.add(newConAddress);
-                                            mapListDataChild.put(newConName, child);
-
-                                            expListAdapter.notifyDataSetChanged();
-                                            dialogAlterCon.dismiss();
-                                        }
-                                    });
+                                    setButtonSubmitAlterOnClickListener(conFinal, etConNameAlter, etConAddressAlter, btnSubmitAlter,
+                                            position, positionFinal, allConsHeader, allConsAddress, keyChosen, allConsType);
 
                                     btnCancelAlterSetOnClickListener(btnCancelAlter);
-
                                     dialogAlterCon.show();
                                     return true;
                             }
@@ -239,6 +215,67 @@ public class ConnectionActivity extends Activity {
         });
 
         dbHandler = new DatabaseHandler(this);
+    }
+
+
+    private void setButtonSubmitAlterOnClickListener(final IConnection conFinal, final EditText etConNameAlter,
+                                                     final EditText etConAddressAlter, Button btnSubmitAlter, final int position,
+                                                     final int positionFinal, final ArrayList<String> allConsHeader,
+                                                     final ArrayList<String> allConsAddress, final String keyChosen,
+                                                     final ArrayList<String> allConsType) {
+
+        btnSubmitAlter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newConName = etConNameAlter.getText().toString();
+                boolean isUnique = isConNameUnique(newConName, conFinal.getConNameDeclaration());
+                if(isUnique) {
+                    if(!newConName.equals("")) {
+                        String newConAddress = etConAddressAlter.getText().toString();
+
+                        conFinal.setConNameDeclaration(newConName);
+                        conFinal.setConAddressDeclaration(newConAddress);
+
+                        MainActivity.getAllConnections().set(position, conFinal);
+
+                        // Ändern in allConsHeader und mapListDataChild
+                        Log.d(LOG_TAG, positionFinal + "");
+                        Log.d(LOG_TAG, allConsHeader.get(position));
+                        allConsHeader.set(position, newConName);
+                        allConsAddress.set(position, newConAddress);
+                        mapListDataChild.remove(keyChosen);
+
+                        ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+                        child.add(allConsType.get(position));
+                        child.add(newConAddress);
+                        mapListDataChild.put(newConName, child);
+
+                        expListAdapter.notifyDataSetChanged();
+                        dialogAlterCon.dismiss();
+                    } else
+                        Toast.makeText(getBaseContext(), getString(R.string.errorNameEmpty), Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getBaseContext(), getString(R.string.errorNameNotUnique), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void refreshListData(ArrayList<String> allConsType, ArrayList<String> allConsAddress, ArrayList<String> allConsHeader) {
+        allConsType.clear();
+        allConsAddress.clear();
+        allConsHeader.clear();
+        for (IConnection c : MainActivity.getAllConnections()) {
+            if (c instanceof BTConnection) {
+                allConsType.add(getString(R.string.description_btCon));
+                allConsHeader.add(((BTConnection) c).getConNameDeclaration());
+                allConsAddress.add(((BTConnection) c).getConAddressDeclaration());
+            }
+            else if (c instanceof EthernetConnection) {
+                allConsType.add(getString(R.string.description_ethernetCon));
+                allConsHeader.add(((EthernetConnection) c).getConNameDeclaration());
+                allConsAddress.add(((EthernetConnection)c).getConAddressDeclaration());
+            }
+        }
     }
 
 
@@ -325,7 +362,7 @@ public class ConnectionActivity extends Activity {
 
 
 
-    public void createNewConnection(View v) {
+    public void createNewConnection(View v) { // TODO name muss unique sein und nicht ""
 
         dialogNewCon = new Dialog(this);
         dialogNewCon.setContentView(R.layout.new_connection);
@@ -509,41 +546,74 @@ public class ConnectionActivity extends Activity {
     public void btnSubmitClicked(View v) {
         String strConType = "";
         String conName = etConName.getText().toString();
-        String conAddress = etConAddress.getText().toString();
-        HashMap<String, ArrayList<String>> mapExpListView = expListAdapter.getMapDataChild();
-        ArrayList<String> listChildrenToAdd;
+        conName.trim();
+        boolean isUnique = isConNameUnique(conName);
+        if(isUnique) {
+            if(!conName.equals("")) {
+                String conAddress = etConAddress.getText().toString();
+                HashMap<String, ArrayList<String>> mapExpListView = expListAdapter.getMapDataChild();
+                ArrayList<String> listChildrenToAdd;
 
-        // Es sind nur MAC-Adressen mit Separator ":" erlaubt (IP-Addressen werden mit einem Punkt getrennt, diese werden nicht ersetzt)
-        conAddress.replaceAll("-", ":");
-        conAddress.trim();
+                // Es sind nur MAC-Adressen mit Separator ":" erlaubt (IP-Addressen werden mit einem Punkt getrennt, diese werden nicht ersetzt)
+                conAddress.replaceAll("-", ":");
+                conAddress.trim();
 
-        switch (conType) { // 0 (nichts ausgewählt), 1 (BT), oder 2 (Ethernet)
+                switch (conType) { // 0 (nichts ausgewählt), 1 (BT), oder 2 (Ethernet)
 
-            case 0: // nichts ausgewählt - sollte nicht vorkommene
-                Toast.makeText(getApplicationContext(), "Es wurde nichts ausgewählt. ", Toast.LENGTH_SHORT).show();
-                Log.e(LOG_TAG, "Es wurde kein Verbindungstyp ausgewählt");
+                    case 0: // nichts ausgewählt - sollte nicht vorkommene
+                        Toast.makeText(getApplicationContext(), "Es wurde nichts ausgewählt. ", Toast.LENGTH_SHORT).show();
+                        Log.e(LOG_TAG, "Es wurde kein Verbindungstyp ausgewählt");
+                        break;
+
+                    case 1: // Bluetooth-Verbindung ausgewählt
+                        strConType = "Bluetooth-Verbindung";
+                        IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
+                        addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddB);
+                        break;
+
+                    case 2: // Ethernet-Verbindung ausgewählt
+                        strConType = "Ethernet-Verbindung";
+                        IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
+                        addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddE);
+                        break;
+                }
+
+                expListAdapter.notifyDataSetChanged(); // Die ExpandableListView aktualisieren
+                Log.i(LOG_TAG, "Liste aller Connections aktualisiert");
+            } else
+                Toast.makeText(this, getString(R.string.errorNameEmpty), Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(this, getString(R.string.errorNameNotUnique), Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean isConNameUnique(String conName) {
+        boolean isUnique = false;
+        for(IConnection c : MainActivity.getAllConnections()) {
+            if(c.getConNameDeclaration().equals(conName)) {
+                isUnique = false;
                 break;
-
-            case 1: // Bluetooth-Verbindung ausgewählt
-                strConType = "Bluetooth-Verbindung";
-                IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
-                addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddB);
-
-//                finish(); // TODO gleich Verbindug aufbauen, sobald angelegt?
-//                chooseConnection(conName);
-                break;
-
-            case 2: // Ethernet-Verbindung ausgewählt
-                strConType = "Ethernet-Verbindung";
-                IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
-                addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddE);
-//                chooseConnection(conName);
-//                finish();
-                break;
+            } else
+                isUnique = true;
         }
+        return isUnique;
+    }
 
-        expListAdapter.notifyDataSetChanged(); // Die ExpandableListView aktualisieren
-        Log.i(LOG_TAG, "Liste aller Connections aktualisiert");
+    private boolean isConNameUnique(String conNameNew, String conNameOld) {
+        boolean isUnique = false;
+        ArrayList<String> conNames = new ArrayList<String>();
+        for(IConnection ic : MainActivity.getAllConnections()) {
+            conNames.add(ic.getConNameDeclaration());
+        }
+        conNames.remove(conNameOld);
+        for(String s : conNames) {
+            if(s.equals(conNameNew)) {
+                isUnique = false;
+                break;
+            }
+            else
+                isUnique = true;
+        }
+        return isUnique;
     }
 
     private void addNewConnection(String strConType, String conName, String conAddress,
@@ -613,6 +683,4 @@ public class ConnectionActivity extends Activity {
 
         return initialisingSuccessful;
     }
-
-
 }

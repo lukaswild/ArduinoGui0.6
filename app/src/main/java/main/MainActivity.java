@@ -161,8 +161,8 @@ public class MainActivity extends Activity {
 //
 //        Log.d(LOG_TAG,"Vor Gui");
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
-        Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
-        ShowName();
+//        Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
+        showName();
 
 //        createDummyData();
 
@@ -190,11 +190,11 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        ShowName();
+        showName();
 //        setProjectLastOpened();
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         loadImgRes();
-        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
     }
 
    /* @Override
@@ -225,13 +225,13 @@ public class MainActivity extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        Toast.makeText(this, "in onPause", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "in onPause", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Toast.makeText(this, "in onStop", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "in onStop", Toast.LENGTH_SHORT).show();
 //        storeDataInDb();
     }
 
@@ -247,7 +247,7 @@ public class MainActivity extends Activity {
     }
 
 
-    public void ShowName(){
+    public void showName(){
         TextView view = (TextView)findViewById(R.id.textView3);
         TextView view2 = (TextView)findViewById(R.id.textView2);
 
@@ -345,7 +345,6 @@ public class MainActivity extends Activity {
 
         try {
             Log.d(LOG_TAG, "Current connection name: " + currentConnection.getConName());
-            int currentConPosition;
             for(int i = 0; i < allConsHeader.size(); i++) {
                 if(currentConnection.getConName().equals(allConsHeader.get(i))) {
                     newConIntent.putExtra("currentConPosition", i);
@@ -376,21 +375,15 @@ public class MainActivity extends Activity {
 
     public void startActivityProject(){
         Intent newProIntent = new Intent(this, ProjectActivity.class);
-
-        // listView
-//        newConIntent.putExtra("listAvailableCons", currentProject.getListAllCons()); // ArrayList<String> mitgeben
-
         ArrayList<String> allProName = new ArrayList<String>();
         ArrayList<String> allProCreationDates = new ArrayList<String>();
         ArrayList<String> allProLastModifiedDates = new ArrayList<String>();
-
 
         for (Project c : allProjects) {
             allProName.add(c.getName());
             allProCreationDates.add(c.getDateStringFormatted(c.getCreationDate()));
             allProLastModifiedDates.add(c.getDateStringFormatted(c.getLastModifiedDate()));
         }
-//        Toast.makeText(this, "Anzahl Header: " + allConsHeader.size() + " \nAnzahl Children: " + allConsAddress.size(), Toast.LENGTH_LONG).show();
 
         newProIntent.putExtra("allProName", allProName);
         newProIntent.putExtra("allProCreationDates", allProCreationDates);
@@ -448,7 +441,6 @@ public class MainActivity extends Activity {
                                                  //Die Seekbar ghet von 0-150; da es keine Sin macht die Länge auf 0 zu setzten wird die Skala verschoben
                                                  //indem die Eingabe mit 50 addiert wird -> somit geht die Seekbar von 100-200
                                                  imgadapt.setLength(progress+50);
-
 
                                              }
 
