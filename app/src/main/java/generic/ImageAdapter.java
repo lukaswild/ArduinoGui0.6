@@ -137,23 +137,8 @@ public class ImageAdapter extends BaseAdapter {
         TextView txtView = (TextView)view.findViewById(R.id.textView5);
 
         imgView.setImageResource(getItemInt(position));
-        if (getItemInt(position)==R.drawable.pwm_0){
 
-                txtView.setText(getTextRes(position));
-                txtView.setVisibility(View.VISIBLE);
-
-
-        }
-         else if (getItemInt(position)==R.drawable.pwm_slider){
-
-                txtView.setText(getTextRes(position));
-                txtView.setVisibility(View.VISIBLE);
-
-
-        }
-        else {
-            txtView.setVisibility(View.INVISIBLE);
-        }
+        setImgVisability(txtView,position);
 
 
 //        imgView.setOnTouchListener(new View.OnTouchListener() {
@@ -207,4 +192,69 @@ public class ImageAdapter extends BaseAdapter {
     }
 */
 
-}}
+}
+private void setImgVisability(TextView txtView, int position){
+
+    if (getItemInt(position)==R.drawable.pwm_0){
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_25_5){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_51){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_76_5){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_102){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_127_5){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_153){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_178_5){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_204){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+
+    else if (getItemInt(position)==R.drawable.pwm_229_5){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+    else if (getItemInt(position)==R.drawable.pwm_255){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
+
+    else {
+        txtView.setVisibility(View.INVISIBLE);
+    }
+}
+
+
+}

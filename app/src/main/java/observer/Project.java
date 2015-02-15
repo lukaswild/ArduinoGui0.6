@@ -22,6 +22,9 @@ import elements.EmptyElement;
 import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
+import elements.PwmElement;
+import elements.PwmInputModel;
+import elements.PwmModel;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ImageAdapter;
@@ -321,8 +324,16 @@ public class Project extends Observable {
                     Log.e(LOG_TAG, "Error - Kein InputElement");
             } else
                 Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
-        } else //TODO else if (model instanceof PwmElement)
+        }
+        else if (model instanceof PwmElement){
+
+            if (model.getIdentifier() !=null){
+                //String code = CodeGenerator.generateCodeToSend(model.s);
+            }
+
+        }
             Log.d(LOG_TAG, "Kein BoolElement");
+
     }
 
 
