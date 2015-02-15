@@ -105,6 +105,13 @@ public class ProjectActivity extends  Activity {
 
                                 case R.id.alterEntry:
                                     // TODO
+
+//                                    Project pro = null;
+//                                    Log.d(LOG_TAG, MainActivity.get.size() + "ddd");
+//                                    for (IConnection c : MainActivity.getAllConnections()) {
+//                                        if (c.getConNameDeclaration().equals(keyChosen))
+//                                            pro = c;
+//                                    }
                             }
 
                             return false;

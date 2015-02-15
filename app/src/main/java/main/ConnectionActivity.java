@@ -267,13 +267,13 @@ public class ConnectionActivity extends Activity {
         for (IConnection c : MainActivity.getAllConnections()) {
             if (c instanceof BTConnection) {
                 allConsType.add(getString(R.string.description_btCon));
-                allConsHeader.add(((BTConnection) c).getConNameDeclaration());
-                allConsAddress.add(((BTConnection) c).getConAddressDeclaration());
+                allConsHeader.add( c.getConNameDeclaration());
+                allConsAddress.add( c.getConAddressDeclaration());
             }
             else if (c instanceof EthernetConnection) {
                 allConsType.add(getString(R.string.description_ethernetCon));
-                allConsHeader.add(((EthernetConnection) c).getConNameDeclaration());
-                allConsAddress.add(((EthernetConnection)c).getConAddressDeclaration());
+                allConsHeader.add(c.getConNameDeclaration());
+                allConsAddress.add(c.getConAddressDeclaration());
             }
         }
     }
