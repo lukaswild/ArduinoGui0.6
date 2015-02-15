@@ -325,8 +325,8 @@ public class Gui extends View implements IObserver {
 
                                                 switch (item2.getItemId()) {
                                                     case R.id.p1:
-                                                        if (!(project.getElementFromMap(position) instanceof EmptyElement)) {
-                                                            project.getElementFromMap(position).setIdentifier("P1");
+                                                        if (project.getElementByName("element" + position) != null) {
+                                                            project.getElementByName("element" + position).setIdentifier("P1");
                                                             return true;
                                                         }
 

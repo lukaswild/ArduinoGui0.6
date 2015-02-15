@@ -250,6 +250,11 @@ private void setImgVisability(TextView txtView, int position){
         txtView.setText(getTextRes(position));
         txtView.setVisibility(View.VISIBLE);
     }
+    else if (getItemInt(position)==R.drawable.pwm_slider){
+
+        txtView.setText(getTextRes(position));
+        txtView.setVisibility(View.VISIBLE);
+    }
 
     else {
         txtView.setVisibility(View.INVISIBLE);

@@ -328,7 +328,72 @@ public class Project extends Observable {
         else if (model instanceof PwmElement){
 
             if (model.getIdentifier() !=null){
-                //String code = CodeGenerator.generateCodeToSend(model.s);
+
+                //Die Idee ist, dass der PWM Wert für den Arduino immer gleich ausschaut
+                //wird jetzt eimal der Wert 34, und einmal der Wert 128 gesendet, dann unterscheiden sich
+                //die Werte anhand der Stellen. Das macht die Überprüfung am Arduino schwieriger.
+                //Besser ist 034, oder z.B.: 009, so ist der PWM Wert immer 3 Stellen lang.
+
+                String pwm ="" ;
+                if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==1){
+                    pwm= "00"+Integer.toString(((PwmElement) model).getCurrentPwm());
+                }
+                else if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==2){
+                    pwm="0"+Integer.toString(((PwmElement) model).getCurrentPwm());
+                }
+                else{
+                    pwm=Integer.toString(((PwmElement) model).getCurrentPwm());
+                }
+
+                String code = CodeGenerator.generateCodeToSend(pwm,model.getIdentifier());
+                Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
+
+                if (model instanceof InputElement){
+                    Log.d(LOG_TAG, "Model ist ein InputElement");
+                    Log.d(LOG_TAG, "Senden an Arduino...");
+                    ((InputElement) model).sendDataToArduino(currentConnection, code);
+                    Log.d(LOG_TAG, "Gesendet");
+
+                    // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
+                    String codeSuccessStr =  BTConnection.receiveData();
+                    Log.d(LOG_TAG, codeSuccessStr);
+                    Log.d(LOG_TAG, BTConnection.receiveData());
+                    Log.d(LOG_TAG, BTConnection.receiveData());
+
+                    Iterator iterator2 = mapAllViewModels.entrySet().iterator();
+                    while (iterator2.hasNext()) {
+                        Log.d(LOG_TAG, "Größe der Map: " + String.valueOf(mapAllViewModels.size()));
+                        Map.Entry entry = (Map.Entry) iterator2.next();
+                        Element currentElement = (Element) entry.getValue();
+
+                        if (currentElement instanceof OutputElement) {
+                            String identifierCurEl = currentElement.getIdentifier();
+                            if(model.getIdentifier().equals(identifierCurEl)) {
+                                // Dazugehöriges OutputElement gefunden
+                                Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
+                                Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
+
+                                codeSuccessStr.trim();
+                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
+
+                                if (codeSuccessStr.equals("100")) {
+                                    // �nderung des Status im Model
+                                    if(model instanceof PwmElement && currentElement instanceof PwmElement) {
+
+
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+
+
+
+
             }
 
         }
@@ -369,6 +434,8 @@ public class Project extends Observable {
             mapAllViewModels.put(i,new EmptyElement());
         }
     }
-
+    public static int ziffernrekursiv(int zahl) {
+        return (zahl>0)? 1+ziffernrekursiv(zahl/10) : 0;
+    }
 
 }
