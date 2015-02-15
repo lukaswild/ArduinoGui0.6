@@ -148,6 +148,11 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
                     String string = "";
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
+
+//                    Project cp = new Project()
+
+
+
                     currentProject.setName(edit.getText().toString());
                     allProjects.add(currentProject);
                     SetCurrentProjByName(edit.getText().toString());
@@ -199,7 +204,7 @@ public class MainActivity extends Activity {
 //        setProjectLastOpened();
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         loadImgRes();
-//        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
     }
 
    /* @Override
@@ -262,10 +267,10 @@ public class MainActivity extends Activity {
             view.setText(currentProject.getName());
         }
 
-      /*  if (!currentConnection.equals(null)){
-            view2.setText(currentConnection.getConName());
-        }
-*/
+//        if (!currentConnection.equals(null)){
+//            view2.setText(currentConnection.getConName());
+//        }
+
     }
 
     @Override

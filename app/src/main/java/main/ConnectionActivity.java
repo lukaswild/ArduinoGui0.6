@@ -595,6 +595,9 @@ public class ConnectionActivity extends Activity {
             } else
                 isUnique = true;
         }
+        if(MainActivity.getAllConnections().size() == 0)
+            isUnique = true;
+
         return isUnique;
     }
 

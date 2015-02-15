@@ -303,6 +303,8 @@ public class ProjectActivity extends  Activity {
             } else
                 isUnique = true;
         }
+        if(MainActivity.getAllProjects().size() == 0)
+            isUnique = true;
         return isUnique;
     }
 
