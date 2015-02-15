@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Kein Projekt vorhanden ! Geben Sie einen Namen für ein neues Projekt ein."
+        android:text="Kein Projekt vorhanden! Geben Sie einen Namen für ein neues Projekt ein."
         android:id="@+id/textView4"
         android:layout_gravity="center_horizontal|top" />
 

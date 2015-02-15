@@ -613,6 +613,9 @@ public class ConnectionActivity extends Activity {
             else
                 isUnique = true;
         }
+        if(conNames.size() == 0)
+            isUnique = true;
+
         return isUnique;
     }
 

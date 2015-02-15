@@ -23,8 +23,6 @@ import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
 import elements.PwmElement;
-import elements.PwmInputModel;
-import elements.PwmModel;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ImageAdapter;
@@ -33,7 +31,7 @@ public class Project extends Observable {
     private int id = 0;//ID für eindeutige Identifizierung und später für DB, wird im Konstruktor vergeben
     private static int count = 0;
 
-    private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden // TODO Name muss unique sein und nicht ""
+    private String name; // Name sollte vom Benutzer im Nachhinein vergeben werden
     private int numberOfRows; // Anzahl von Elementen in einer Reihe
     private int numberOfLines; // Anzahl von Elementen untereinander (Anzahl von Zeilen)
 
@@ -45,7 +43,6 @@ public class Project extends Observable {
     private DateFormat dateFormatFormatted = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     private Gui gui;
-    private Db dbConnection; // TODO DB-Programmierung
     private final String LOG_TAG = "Project";
 
     private SwitchModel elementSwitch;

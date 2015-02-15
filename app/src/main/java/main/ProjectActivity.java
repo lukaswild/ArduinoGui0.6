@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import generic.ExpListAdapterAllPro;
+import observer.Project;
 
 /**
  * Created by Lukas on 04.01.2015.
@@ -33,15 +34,16 @@ public class ProjectActivity extends  Activity {
 
 
     private final String LOG_TAG = "ProjectActivity";
-    EditText proName;
-    Button btnSubmit;
+    private EditText proName;
+    private Button btnSubmit;
 
-    Dialog dialogNewPro;
+    private Dialog dialogNewPro;
+    private Dialog dialogAlterPro;
 
     private ExpandableListView expListView;
     private ArrayList<String> listDataHeader;
     static HashMap<String, ArrayList<String>> mapListDataChild;
-    ExpListAdapterAllPro expListAdapter;
+    private ExpListAdapterAllPro expListAdapter;
 
 
     @Override
@@ -61,8 +63,8 @@ public class ProjectActivity extends  Activity {
         Intent parentIntent = getIntent();
 
         final ArrayList<String> allProName = getIntentExtra(parentIntent, "allProName");
-        ArrayList<String> allProCreationDates = getIntentExtra(parentIntent, "allProCreationDates");
-        ArrayList<String> allProLastModifiedDates = getIntentExtra(parentIntent, "allProLastModifiedDates");
+        final ArrayList<String> allProCreationDates = getIntentExtra(parentIntent, "allProCreationDates");
+        final ArrayList<String> allProLastModifiedDates = getIntentExtra(parentIntent, "allProLastModifiedDates");
 
 
         mapListDataChild = new HashMap<String, ArrayList<String>>();
@@ -104,21 +106,72 @@ public class ProjectActivity extends  Activity {
                                     return true;
 
                                 case R.id.alterEntry:
-                                    // TODO
 
-//                                    Project pro = null;
-//                                    Log.d(LOG_TAG, MainActivity.get.size() + "ddd");
-//                                    for (IConnection c : MainActivity.getAllConnections()) {
-//                                        if (c.getConNameDeclaration().equals(keyChosen))
-//                                            pro = c;
-//                                    }
+                                    Project pro = null;
+                                    for (Project p: MainActivity.getAllProjects()) {
+                                        if (p.getName().equals(keyChosen))
+                                            pro = p;
+                                    }
+
+                                    if(pro == null) {
+                                        Toast.makeText(getBaseContext(), "Es ist leider ein Fehler aufgetreten", Toast.LENGTH_SHORT).show();
+                                        Log.e(LOG_TAG, "Bearbeiten nicht möglich, kein passender Eintrag in Liste gefunden");
+                                        return false;
+                                    }
+
+
+                                    dialogAlterPro = new Dialog(ProjectActivity.this);
+                                    dialogAlterPro.setTitle("Projekt bearbeiten");
+                                    dialogAlterPro.setContentView(R.layout.alter_project);
+
+                                    final Project proFinal = pro;
+                                    final EditText etProNameAlter = (EditText) dialogAlterPro.findViewById(R.id.etProNameAlter);
+                                    Button btnSubmitAlter = (Button) dialogAlterPro.findViewById(R.id.btnSubmitProAlter);
+                                    Button btnCancelAlter = (Button) dialogAlterPro.findViewById(R.id.btnCancelProAlter);
+
+                                    etProNameAlter.setText(pro.getName());
+
+                                    btnSubmitAlter.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+
+                                            String newProName = etProNameAlter.getText().toString();
+                                            boolean isUnique = isProNameUnique(newProName, proFinal.getName());
+                                            if(isUnique) {
+                                                if(!newProName.equals("")) {
+                                                    proFinal.setName(newProName);
+                                                    MainActivity.getAllProjects().set(positionFinal, proFinal);
+                                                    allProName.set(positionFinal, newProName);
+                                                    mapListDataChild.remove(keyChosen);
+
+                                                    ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+                                                    child.add("Erstellt am: " + allProCreationDates.get(positionFinal));
+                                                    child.add("Zuletzt geändert: " + allProLastModifiedDates.get(positionFinal));
+                                                    mapListDataChild.put(newProName, child);
+                                                    expListAdapter.notifyDataSetChanged();
+                                                    dialogAlterPro.dismiss();
+                                                }
+                                                else
+                                                    Toast.makeText(getBaseContext(), "Name darf nicht leer sein", Toast.LENGTH_SHORT).show();
+                                            }
+                                            else
+                                                Toast.makeText(getBaseContext(), "Name bereits vorhanden", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                                    btnCancelAlter.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialogAlterPro.cancel();
+                                        }
+                                    });
+
+                                    dialogAlterPro.show();
+                                    return true;
                             }
-
                             return false;
                         }
                     });
-
-                    return true;
                 }
 
                 return false;
@@ -239,6 +292,40 @@ public class ProjectActivity extends  Activity {
 
     public static void dismiss() {
 
+    }
+
+    private boolean isProNameUnique(String proName) {
+        boolean isUnique = false;
+        for(Project p : MainActivity.getAllProjects()) {
+            if(p.getName().equals(proName)) {
+                isUnique = false;
+                break;
+            } else
+                isUnique = true;
+        }
+        return isUnique;
+    }
+
+    private boolean isProNameUnique(String proNameNew, String proNameOld) {
+        boolean isUnique = false;
+        ArrayList<String> proNames = new ArrayList<String>();
+        for(Project p : MainActivity.getAllProjects()) {
+            proNames.add(p.getName());
+        }
+        proNames.remove(proNameOld);
+
+        for(String s : proNames) {
+            if(s.equals(proNameNew)) {
+                isUnique = false;
+                break;
+            }
+            else
+                isUnique = true;
+        }
+        if(proNames.size() == 0)
+            isUnique = true;
+
+        return isUnique;
     }
 
 }

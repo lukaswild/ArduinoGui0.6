@@ -69,6 +69,10 @@ public class MainActivity extends Activity {
         return allConnections;
     }
 
+    public static ArrayList<Project> getAllProjects() {
+        return allProjects;
+    }
+
     public static void setAllConnections(ArrayList<IConnection> allConnections) {
         MainActivity.allConnections = allConnections;
     }
@@ -130,7 +134,7 @@ public class MainActivity extends Activity {
         //soll angezeigt werden wenn es noch kein einziges projekt gibt
         if(allProjects.isEmpty()) {
             final Dialog popDialog = new Dialog(this);
-            popDialog.setCancelable(true);
+            popDialog.setCancelable(false);
 
             popDialog.setContentView(R.layout.dialog_project);
             popDialog.setTitle("Projekt festlegen");
@@ -147,8 +151,7 @@ public class MainActivity extends Activity {
                     currentProject.setName(edit.getText().toString());
                     allProjects.add(currentProject);
                     SetCurrentProjByName(edit.getText().toString());
-                    popDialog.cancel();
-
+                    popDialog.dismiss();
                 }
 
             });
