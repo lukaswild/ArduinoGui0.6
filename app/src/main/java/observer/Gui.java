@@ -210,6 +210,7 @@ public class Gui extends View implements IObserver {
                                     popDialog.cancel();
                                     //Wert des bild setzen
                                     imgadapt.notifyDataSetChanged();
+                                    project.sendDataUpdateGui(v, currentConnection, position,false);
 
                                 }
                             });

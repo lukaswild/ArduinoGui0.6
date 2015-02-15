@@ -31,7 +31,7 @@ public class CodeGenerator {
 
 	public static String generateCodeToSend(String msg, String identifier) {
         Log.d(LOG_TAG, "Generiere Code...");
-		String code = "P" + msg + "I" + identifier;// P für PWM
+		String code = "W" + msg + "I" + identifier;// W für PWM
 		return code; 
 	}
 

@@ -95,6 +95,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //db.execSQL("INSERT INTO connections VALUES (null,'HC-05','89', 13, 'off', 'P6', 1)");
+
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment()).commit();
@@ -216,10 +218,10 @@ public class MainActivity extends Activity {
         // Abspeichern der Connections in der DB
         storeDataInDb();
 
-//        allProjects.clear();
-//        db.execSQL("DROP TABLE IF EXISTS connections");
-//        db.execSQL("DROP TABLE IF EXISTS projects");
-//        db.execSQL("DROP TABLE IF EXISTS elements");
+//       allProjects.clear();
+ //      db.execSQL("DROP TABLE IF EXISTS connections");
+  //     db.execSQL("DROP TABLE IF EXISTS projects");
+  //      db.execSQL("DROP TABLE IF EXISTS elements");
     }
 
     @Override
