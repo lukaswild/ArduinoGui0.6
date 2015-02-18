@@ -50,9 +50,23 @@ public class SwitchModel extends BoolElement implements InputElement {
     }
 
     @Override
-    public void sendDataToArduino(IConnection connection, String data) {
+    public void sendDataToArduino(IConnection connection, String data, int status) {
         Log.d(LOG_TAG, "Daten an Arduino senden...");
         connection.sendData(data);
+        if(isFirstInteraction()) {
+            setMillisFirstInteraction(System.currentTimeMillis());
+            setFirstInteraction(false);
+        }
+
+        long timeDifference = (System.currentTimeMillis() - getMillisFirstInteraction()) / 1000;
+        if(!getTimeRecord().isEmpty() && !getDataRecord().isEmpty()) {
+            getTimeRecord().add((int) timeDifference);
+            getDataRecord().add(getDataRecord().get(getDataRecord().size() - 1));
+        }
+
+        getTimeRecord().add((int) timeDifference); // TODO Sollen diese Listen auch in der DB gespeichert werden? eher nicht
+        getDataRecord().add(status);
+        Log.d(LOG_TAG, "Neuer Status aufgezeichnet");
     }
 
 }

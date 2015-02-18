@@ -2,7 +2,6 @@ package observer;
 
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.GridView;
 
 import com.example.arduinogui.R;
@@ -96,7 +95,7 @@ public class Project extends Observable {
             return mapAllViewModels.get(key);
         }
         else {
-           return null;
+            return null;
         }
     }
     public Calendar getCreationDate() {
@@ -172,7 +171,7 @@ public class Project extends Observable {
         id = ++count;
     }
 
-    public Project(Gui gui, String name, ImageAdapter imageAdapter) { // TODO neuen Konstruktor schreiben, mit allen Elementen übergeben wie in DB
+    public Project(Gui gui, String name, ImageAdapter imageAdapter) {
 
 //        allElementModels = new ArrayList<Element>();
         numberOfRows = 2;
@@ -267,18 +266,21 @@ public class Project extends Observable {
         if(model instanceof BoolElement) {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
 
-//            boolean curStatus = ((BoolElement) model).isStatusHigh();
-//            boolean newStatus = !curStatus; // TODO wenn Schalter betätigt wird, bevor Elemente verknüpft sind, so wird der falsche Status gesendet, da der Status einfach immer negiert wird
-
             if(model.getIdentifier() != null) {
-                String code = CodeGenerator.generateCodeToSend(!newStatus, model.getIdentifier()); //////////////////////////
+                boolean bStatus = !newStatus;
+                int statusInt = 0;
+                String code = CodeGenerator.generateCodeToSend(bStatus, model.getIdentifier()); //////////////////////////
                 Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
                 // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
                 if (model instanceof InputElement) { // sollte true sein - als Absicherung trotzdem abfragen
                     Log.d(LOG_TAG, "Model ist ein InputElement");
                     Log.d(LOG_TAG, "Senden an Arduino...");
-                    ((InputElement) model).sendDataToArduino(currentConnection, code); // Daten an Arduino senden
+                    if(bStatus)
+                        statusInt = 1;
+                    else
+                        statusInt = 0;
+                    ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
                     Log.d(LOG_TAG, "Gesendet");
 
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
@@ -348,7 +350,7 @@ public class Project extends Observable {
                 if (model instanceof InputElement){
                     Log.d(LOG_TAG, "Model ist ein InputElement");
                     Log.d(LOG_TAG, "Senden an Arduino...");
-                    ((InputElement) model).sendDataToArduino(currentConnection, code);
+                    ((InputElement) model).sendDataToArduino(currentConnection, code, Integer.parseInt(pwm));
                     Log.d(LOG_TAG, "Gesendet");
 
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
@@ -394,7 +396,7 @@ public class Project extends Observable {
             }
 
         }
-            Log.d(LOG_TAG, "Kein BoolElement");
+        Log.d(LOG_TAG, "Kein BoolElement");
 
     }
 
@@ -406,25 +408,6 @@ public class Project extends Observable {
         Log.d(LOG_TAG, "Größe der Map: " + mapAllViewModels.size());
     }
 
-
-
-    /**
-     * Verbindet ein Element mit der zugeh�rigen Zeichenkette, welche das Arduino-Programm verwendet
-     * @param e Android-Element
-     * @param identifier Identifikationsstring des Arduino-Elements
-     */
-    public void connectWith(Element e, String identifier) {
-        // TODO Momentan wird Identifier in Element definiert --> Methode w�re unn�tig
-    }
-
-    //TODO Fehler
-    private class ElementListener implements OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            //	sendDataUpdateGui(v); Geht nicht mehr weil keine Connection Instanz
-        }
-    }
 
     private void setMap(){
         for (int i=0;i<40;i++){

@@ -46,7 +46,7 @@ public class PushButtonModel extends BoolElement implements InputElement {
     }
 
     @Override
-    public void sendDataToArduino(IConnection connection, String data) {
+    public void sendDataToArduino(IConnection connection, String data, int status) {
         Log.d(LOG_TAG, "PushButtonModel sendet Daten an Arduino...");
         connection.sendData(data);
     }

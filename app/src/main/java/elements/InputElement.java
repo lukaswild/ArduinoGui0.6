@@ -4,5 +4,5 @@ import connection.IConnection;
 
 public interface InputElement {
 
-	public void sendDataToArduino(IConnection connection, String data);
+	public void sendDataToArduino(IConnection connection, String dataCode, int status);
 }

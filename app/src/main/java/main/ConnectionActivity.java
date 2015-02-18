@@ -36,6 +36,7 @@ import java.util.HashMap;
 import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
+import connection.IPAddressValidator;
 import database.DatabaseHandler;
 import generic.ExpListAdapterAllCons;
 
@@ -566,20 +567,28 @@ public class ConnectionActivity extends Activity {
                         break;
 
                     case 1: // Bluetooth-Verbindung ausgewählt
-                        strConType = "Bluetooth-Verbindung";
-                        IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
-                        addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddB);
+                        if(BluetoothAdapter.checkBluetoothAddress(conAddress)) {
+                            strConType = "Bluetooth-Verbindung";
+                            IConnection conToAddB = BTConnection.createAttributeCon(conName, conAddress);
+                            addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddB);
+                        } else
+                            Toast.makeText(getBaseContext(), getString(R.string.errInvalidMacAddress), Toast.LENGTH_SHORT).show();
                         break;
 
                     case 2: // Ethernet-Verbindung ausgewählt
-                        strConType = "Ethernet-Verbindung";
-                        IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
-                        addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddE);
+                        IPAddressValidator validator = new IPAddressValidator();
+                        if(validator.isValid(conAddress)) {
+                            strConType = "Ethernet-Verbindung";
+                            IConnection conToAddE = EthernetConnection.createAttributeCon(conName, conAddress);
+                            addNewConnection(strConType, conName, conAddress, mapExpListView, conToAddE);
+                        } else
+                            Toast.makeText(getBaseContext(), "Ungültige IP-Adresse", Toast.LENGTH_SHORT).show();
                         break;
                 }
 
                 expListAdapter.notifyDataSetChanged(); // Die ExpandableListView aktualisieren
                 Log.i(LOG_TAG, "Liste aller Connections aktualisiert");
+
             } else
                 Toast.makeText(this, getString(R.string.errorNameEmpty), Toast.LENGTH_SHORT).show();
         } else

@@ -21,8 +21,8 @@
     <string name="etConNameHint">Bezeichnung</string>
     <string name="btnSubmit">OK</string>
     <string name="btnCancel">Abbrechen</string>
-    <string name="mennu_popup_identifyer">Identifyer</string>
-    <string name="mennu_popup_delete">Element Löschen</string>
+    <string name="menu_popup_identifyer">Identifyer</string>
+    <string name="menu_popup_delete">Element löschen</string>
     <string name="txtAllCons">Verfügbare Verbindungen</string>
     <string name="btnNewCon">Neue Verbindung einrichten</string>
     <string name="tglBtnChooseCon">auswählen</string>
@@ -56,5 +56,13 @@
     <string name="addPwmCol">PWM - Anzeige hinzufügen</string>
     <string name="errorNameEmpty">Name darf nicht leer sein</string>
     <string name="errorNameNotUnique">Name bereits vorhanden</string>
+    <string name="errInvalidMacAddress">Ungültige MAC-Adresse</string>
+    <string name="title_activity_monitor">MonitorActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_tools_header">Tools</string>
+    <string name="popupMenuToolsMontior">Diagramm</string>
+    <string name="title_activity_diagram">Diagramm anzeigen</string>
+    <string name="menu_choice_diagram">Diagramm</string>
+    <string name="menu_popup_record">Aufzeichnung starten</string>
 
 </resources>

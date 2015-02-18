@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import connection.BTConnection;
 import main.ConnectionActivity;
+import main.MainActivity;
 
 /**
  * Created by Simon on 02.01.2015.
@@ -69,39 +70,11 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
                     }
                 } else { // Wenn Verbindung beendet werden soll
                     BTConnection.closeConnection();
+                    MainActivity.setCurrentConnection(null);
                     Log.d(LOG_TAG, "Verbindung wird beendet");
                 }
             }
         });
-
-//        tvListHeader.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//                // TODO Menü anzeigen, Löschfunktion anbieten
-//
-//                PopupMenu popupConOptions = new PopupMenu(context, v);
-//                popupConOptions.inflate(R.menu.menu_popup_connection);
-//                popupConOptions.show();
-//                TextView tvClickedItem = (TextView) v;
-//                final String clickedItemHeader = tvClickedItem.getText().toString();
-//
-//                popupConOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//                    @Override
-//                    public boolean onMenuItemClick(MenuItem item) {
-//                        switch(item.getItemId()) {
-//                            case R.id.removeCon:
-//                                mapDataChild.remove(clickedItemHeader);
-//
-//                                notifyDataSetChanged();
-//                                return true;
-//                        }
-//                        return false;
-//                    }
-//                });
-//
-//                return false;
-//            }
-//        });
 
         return convertView;
     }

@@ -2,6 +2,7 @@ package observer;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
@@ -23,13 +24,13 @@ import java.util.HashMap;
 
 import connection.IConnection;
 import elements.Element;
-import elements.EmptyElement;
 import elements.LedModel;
 import elements.PushButtonModel;
 import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
 import generic.ImageAdapter;
+import main.DiagramActivity;
 
 
 /* 
@@ -274,7 +275,7 @@ public class Gui extends View implements IObserver {
 
 
         }
-        else if (editmode){
+        else if (editmode) {
             project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, final View v, final int position, long id) {
@@ -464,19 +465,28 @@ public class Gui extends View implements IObserver {
                                         imgadapt.notifyDataSetChanged();
                                         return true;
 
-                                    default:
-                                    /*for (Element var : CurrentProject.getAllElements()) { //TODO SIBO für war des default ??
-                                        if (var.getName() == ("element" + position)) {
-                                            var.setIdentifier(Integer.toString(item.getItemId()));
+                                    case R.id.element_tools:
+                                        popupMenu.dismiss();
+                                        Context wrap = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
+                                        final PopupMenu popTools = new PopupMenu(wrap, v);
+                                        popTools.inflate(R.menu.menu_popup_tools);
+                                        popTools.show();
+                                        popTools.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                            @Override
+                                            public boolean onMenuItemClick(MenuItem item) {
+                                                switch (item.getItemId()) {
+                                                    case R.id.diagram:
+                                                        startActivityDiagram(project, position);
+                                                        return true;
+                                                }
 
-
-                                        Toast.makeText(getBaseContext(),"ID" + var.getIdentifier(),Toast.LENGTH_SHORT);
-                                            return  true;
-                                     }
-                                    }*/
-                                        return false;
+                                                return false;
+                                            }
+                                        });
+                                        return true;
                                 }
 
+                                return false;
                             }
                         });
 
@@ -484,6 +494,15 @@ public class Gui extends View implements IObserver {
 
                 }});
         }
+    }
+
+
+    private void startActivityDiagram(Project project, int position) {
+        Element elementClicked = project.getMapAllViewModels().get(position);
+        Intent intentDiagram = new Intent(getContext(), DiagramActivity.class);
+        intentDiagram.putExtra("timeRecord", elementClicked.getTimeRecord());
+        intentDiagram.putExtra("dataRecord", elementClicked.getDataRecord());
+        getContext().startActivity(intentDiagram);
     }
 
     private void setTouchListenerForButtons(Project project, final ImageAdapter imgadapt) {

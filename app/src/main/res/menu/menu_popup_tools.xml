@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/group_popupmenu_identifyer" >
+        <item android:id="@+id/diagram" android:title="@string/menu_choice_diagram" android:visible="true" />
+    </group>
+</menu>

@@ -124,13 +124,6 @@ public class MainActivity extends Activity {
         }
         Log.d(LOG_TAG, "Größe von allProjects: " + allProjects.size());
 
-//        Project pro1 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt1", imgadapt);
-//        Project pro2 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt2", imgadapt);
-//        Project pro3 = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))),"Projekt3", imgadapt);
-//        allProjects.add(pro1);
-//        allProjects.add(pro2);
-//        allProjects.add(pro3);
-
         //soll angezeigt werden wenn es noch kein einziges projekt gibt
         if(allProjects.isEmpty()) {
             final Dialog popDialog = new Dialog(this);
@@ -140,18 +133,12 @@ public class MainActivity extends Activity {
             popDialog.setTitle("Projekt festlegen");
             popDialog.show();
 
-
-
             Button btn = (Button) popDialog.findViewById(R.id.DialogProBtnSubmit);
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     String string = "";
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
-
-//                    Project cp = new Project()
-
-
 
                     currentProject.setName(edit.getText().toString());
                     allProjects.add(currentProject);
@@ -168,14 +155,8 @@ public class MainActivity extends Activity {
             setProjectLastOpened();
         }
 
-//
-//        Log.d(LOG_TAG,"Vor Gui");
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
-//        Toast.makeText(getBaseContext(), "In der onCreate !", Toast.LENGTH_SHORT).show();
         showName();
-
-//        createDummyData();
-
 
     }
 
@@ -204,7 +185,7 @@ public class MainActivity extends Activity {
 //        setProjectLastOpened();
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         loadImgRes();
-        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
     }
 
    /* @Override
@@ -267,9 +248,14 @@ public class MainActivity extends Activity {
             view.setText(currentProject.getName());
         }
 
-//        if (!currentConnection.equals(null)){
-//            view2.setText(currentConnection.getConName());
-//        }
+        if (!(allConnections.size()==0)){
+            try {
+                view2.setText(currentConnection.getConName());
+            } catch (NullPointerException e) {
+                Log.d(LOG_TAG, "Aktuell keine Verbindung ausgewählt");
+            }
+
+       }
 
     }
 
@@ -336,7 +322,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void startActivityConnection() {
+    private void startActivityConnection() {
         Log.d(LOG_TAG, "ConnectionActivity wird gestartet...");
         Intent newConIntent = new Intent(this, ConnectionActivity.class);
 
@@ -383,7 +369,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void startActivityProject(){
+    private void startActivityProject(){
         Intent newProIntent = new Intent(this, ProjectActivity.class);
         ArrayList<String> allProName = new ArrayList<String>();
         ArrayList<String> allProCreationDates = new ArrayList<String>();
@@ -400,6 +386,11 @@ public class MainActivity extends Activity {
         newProIntent.putExtra("allProLastModifiedDates", allProLastModifiedDates);
 
         startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
+    }
+
+    private void startActivityDiagram() {
+        Intent intentDiagram = new Intent(this, DiagramActivity.class);
+        startActivity(intentDiagram);
     }
 
 
