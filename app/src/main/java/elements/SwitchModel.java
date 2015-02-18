@@ -9,7 +9,6 @@ import connection.IConnection;
 public class SwitchModel extends BoolElement implements InputElement {
 
     private final String LOG_TAG = "SwitchModel";
-
     int resourceSwitchOff = R.drawable.switch_on;
     int resourceSwitchOn = R.drawable.switch_off;
 
@@ -59,6 +58,11 @@ public class SwitchModel extends BoolElement implements InputElement {
         }
 
         long timeDifference = (System.currentTimeMillis() - getMillisFirstInteraction()) / 1000;
+        /*
+        Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
+        Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
+        nochmals in die Liste eingetragen werden
+         */
         if(!getTimeRecord().isEmpty() && !getDataRecord().isEmpty()) {
             getTimeRecord().add((int) timeDifference);
             getDataRecord().add(getDataRecord().get(getDataRecord().size() - 1));
@@ -68,5 +72,4 @@ public class SwitchModel extends BoolElement implements InputElement {
         getDataRecord().add(status);
         Log.d(LOG_TAG, "Neuer Status aufgezeichnet");
     }
-
 }

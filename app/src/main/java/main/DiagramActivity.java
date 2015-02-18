@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 public class DiagramActivity extends Activity {
 
+    private static final String LOG_TAG = "DiagramActivity";
     GraphView graphView;
     ArrayList<Integer> timeRecord;
     ArrayList<Integer> dataRecord;
@@ -38,17 +39,11 @@ public class DiagramActivity extends Activity {
 
         graphView = (GraphView) findViewById(R.id.graph);
         graphView.setTitle("Verlauf");
-//        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-//                new DataPoint(0, 1),
-//                new DataPoint(1, 5),
-//                new DataPoint(2, 3),
-//                new DataPoint(3, 2),
-//                new DataPoint(4, 6)
-//        });
-
         LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
-
         graphView.addSeries(series);
+
+        // TODO Graph sollte zoombar sein
+
     }
 
 
