@@ -58,11 +58,15 @@
     <string name="errorNameNotUnique">Name bereits vorhanden</string>
     <string name="errInvalidMacAddress">Ungültige MAC-Adresse</string>
     <string name="title_activity_monitor">MonitorActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_tools_header">Tools</string>
     <string name="popupMenuToolsMontior">Diagramm</string>
     <string name="title_activity_diagram">Diagramm anzeigen</string>
     <string name="menu_choice_diagram">Diagramm</string>
     <string name="menu_popup_record">Aufzeichnung starten</string>
+    <string name="txtPin">Pin: </string>
+    <string name="txtElement">Element: </string>
+    <string name="btnAddDataPoints">Daten hinzufügen</string>
+    <string name="btnRemoveDataPoints">Daten entfernen</string>
+    <string name="txtAvailableElements">Verfügbare Elemente</string>
 
 </resources>

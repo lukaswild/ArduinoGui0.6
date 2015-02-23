@@ -16,13 +16,16 @@ public class SwitchModel extends BoolElement implements InputElement {
     public SwitchModel(String name, boolean statusHigh) {
         super.name = name;
         super.statusHigh = statusHigh;
+        super.kind = "Switch";
         if(statusHigh)
             super.setResource(resourceSwitchOn);
         else
             super.setResource(resourceSwitchOff);
     }
 
-    public SwitchModel() {}
+    public SwitchModel() {
+        super.kind = "Switch";
+    }
 
     @Override
     public void setResource(boolean status) {
@@ -56,6 +59,7 @@ public class SwitchModel extends BoolElement implements InputElement {
             setMillisFirstInteraction(System.currentTimeMillis());
             setFirstInteraction(false);
         }
+
 
         long timeDifference = (System.currentTimeMillis() - getMillisFirstInteraction()) / 1000;
         /*

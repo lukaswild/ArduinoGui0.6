@@ -2,6 +2,6 @@
     <group android:id="@+id/group_popupmenu_clickoptions" >
         <item android:id="@+id/identifyer" android:title="@string/menu_popup_identifyer" android:visible="true"/>
         <item android:id="@+id/delete" android:title="@string/menu_popup_delete" android:visible="true" />
-        <item android:id="@+id/element_tools" android:title="@string/menu_tools_header" android:visible="true" />
+        <item android:id="@+id/element_tools" android:title="@string/menu_choice_diagram" android:visible="true" />
     </group>
 </menu>

@@ -13,9 +13,12 @@ public class PwmModel extends PwmElement implements OutputElement{
         super.name = name;
         super.setResource(R.drawable.pwm_0);
         super.setCurrentPwm(0);
+        super.setKind("Pwm-Element");
     }
 
-    public PwmModel() {}
+    public PwmModel() {
+        super.setKind("Pwm-Element");
+    }
 
 
 

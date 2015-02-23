@@ -6,27 +6,22 @@
         android:id="@+id/connection"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/title_activity_connection"/>
+        android:title="@string/title_activity_connection"
+        tools:ignore="AppCompatResource" />
 
     <item
         android:id="@+id/newproject"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/title_activity_new_project"/>
-
-    <item
-        android:id="@+id/tools"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/menu_tools_header"/>
+        android:title="@string/title_activity_new_project"
+        tools:ignore="AppCompatResource" />
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"
-
-    />
+        tools:ignore="AppCompatResource" />
 
     <!--<item android:id="@+id/menu_tools_header"-->
         <!--android:title="@string/menu_tools_header"-->

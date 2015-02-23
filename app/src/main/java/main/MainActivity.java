@@ -388,11 +388,6 @@ public class MainActivity extends Activity {
         startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
     }
 
-    private void startActivityDiagram() {
-        Intent intentDiagram = new Intent(this, DiagramActivity.class);
-        startActivity(intentDiagram);
-    }
-
 
     public static boolean removeConnection(String conName) {
         for (IConnection c: allConnections) {
@@ -574,23 +569,6 @@ public class MainActivity extends Activity {
             }
         }
         imgadapt.notifyDataSetChanged();
-    }
-
-
-    public void createDummyData(){
-        // Dummy Daten für ExpandableListView
-        IConnection c1 = BTConnection.createAttributeCon("BSibo1", "98:D3:31:B1:F6:82");
-        IConnection c2 = BTConnection.createAttributeCon("BSibo2", "98:D3:31:B1:F6:82");
-        IConnection c3 = BTConnection.createAttributeCon("BSibo3", "98:D3:31:B1:F6:82");
-        IConnection c4 = BTConnection.createAttributeCon("BLuggi1", "98:D3:31:B1:F4:7A");
-        IConnection c5 = BTConnection.createAttributeCon("BLuggi2", "98:D3:31:B1:F4:7A");
-
-        allConnections.add(c1);
-        allConnections.add(c2);
-        allConnections.add(c3);
-        allConnections.add(c4);
-        allConnections.add(c5);
-
     }
 
 

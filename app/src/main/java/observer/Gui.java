@@ -23,6 +23,7 @@ import com.example.arduinogui.R;
 import java.util.HashMap;
 
 import connection.IConnection;
+import elements.BoolElement;
 import elements.Element;
 import elements.LedModel;
 import elements.PushButtonModel;
@@ -78,12 +79,36 @@ public class Gui extends View implements IObserver {
         ImageAdapter imageAdapter =  (ImageAdapter) gridView.getAdapter();
         Integer o = (Integer) imageAdapter.getItem(outputElementPosition);
         Log.d(LOG_TAG, o.getClass().toString());
+        if(modelToUpdate.isFirstInteraction()) {
+            modelToUpdate.setMillisFirstInteraction(System.currentTimeMillis());
+            modelToUpdate.setFirstInteraction(false);
+        }
 
-        if(modelToUpdate instanceof LedModel) {
-            if((Integer)imageAdapter.getItem(inputElementPosition) == imgSwitchOff)
-                updateLedStatus(imageAdapter, outputElementPosition, true);
-            else
-                updateLedStatus(imageAdapter, outputElementPosition, false);
+        long timeDifference = (System.currentTimeMillis() - modelToUpdate.getMillisFirstInteraction()) / 1000;
+        /*
+        Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
+        Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
+        nochmals in die Liste eingetragen werden
+         */
+        if(!modelToUpdate.getTimeRecord().isEmpty() && !modelToUpdate.getDataRecord().isEmpty()) {
+            modelToUpdate.getTimeRecord().add((int) timeDifference);
+            modelToUpdate.getDataRecord().add(modelToUpdate.getDataRecord().get(modelToUpdate.getDataRecord().size() - 1));
+        }
+        modelToUpdate.getTimeRecord().add((int) timeDifference); // TODO Sollen diese Listen auch in der DB gespeichert werden? eher nicht
+        int statusToAdd = 0;
+
+        if(modelToUpdate instanceof BoolElement) {
+            if (!((BoolElement) modelToUpdate).isStatusHigh())
+                statusToAdd = 1;
+            modelToUpdate.getDataRecord().add(statusToAdd);
+            Log.d(LOG_TAG, "Neuer Status aufgezeichnet");
+
+            if (modelToUpdate instanceof LedModel) {
+                if ((Integer) imageAdapter.getItem(inputElementPosition) == imgSwitchOff)
+                    updateLedStatus(imageAdapter, outputElementPosition, true);
+                else
+                    updateLedStatus(imageAdapter, outputElementPosition, false);
+            }
         }
         Log.d(LOG_TAG, "Gui aktualisiert");
     }
@@ -466,23 +491,24 @@ public class Gui extends View implements IObserver {
                                         return true;
 
                                     case R.id.element_tools:
-                                        popupMenu.dismiss();
-                                        Context wrap = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
-                                        final PopupMenu popTools = new PopupMenu(wrap, v);
-                                        popTools.inflate(R.menu.menu_popup_tools);
-                                        popTools.show();
-                                        popTools.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                                            @Override
-                                            public boolean onMenuItemClick(MenuItem item) {
-                                                switch (item.getItemId()) {
-                                                    case R.id.diagram:
-                                                        startActivityDiagram(project, position);
-                                                        return true;
-                                                }
-
-                                                return false;
-                                            }
-                                        });
+//                                        popupMenu.dismiss();
+//                                        Context wrap = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
+//                                        final PopupMenu popTools = new PopupMenu(wrap, v);
+//                                        popTools.inflate(R.menu.menu_popup_tools);
+//                                        popTools.show();
+//                                        popTools.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                                            @Override
+//                                            public boolean onMenuItemClick(MenuItem item) {
+//                                                switch (item.getItemId()) {
+//                                                    case R.id.diagram:
+//                                                        startActivityDiagram(project, position);
+//                                                        return true;
+//                                                }
+//
+//                                                return false;
+//                                            }
+//                                        });
+                                        startActivityDiagram(project, position);
                                         return true;
                                 }
 
@@ -502,6 +528,9 @@ public class Gui extends View implements IObserver {
         Intent intentDiagram = new Intent(getContext(), DiagramActivity.class);
         intentDiagram.putExtra("timeRecord", elementClicked.getTimeRecord());
         intentDiagram.putExtra("dataRecord", elementClicked.getDataRecord());
+        intentDiagram.putExtra("elementClass", elementClicked.getClass().toString());
+        intentDiagram.putExtra("elementIdentifier", elementClicked.getIdentifier());
+        Log.d("SSSSSSSSSSSSS", elementClicked.getClass().toString());
         getContext().startActivity(intentDiagram);
     }
 

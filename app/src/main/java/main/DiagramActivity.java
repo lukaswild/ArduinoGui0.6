@@ -1,25 +1,46 @@
 package main;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.arduinogui.R;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+
+import elements.Element;
+import observer.Project;
 
 
 public class DiagramActivity extends Activity {
 
     private static final String LOG_TAG = "DiagramActivity";
-    GraphView graphView;
-    ArrayList<Integer> timeRecord;
-    ArrayList<Integer> dataRecord;
+    private GraphView graphView;
+    private ArrayList<Integer> timeRecord;
+    private ArrayList<Integer> dataRecord;
+    private String elementClass = "";
+    private String elementIdentifier = "";
+    private final int[] GRAPH_COLOR = {Color.BLUE, Color.GREEN, Color.GRAY, Color.RED, Color.YELLOW, Color.BLACK, Color.CYAN,
+            Color.MAGENTA, Color.WHITE, Color.DKGRAY, Color.LTGRAY}; // TODO Farben von entfernten DataPoints sollen wieder verwendet werden können --> als Stack?
+    private final int maxNumberGraphs = GRAPH_COLOR.length;
+    private int graphCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,23 +48,52 @@ public class DiagramActivity extends Activity {
         setContentView(R.layout.activity_diagram);
 
         Intent parentIntent = getIntent();
-        if(parentIntent.getExtras().containsKey("timeRecord"))
-            timeRecord = (ArrayList<Integer>) parentIntent.getExtras().get("timeRecord");
-        if(parentIntent.getExtras().containsKey("dataRecord"))
-            dataRecord = (ArrayList<Integer>) parentIntent.getExtras().get("dataRecord");
+        getIntentExtras(parentIntent);
 
+        DataPoint[] dataPoints = getDataPointsArr(timeRecord, dataRecord);
+
+        graphView = (GraphView) findViewById(R.id.graph);
+        if(timeRecord.isEmpty())
+            graphView.setTitle("Keine Daten vorhanden");
+        else {
+            graphView.setTitle("Verlauf");
+            graphView.getLegendRenderer().setVisible(true); // Anzeigen der Legende
+            graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP); // TODO wenn möglich Legende unterhalb von Graph
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
+            series.setColor(GRAPH_COLOR[graphCount++]);
+
+            graphView.addSeries(series);
+            graphView.setMinimumHeight(graphView.getHeight());
+
+            StringBuilder titleSeries = new StringBuilder();
+            if (elementClass.equals(getString(R.string.classLedModel)))
+                titleSeries.append("Led ");
+            else if (elementClass.equals(getString(R.string.classSwitchModel)))
+                titleSeries.append("Schalter ");
+            titleSeries.append(elementIdentifier);
+            series.setTitle(titleSeries.toString());
+
+        }
+        // TODO Graph sollte zoombar sein
+    }
+
+    private DataPoint[] getDataPointsArr(ArrayList<Integer> timeRecord, ArrayList<Integer> dataRecord) {
         DataPoint[] dataPoints = new DataPoint[timeRecord.size()];
         for(int i = 0; i < dataPoints.length; i++) {
             dataPoints[i] = new DataPoint(timeRecord.get(i), dataRecord.get(i));
         }
+        return dataPoints;
+    }
 
-        graphView = (GraphView) findViewById(R.id.graph);
-        graphView.setTitle("Verlauf");
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
-        graphView.addSeries(series);
-
-        // TODO Graph sollte zoombar sein
-
+    private void getIntentExtras(Intent parentIntent) {
+        if(parentIntent.getExtras().containsKey("timeRecord"))
+            timeRecord = parentIntent.getExtras().getIntegerArrayList("timeRecord");
+        if(parentIntent.getExtras().containsKey("dataRecord"))
+            dataRecord = parentIntent.getExtras().getIntegerArrayList("dataRecord");
+        if(parentIntent.getExtras().containsKey("elementClass"))
+            elementClass = parentIntent.getExtras().getString("elementClass");
+        if(parentIntent.getExtras().containsKey("elementIdentifier"))
+            elementIdentifier = parentIntent.getExtras().getString("elementIdentifier");
     }
 
 
@@ -67,5 +117,107 @@ public class DiagramActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public void addDataPoints(View v) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.add_datapoint);
+        dialog.setTitle("Datenreihe auswählen");
+        ListView listView = (ListView) dialog.findViewById(R.id.lvAvailableElements);
+        Button btnCancelAddDataPoint = (Button) dialog.findViewById(R.id.btnCancelAddDataPoint);
+        Project currentProject = MainActivity.getCurrentProject();
+        final ArrayList<Element> allElements = new ArrayList<Element>();
+
+        Iterator iterator = currentProject.getMapAllViewModels().entrySet().iterator();
+        while(iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            Element element = (Element) entry.getValue();
+            if(!(element.getIdentifier() == null)) {
+                allElements.add(element);
+
+            }
+        }
+
+        String[] listData = new String[allElements.size()];
+        for(int i = 0; i < allElements.size(); i++) {
+            Element e = allElements.get(i);
+            listData[i] = e.getKind() + " " + e.getIdentifier();
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, listData);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (graphCount < maxNumberGraphs) {
+
+                    Element elementAtPos = allElements.get(position);
+                    DataPoint[] dataPointsToAdd = getDataPointsArr(elementAtPos.getTimeRecord(), elementAtPos.getDataRecord());
+                    LineGraphSeries<DataPoint> seriesToAdd = new LineGraphSeries<DataPoint>(dataPointsToAdd);
+                    StringBuilder titleSeries = new StringBuilder();
+                    if(elementAtPos.getKind().equals("Switch"))
+                        titleSeries.append("Schalter ");
+                    else if (elementAtPos.getKind().equals("Led"))
+                        titleSeries.append("Led "); // TODO weitere Elemente
+                    titleSeries.append(elementAtPos.getIdentifier());
+                    seriesToAdd.setTitle(titleSeries.toString());
+                    seriesToAdd.setColor(GRAPH_COLOR[graphCount++]);
+                    graphView.addSeries(seriesToAdd);
+                } else
+                    Toast.makeText(getBaseContext(), "Maximale Anzahl an Daten erreicht", Toast.LENGTH_SHORT).show();
+
+                dialog.dismiss();
+            }
+        });
+
+        btnCancelAddDataPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
+
+
+    public void removeDataPoints(View v) {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.remove_datapoint);
+        dialog.setTitle("Datenreihe entfernen");
+        ListView listView = (ListView) dialog.findViewById(R.id.lvAddedElements);
+        Button btnCancelRemoveDataPoint = (Button) dialog.findViewById(R.id.btnCancelRemoveDataPoint);
+        final ArrayList<Series> allAddedSeries = new ArrayList<Series>();
+
+        for(int i = 0; i < graphView.getSeries().size(); i++) {
+            allAddedSeries.add(graphView.getSeries().get(i));
+        }
+
+        String[] values = new String[allAddedSeries.size()];
+        for(int i = 0; i < allAddedSeries.size(); i++) {
+            values[i] = allAddedSeries.get(i).getTitle();
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Series seriesToRemove = allAddedSeries.get(position);
+                graphView.removeSeries(seriesToRemove);
+                dialog.dismiss();
+            }
+        });
+
+        btnCancelRemoveDataPoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+        dialog.show();
     }
 }

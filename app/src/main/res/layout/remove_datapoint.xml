@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.example.arduinogui.NewConnectionActivity"
+    tools:ignore="MergeRootFrame"
+    android:background="@drawable/background2">
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top">
+
+        <LinearLayout
+            android:id="@+id/linLayoutRemoveDataPoint"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="left|top"
+            android:orientation="vertical"
+            android:paddingBottom="60dp">
+
+        <ListView
+            android:id="@+id/lvAddedElements"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnCancelRemoveDataPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxHeight="60dp"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="@string/btnCancel"/>
+
+    </FrameLayout>
+
+</FrameLayout>

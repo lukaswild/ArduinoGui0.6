@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public abstract class Element {
 
 	protected String name;  // TODO notwendig?
+    protected String kind;
 	protected String identifier;
     private boolean isFirstInteraction = true;
 
@@ -15,9 +16,19 @@ public abstract class Element {
 
     protected int resource;
 	
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 	}
+
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
 
     public void Element(){
 
