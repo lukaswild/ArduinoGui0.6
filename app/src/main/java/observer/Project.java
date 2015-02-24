@@ -22,6 +22,8 @@ import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
 import elements.PwmElement;
+import elements.PwmInputModel;
+import elements.PwmModel;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ImageAdapter;
@@ -305,7 +307,7 @@ public class Project extends Observable {
                                 codeSuccessStr.trim();
                                 Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
 
-                                if (codeSuccessStr.equals("100")) {
+                                if (codeSuccessStr.contains("100")) {
                                     // �nderung des Status im Model
                                     if(model instanceof BoolElement && currentElement instanceof BoolElement) {
                                         ((BoolElement) model).setStatusHigh(newStatus);
@@ -375,11 +377,39 @@ public class Project extends Observable {
                                 codeSuccessStr.trim();
                                 Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
 
-                                if (codeSuccessStr.equals("100")) {
+                                if (codeSuccessStr.contains("W")) {
                                     // �nderung des Status im Model
+                                    String receive ="";
+                                    int receiveInt=0;
+
+                                     if (codeSuccessStr.charAt(0)=='1'){
+
+                                         receive +=codeSuccessStr.charAt(4);
+                                         receive +=codeSuccessStr.charAt(5);
+                                         receive +=codeSuccessStr.charAt(6);
+                                     }
+                                    else if(codeSuccessStr.charAt(0)=='W'){
+
+                                         String s="";
+                                         for (int i =1;i<codeSuccessStr.length();i++){
+                                             s+=codeSuccessStr.charAt(i);
+                                             //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
+
+                                         }
+                                         receiveInt=Integer.parseInt(s);
+
+                                    }
+                                    //receiveInt=Integer.parseInt(receive);
+                                    Log.d(LOG_TAG, "receiveInt " + receiveInt);
+
+
                                     if(model instanceof PwmElement && currentElement instanceof PwmElement) {
 
-
+                                        ((PwmElement)model).setCurrentPwm(receiveInt);
+                                        ((PwmElement)model).refreshRes();
+                                        Log.d(LOG_TAG, "im isntanceof");
+                                        notify(this, currentElement, position, (Integer) entry.getKey());
+                                        imageAdapter.notifyDataSetChanged();
 
                                     }
                                 }

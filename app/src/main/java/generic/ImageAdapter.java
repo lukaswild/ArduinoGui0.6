@@ -197,6 +197,8 @@ private void setImgVisability(TextView txtView, int position){
 
     if (getItemInt(position)==R.drawable.pwm_0){
         txtView.setText(getTextRes(position));
+
+
         txtView.setVisibility(View.VISIBLE);
     }
     else if (getItemInt(position)==R.drawable.pwm_25_5){

@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //db.execSQL("INSERT INTO connections VALUES (null,'HC-05','89', 13, 'off', 'P6', 1)");
+        //wdb.execSQL("INSERT INTO connections VALUES (null,'HC-05','89', 13, 'off', 'P6', 1)");
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
