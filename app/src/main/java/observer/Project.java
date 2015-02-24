@@ -405,9 +405,11 @@ public class Project extends Observable {
 
                                     if(model instanceof PwmElement && currentElement instanceof PwmElement) {
 
+                                        ((PwmElement)currentElement).setCurrentPwm(receiveInt);
+                                        ((PwmElement)currentElement).refreshRes();
                                         ((PwmElement)model).setCurrentPwm(receiveInt);
                                         ((PwmElement)model).refreshRes();
-                                        Log.d(LOG_TAG, "im isntanceof");
+                                        Log.d(LOG_TAG, "im instanceof");
                                         notify(this, currentElement, position, (Integer) entry.getKey());
                                         imageAdapter.notifyDataSetChanged();
 
