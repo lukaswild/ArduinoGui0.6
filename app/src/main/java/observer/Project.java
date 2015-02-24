@@ -22,8 +22,6 @@ import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
 import elements.PwmElement;
-import elements.PwmInputModel;
-import elements.PwmModel;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ImageAdapter;
@@ -315,6 +313,7 @@ public class Project extends Observable {
                                         ((BoolElement)model).setResource(newStatus);
                                         ((BoolElement)currentElement).setResource(newStatus);
                                         notify(this, currentElement, position, (Integer) entry.getKey());
+
                                     }
                                 }
                             }
@@ -412,6 +411,8 @@ public class Project extends Observable {
                                         Log.d(LOG_TAG, "im instanceof");
                                         notify(this, currentElement, position, (Integer) entry.getKey());
                                         imageAdapter.notifyDataSetChanged();
+                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
+
 
                                     }
                                 }

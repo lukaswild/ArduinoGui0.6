@@ -24,6 +24,7 @@ import com.jjoe64.graphview.series.Series;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 
 import elements.Element;
 import observer.Project;
@@ -37,15 +38,19 @@ public class DiagramActivity extends Activity {
     private ArrayList<Integer> dataRecord;
     private String elementClass = "";
     private String elementIdentifier = "";
-    private final int[] GRAPH_COLOR = {Color.BLUE, Color.GREEN, Color.GRAY, Color.RED, Color.YELLOW, Color.BLACK, Color.CYAN,
-            Color.MAGENTA, Color.WHITE, Color.DKGRAY, Color.LTGRAY}; // TODO Farben von entfernten DataPoints sollen wieder verwendet werden können --> als Stack?
-    private final int maxNumberGraphs = GRAPH_COLOR.length;
+//    private final int[] GRAPH_COLOR = {Color.BLUE, Color.GREEN, Color.GRAY, Color.RED, Color.YELLOW, Color.BLACK, Color.CYAN,
+//            Color.MAGENTA, Color.WHITE, Color.DKGRAY, Color.LTGRAY}; // TODO Farben von entfernten DataPoints sollen wieder verwendet werden können --> als Stack?
+//    private final int maxNumberGraphs = GRAPH_COLOR.length;
+    private Stack<Integer> graphColorStack;
     private int graphCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagram);
+
+        initialiseGraphColorStack();
+
 
         Intent parentIntent = getIntent();
         getIntentExtras(parentIntent);
@@ -60,7 +65,8 @@ public class DiagramActivity extends Activity {
             graphView.getLegendRenderer().setVisible(true); // Anzeigen der Legende
             graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP); // TODO wenn möglich Legende unterhalb von Graph
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
-            series.setColor(GRAPH_COLOR[graphCount++]);
+//            series.setColor(GRAPH_COLOR[graphCount++]);
+            series.setColor(graphColorStack.pop());
 
             graphView.addSeries(series);
             graphView.setMinimumHeight(graphView.getHeight());
@@ -75,6 +81,21 @@ public class DiagramActivity extends Activity {
 
         }
         // TODO Graph sollte zoombar sein
+    }
+
+    private void initialiseGraphColorStack() {
+        graphColorStack = new Stack<Integer>();
+        graphColorStack.push(Color.LTGRAY);
+        graphColorStack.push(Color.DKGRAY);
+        graphColorStack.push(Color.WHITE);
+        graphColorStack.push(Color.MAGENTA);
+        graphColorStack.push(Color.CYAN);
+        graphColorStack.push(Color.BLACK);
+        graphColorStack.push(Color.YELLOW);
+        graphColorStack.push(Color.RED);
+        graphColorStack.push(Color.GRAY);
+        graphColorStack.push(Color.GREEN);
+        graphColorStack.push(Color.BLUE);
     }
 
     private DataPoint[] getDataPointsArr(ArrayList<Integer> timeRecord, ArrayList<Integer> dataRecord) {
@@ -151,7 +172,7 @@ public class DiagramActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (graphCount < maxNumberGraphs) {
+                if (!graphColorStack.isEmpty()) {
 
                     Element elementAtPos = allElements.get(position);
                     DataPoint[] dataPointsToAdd = getDataPointsArr(elementAtPos.getTimeRecord(), elementAtPos.getDataRecord());
@@ -163,7 +184,8 @@ public class DiagramActivity extends Activity {
                         titleSeries.append("Led "); // TODO weitere Elemente
                     titleSeries.append(elementAtPos.getIdentifier());
                     seriesToAdd.setTitle(titleSeries.toString());
-                    seriesToAdd.setColor(GRAPH_COLOR[graphCount++]);
+//                    seriesToAdd.setColor(GRAPH_COLOR[graphCount++]);
+                    seriesToAdd.setColor(graphColorStack.pop());
                     graphView.addSeries(seriesToAdd);
                 } else
                     Toast.makeText(getBaseContext(), "Maximale Anzahl an Daten erreicht", Toast.LENGTH_SHORT).show();
@@ -208,6 +230,7 @@ public class DiagramActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Series seriesToRemove = allAddedSeries.get(position);
                 graphView.removeSeries(seriesToRemove);
+                graphColorStack.push(seriesToRemove.getColor());
                 dialog.dismiss();
             }
         });

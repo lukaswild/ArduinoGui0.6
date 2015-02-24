@@ -27,6 +27,7 @@ import elements.BoolElement;
 import elements.Element;
 import elements.LedModel;
 import elements.PushButtonModel;
+import elements.PwmElement;
 import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
@@ -110,6 +111,14 @@ public class Gui extends View implements IObserver {
                     updateLedStatus(imageAdapter, outputElementPosition, false);
             }
         }
+        else if (modelToUpdate instanceof PwmElement) {
+            Log.d(LOG_TAG, "PWM der säule:" +((PwmElement) modelToUpdate).getCurrentPwm());
+            ((PwmElement) modelToUpdate).refreshRes();
+            imageAdapter.update(modelToUpdate.getResource(),outputElementPosition);
+            imageAdapter.updateTextRes(Integer.toString(statusToAdd),outputElementPosition);
+
+        }
+
         Log.d(LOG_TAG, "Gui aktualisiert");
     }
 
@@ -530,7 +539,6 @@ public class Gui extends View implements IObserver {
         intentDiagram.putExtra("dataRecord", elementClicked.getDataRecord());
         intentDiagram.putExtra("elementClass", elementClicked.getClass().toString());
         intentDiagram.putExtra("elementIdentifier", elementClicked.getIdentifier());
-        Log.d("SSSSSSSSSSSSS", elementClicked.getClass().toString());
         getContext().startActivity(intentDiagram);
     }
 

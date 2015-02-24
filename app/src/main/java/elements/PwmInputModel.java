@@ -1,7 +1,5 @@
 package elements;
 
-import android.util.Log;
-
 import com.example.arduinogui.R;
 
 import connection.IConnection;
@@ -21,6 +19,7 @@ public class PwmInputModel extends PwmElement implements InputElement {
 
     @Override
     public void sendDataToArduino(IConnection connection, String dataCode, int status) {
-        Log.d(LOG_TAG, "Nicht ausprogrammiert");
+        connection.sendData(dataCode);
+
     }
 }
