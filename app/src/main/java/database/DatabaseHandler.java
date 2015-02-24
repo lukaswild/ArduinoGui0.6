@@ -23,7 +23,10 @@ import elements.BoolElement;
 import elements.Element;
 import elements.EmptyElement;
 import elements.LedModel;
+import elements.PushButtonModel;
 import elements.PwmElement;
+import elements.PwmInputModel;
+import elements.PwmModel;
 import elements.SwitchModel;
 import observer.Gui;
 import observer.Project;
@@ -348,7 +351,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 if(eType.equals(context.getString(R.string.classSwitchModel)))
                     e = new SwitchModel();
                 else if (eType.equals(context.getString(R.string.classLedModel)))
-                    e = new LedModel(); // TODO mehrere Elemente
+                    e = new LedModel();
+                else if (eType.equals(context.getString(R.string.classPushButtonModel)))
+                    e = new PushButtonModel();
+                else if(eType.equals(context.getString(R.string.classPwmInputModel)))
+                    e = new PwmInputModel();
+                else if(eType.equals(context.getString(R.string.classPwmModel)))
+                    e = new PwmModel();
                 else
                     e = new EmptyElement();
                 e.setIdentifier(identifier);
@@ -366,7 +375,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 }
 
                 else {
-                    //TODO es ist ein empty emelemnt. Status ??
+                    //TODO es ist ein empty element. Status ??
                 }
 
 

@@ -10,13 +10,6 @@
     <string name="mennu_popup_addled">LED hinzufügen</string>
     <string name="title_activity_connection">Verbindung einrichten</string>
     <string name="txtConType">Art der Verbindung</string>
-
-    <string-array name="arrConTypeEntries">
-        <item>Bitte wählen Sie</item>
-        <item>Bluetooth</item>
-        <item>Ethernet</item>
-    </string-array>
-
     <string name="tvConName">Bezeichnung der Verbindung</string>
     <string name="etConNameHint">Bezeichnung</string>
     <string name="btnSubmit">OK</string>
@@ -46,6 +39,9 @@
     <string name="popupMenuEntryAlterEntry">Bearbeiten</string>
     <string name="classSwitchModel">class elements.SwitchModel</string>
     <string name="classLedModel">"class elements.LedModel"</string>
+    <string name="classPushButtonModel">"class elements.PushButtonModel"</string>
+    <string name="classPwmModel">"class elements.PwmModel"</string>
+    <string name="classPwmInputModel">"class elements.PwmInputModel"</string>
     <string name="classEmptyElement">"class elements.EmptyElement"</string>
     <string name="txtAddress">Adresse</string>
     <string name="txtMacAddressBT">MAC-Adresse des Bluetooth-Moduls</string>
@@ -68,5 +64,11 @@
     <string name="btnAddDataPoints">Daten hinzufügen</string>
     <string name="btnRemoveDataPoints">Daten entfernen</string>
     <string name="txtAvailableElements">Verfügbare Elemente</string>
+
+    <string-array name="arrConTypeEntries">
+        <item>Bitte wählen Sie</item>
+        <item>Bluetooth</item>
+        <item>Ethernet</item>
+    </string-array>
 
 </resources>

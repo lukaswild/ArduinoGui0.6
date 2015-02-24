@@ -22,6 +22,10 @@ public class PushButtonModel extends BoolElement implements InputElement {
         setResource(false);
     }
 
+    public PushButtonModel() {
+        super.kind = "Button";
+    }
+
     public int getResourceButtonOff() {
         return resourceButtonOff;
     }

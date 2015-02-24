@@ -15,6 +15,11 @@ public class PwmInputModel extends PwmElement implements InputElement {
         super.name = name;
         super.setResource(R.drawable.pwm_slider);
         super.setCurrentPwm(0);
+        super.kind = "Adc-Input";
+    }
+
+    public PwmInputModel() {
+        super.kind = "Adc-Input";
     }
 
     @Override

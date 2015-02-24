@@ -120,7 +120,8 @@ public class MainActivity extends Activity {
         } catch (SQLiteException e) {
             Log.e(LOG_TAG, "Datenbank bzw. Tabellen nicht gefunden");
         } catch(Exception ex) {
-            Log.e(LOG_TAG, "Fehler");
+            Log.e(LOG_TAG, "Fehler ");
+            ex.printStackTrace();
         }
         Log.d(LOG_TAG, "Größe von allProjects: " + allProjects.size());
 

@@ -202,13 +202,13 @@ public class Gui extends View implements IObserver {
                             popDialog.setCancelable(true);
                             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-                            final  View Viewlayout = inflater.inflate(R.layout.pwm_seekbar,(ViewGroup)findViewById(R.id.seekBarPWM));
+                            final View viewlayout = inflater.inflate(R.layout.pwm_seekbar,(ViewGroup)findViewById(R.id.seekBarPWM));
 
-                            popDialog.setContentView(Viewlayout);
+                            popDialog.setContentView(viewlayout);
                             popDialog.setTitle("Einstellungen");
                             popDialog.show();
 
-                            final SeekBar seek1 = (SeekBar)Viewlayout.findViewById(R.id.seekBarPWM);
+                            final SeekBar seek1 = (SeekBar)viewlayout.findViewById(R.id.seekBarPWM);
                             seek1.setProgress(pwm.getCurrentPwm());
                             seek1.setDrawingCacheBackgroundColor(Color.DKGRAY);
 
@@ -235,7 +235,7 @@ public class Gui extends View implements IObserver {
 
 
                             );
-                            final Button button = (Button)Viewlayout.findViewById(R.id.buttonOKPWM);
+                            final Button button = (Button)viewlayout.findViewById(R.id.buttonOKPWM);
 
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override

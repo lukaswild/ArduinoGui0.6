@@ -410,8 +410,8 @@ public class Project extends Observable {
                                         ((PwmElement)model).refreshRes();
                                         Log.d(LOG_TAG, "im instanceof");
                                         notify(this, currentElement, position, (Integer) entry.getKey());
-                                        imageAdapter.notifyDataSetChanged();
-                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
+//                                        imageAdapter.notifyDataSetChanged();
+//                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
 
 
                                     }

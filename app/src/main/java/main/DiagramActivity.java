@@ -38,11 +38,7 @@ public class DiagramActivity extends Activity {
     private ArrayList<Integer> dataRecord;
     private String elementClass = "";
     private String elementIdentifier = "";
-//    private final int[] GRAPH_COLOR = {Color.BLUE, Color.GREEN, Color.GRAY, Color.RED, Color.YELLOW, Color.BLACK, Color.CYAN,
-//            Color.MAGENTA, Color.WHITE, Color.DKGRAY, Color.LTGRAY}; // TODO Farben von entfernten DataPoints sollen wieder verwendet werden können --> als Stack?
-//    private final int maxNumberGraphs = GRAPH_COLOR.length;
     private Stack<Integer> graphColorStack;
-    private int graphCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +61,6 @@ public class DiagramActivity extends Activity {
             graphView.getLegendRenderer().setVisible(true); // Anzeigen der Legende
             graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP); // TODO wenn möglich Legende unterhalb von Graph
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
-//            series.setColor(GRAPH_COLOR[graphCount++]);
             series.setColor(graphColorStack.pop());
 
             graphView.addSeries(series);
@@ -184,7 +179,6 @@ public class DiagramActivity extends Activity {
                         titleSeries.append("Led "); // TODO weitere Elemente
                     titleSeries.append(elementAtPos.getIdentifier());
                     seriesToAdd.setTitle(titleSeries.toString());
-//                    seriesToAdd.setColor(GRAPH_COLOR[graphCount++]);
                     seriesToAdd.setColor(graphColorStack.pop());
                     graphView.addSeries(seriesToAdd);
                 } else
