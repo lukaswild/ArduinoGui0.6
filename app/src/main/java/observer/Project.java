@@ -381,21 +381,21 @@ public class Project extends Observable {
                                     String receive ="";
                                     int receiveInt=0;
 
-                                     if (codeSuccessStr.charAt(0)=='1'){
+                                    if (codeSuccessStr.charAt(0)=='1'){
 
-                                         receive +=codeSuccessStr.charAt(4);
-                                         receive +=codeSuccessStr.charAt(5);
-                                         receive +=codeSuccessStr.charAt(6);
-                                     }
+                                        receive +=codeSuccessStr.charAt(4);
+                                        receive +=codeSuccessStr.charAt(5);
+                                        receive +=codeSuccessStr.charAt(6);
+                                    }
                                     else if(codeSuccessStr.charAt(0)=='W'){
 
-                                         String s="";
-                                         for (int i =1;i<codeSuccessStr.length();i++){
-                                             s+=codeSuccessStr.charAt(i);
-                                             //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
+                                        String s="";
+                                        for (int i =1;i<codeSuccessStr.length();i++){
+                                            s+=codeSuccessStr.charAt(i);
+                                            //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
 
-                                         }
-                                         receiveInt=Integer.parseInt(s);
+                                        }
+                                        receiveInt=Integer.parseInt(s);
 
                                     }
                                     //receiveInt=Integer.parseInt(receive);
