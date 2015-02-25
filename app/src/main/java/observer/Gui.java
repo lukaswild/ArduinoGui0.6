@@ -114,6 +114,7 @@ public class Gui extends View implements IObserver {
         else if (modelToUpdate instanceof PwmElement) {
             Log.d(LOG_TAG, "PWM der säule:" +((PwmElement) modelToUpdate).getCurrentPwm());
             ((PwmElement) modelToUpdate).refreshRes();
+            Log.d("DDDDDDDD", modelToUpdate.getClass().toString());
             imageAdapter.update(modelToUpdate.getResource(),outputElementPosition);
             imageAdapter.updateTextRes(Integer.toString(statusToAdd),outputElementPosition);
 

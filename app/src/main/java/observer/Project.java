@@ -325,7 +325,7 @@ public class Project extends Observable {
             } else
                 Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
         }
-        else if (model instanceof PwmElement){
+        else if (model instanceof PwmElement) {
 
             if (model.getIdentifier() !=null){
 
@@ -406,11 +406,11 @@ public class Project extends Observable {
 
                                         ((PwmElement)currentElement).setCurrentPwm(receiveInt);
                                         ((PwmElement)currentElement).refreshRes();
-                                        ((PwmElement)model).setCurrentPwm(receiveInt);
-                                        ((PwmElement)model).refreshRes();
+//                                        ((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
+//                                        ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
                                         Log.d(LOG_TAG, "im instanceof");
                                         notify(this, currentElement, position, (Integer) entry.getKey());
-//                                        imageAdapter.notifyDataSetChanged();
+//                                        imageAdapter.notifyDataSetChanged(); // Das gehören in update in Gui
 //                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
 
 
