@@ -29,10 +29,12 @@ import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
 import observer.Gui;
+import observer.IObserver;
+import observer.Observable;
 import observer.Project;
 
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
     private static final String TABLE_CONNECTIONS = "connections";
     private static final String TABLE_PROJECTS = "projects";
@@ -42,10 +44,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "DbArduinoGui";
     private static final int DATABASE_VERSION = 1;
     private final String LOG_TAG = "DatabaseHandler";
+    private SQLiteDatabase db;
 
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public SQLiteDatabase getDb() {
+        return this.db;
+    }
+
+    public void setDb(SQLiteDatabase db) {
+        this.db = db;
     }
 
 
@@ -56,6 +67,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 //        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
 
         Log.d(LOG_TAG, "Erzeugen der Datenbank...");
+        this.db = db = this.getWritableDatabase();
         createTableConnections(db);
         createTableProjects(db);
         createTableElements(db);
@@ -406,5 +418,37 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         calLastOpenedDate.set(Integer.parseInt(lastOpenedDateSplit[0]), Integer.parseInt(lastOpenedDateSplit[1]) - 1,
                 Integer.parseInt(lastOpenedDateSplit[2]), Integer.parseInt(lastOpenedDateSplit[3]),
                 Integer.parseInt(lastOpenedDateSplit[4]), Integer.parseInt(lastOpenedDateSplit[5]));
+    }
+
+    @Override
+    public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition) {
+        // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delelte)
+
+        Log.d(LOG_TAG, "Updaten der DB über Observer");
+//        ContentValues values = new ContentValues();
+
+        // TODO update über Methode update (schöner)
+        if(modelToUpdate instanceof BoolElement) {
+            int statusInt;
+            if(((BoolElement) modelToUpdate).isStatusHigh())
+                statusInt = 1;
+            else
+                statusInt = 0;
+//            values.put("projects join elements using ", ((BoolElement)modelToUpdate).isStatusHigh());
+
+//            SQLiteStatement updateOutputEl = db.compileStatement("UPDATE ? SET status = ?, resource = ? WHERE position = ?");
+//            updateOutputEl.bindString(1, TABLE_ELEMENTS);
+//            updateOutputEl.bindLong(2, statusInt);
+//            updateOutputEl.bindLong(3, modelToUpdate.getResource());
+//            updateOutputEl.bindLong(4, outputElementPosition);
+//            updateOutputEl.execute();
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + statusInt + ", resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + statusInt + ", resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
+//            db.update(TABLE_ELEMENTS, values, "position = ?", new String[] {outputElementPosition + ""});
+            Log.d(LOG_TAG, "DB aktualisiert");
+        } else if (modelToUpdate instanceof PwmElement) {
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + ((PwmElement)modelInput).getCurrentPwm() + ", resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
+        }
     }
 }

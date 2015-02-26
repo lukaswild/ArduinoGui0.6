@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -58,8 +57,8 @@ public class MainActivity extends Activity {
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
     private final static String LOG_TAG = "MainActivity";
-    private DatabaseHandler dbHandler;
-    private SQLiteDatabase db;
+    private static DatabaseHandler dbHandler; // TODO passt static ?
+//    private SQLiteDatabase db;
     private boolean editmode = false;
 
 
@@ -84,6 +83,7 @@ public class MainActivity extends Activity {
     public static void setCurrentProject(Project currentProject) {
         MainActivity.currentProject = currentProject;
         currentProject.setLastOpenedDate(Calendar.getInstance()); // Aktuelles Datum setzen
+        currentProject.addToObservers(dbHandler); // TODO richtig hier ?
     }
 
     public static IConnection getCurrentConnection() {
@@ -114,9 +114,10 @@ public class MainActivity extends Activity {
         GridView gridView = (GridView) findViewById(R.id.gridview);
         try {
             dbHandler = new DatabaseHandler(this);
-            db = dbHandler.getWritableDatabase();
-            allConnections = dbHandler.selectAllCons(db, this); // funktioniert
-            allProjects = dbHandler.selectAllPros(db, this, gridView);
+//            db = dbHandler.getWritableDatabase();
+            dbHandler.setDb(dbHandler.getWritableDatabase());
+            allConnections = dbHandler.selectAllCons(dbHandler.getDb(), this); // funktioniert
+            allProjects = dbHandler.selectAllPros(dbHandler.getDb(), this, gridView);
         } catch (SQLiteException e) {
             Log.e(LOG_TAG, "Datenbank bzw. Tabellen nicht gefunden");
         } catch(Exception ex) {
@@ -206,7 +207,7 @@ public class MainActivity extends Activity {
         currentConnection = null;
 
         // Abspeichern der Connections in der DB
-        storeDataInDb();
+//        storeDataInDb();
 
 //       allProjects.clear();
  //      db.execSQL("DROP TABLE IF EXISTS connections");
@@ -232,10 +233,10 @@ public class MainActivity extends Activity {
         ArrayList<String> allConsType = new ArrayList<String>();
         ArrayList<String> allConsAddress = new ArrayList<String>();
         splitConsIntoLists(allConsType, allConsName, allConsAddress);
-        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, db);
+        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
 
         // Eintragen der Projekte in die DB
-        dbHandler.updateProjects(allProjects, db, this);
+        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
     }
 
 

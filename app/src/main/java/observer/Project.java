@@ -312,7 +312,7 @@ public class Project extends Observable {
                                         ((BoolElement)currentElement).setStatusHigh(newStatus);
                                         ((BoolElement)model).setResource(newStatus);
                                         ((BoolElement)currentElement).setResource(newStatus);
-                                        notify(this, currentElement, position, (Integer) entry.getKey());
+                                        notify(this, model, currentElement, position, (Integer) entry.getKey());
 
                                     }
                                 }
@@ -409,7 +409,7 @@ public class Project extends Observable {
 //                                        ((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
 //                                        ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
                                         Log.d(LOG_TAG, "im instanceof");
-                                        notify(this, currentElement, position, (Integer) entry.getKey());
+                                        notify(this, model, currentElement, position, (Integer) entry.getKey());
 //                                        imageAdapter.notifyDataSetChanged(); // Das gehören in update in Gui
 //                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
 
@@ -447,6 +447,8 @@ public class Project extends Observable {
             mapAllViewModels.put(i,new EmptyElement());
         }
     }
+
+
     public static int ziffernrekursiv(int zahl) {
         return (zahl>0)? 1+ziffernrekursiv(zahl/10) : 0;
     }

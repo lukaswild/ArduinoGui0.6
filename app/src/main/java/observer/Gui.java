@@ -72,7 +72,7 @@ public class Gui extends View implements IObserver {
 
 
     @Override
-    public void update(Observable senderClass, Element modelToUpdate, int inputElementPosition, int outputElementPosition) {
+    public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition) {
         Log.d(LOG_TAG, "Updaten der Gui...");
         Log.d(LOG_TAG, "outputElementPosition: " + outputElementPosition);
         View child = gridView.getChildAt(outputElementPosition);
@@ -114,7 +114,6 @@ public class Gui extends View implements IObserver {
         else if (modelToUpdate instanceof PwmElement) {
             Log.d(LOG_TAG, "PWM der säule:" +((PwmElement) modelToUpdate).getCurrentPwm());
             ((PwmElement) modelToUpdate).refreshRes();
-            Log.d("DDDDDDDD", modelToUpdate.getClass().toString());
             imageAdapter.update(modelToUpdate.getResource(),outputElementPosition);
             imageAdapter.updateTextRes(Integer.toString(statusToAdd),outputElementPosition);
 
@@ -558,25 +557,39 @@ public class Gui extends View implements IObserver {
                     project.getGui().getGridView().getChildAt(btnPosition).setOnTouchListener(new OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
-
+                        Toast.makeText(getContext(), event.getAction() + "", Toast.LENGTH_SHORT).show();
                             switch (event.getAction()) {
 
                                 case MotionEvent.ACTION_DOWN:
                                     Toast.makeText(getContext(), "Button unten", Toast.LENGTH_SHORT).show();
                                     imgadapt.update(R.drawable.button_on, btnPosition);
                                     imgadapt.notifyDataSetChanged();
-                                    return true;
+                                    break;
+//                                    return true;
 
                                 case MotionEvent.ACTION_UP:
                                     Toast.makeText(getContext(), "TouchListener oben", Toast.LENGTH_SHORT).show();
                                     imgadapt.update(R.drawable.button_off, btnPosition);
                                     imgadapt.notifyDataSetChanged();
-                                    return true;
+                                    break;
+//                                    return false;
                             }
 
-                            return false;
+                            return true;
                         }
                     });
+
+
+//                    project.getGui().getGridView().getChildAt(btnPosition).setOnFocusChangeListener(new OnFocusChangeListener() {
+//                        @Override
+//                        public void onFocusChange(View v, boolean hasFocus) {
+//                            if(hasFocus)
+//                                Toast.makeText(getContext(), "hasFocus", Toast.LENGTH_SHORT).show();
+//                            else
+//                                Toast.makeText(getContext(), "no Focus", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+
 
                 }
             } catch (NullPointerException e) {
@@ -604,7 +617,8 @@ public class Gui extends View implements IObserver {
                 project.getGui().getGridView().getChildAt(position).setTag(position);
 //                setTouchListenerForButtons(project, imgadapt);
 
-                // TODO Model für PushButton der Liste im Project adden
+                // TODO Listener für Button-Berührung
+
                 return true;
 
             case R.id.AddLED:
