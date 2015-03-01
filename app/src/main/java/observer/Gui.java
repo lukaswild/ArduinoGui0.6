@@ -545,7 +545,7 @@ public class Gui extends View implements IObserver {
     private void setTouchListenerForButtons(Project project, final ImageAdapter imgadapt) {
         for(int i = 0; i < imgadapt.getCount(); i++) {
             View v = project.getGui().getGridView().getChildAt(i);
-            try {
+                try {
                 Object tag = v.getTag();
 
                 int p = 0;
@@ -578,19 +578,6 @@ public class Gui extends View implements IObserver {
                             return true;
                         }
                     });
-
-
-//                    project.getGui().getGridView().getChildAt(btnPosition).setOnFocusChangeListener(new OnFocusChangeListener() {
-//                        @Override
-//                        public void onFocusChange(View v, boolean hasFocus) {
-//                            if(hasFocus)
-//                                Toast.makeText(getContext(), "hasFocus", Toast.LENGTH_SHORT).show();
-//                            else
-//                                Toast.makeText(getContext(), "no Focus", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-
-
                 }
             } catch (NullPointerException e) {
                 // Kein PushButton
@@ -616,6 +603,32 @@ public class Gui extends View implements IObserver {
                 project.addModelToMap(position, new PushButtonModel("Button"));
                 project.getGui().getGridView().getChildAt(position).setTag(position);
 //                setTouchListenerForButtons(project, imgadapt);
+
+                project.getGui().getGridView().getChildAt(positionFinal).setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        Toast.makeText(getContext(), event.getAction() + "", Toast.LENGTH_SHORT).show();
+                        switch (event.getAction()) {
+
+                            case MotionEvent.ACTION_DOWN:
+                                Toast.makeText(getContext(), "Button unten", Toast.LENGTH_SHORT).show();
+                                imgadapt.update(R.drawable.button_on, positionFinal);
+                                imgadapt.notifyDataSetChanged();
+                                break;
+//                                    return true;
+
+                            case MotionEvent.ACTION_UP:
+                                Toast.makeText(getContext(), "TouchListener oben", Toast.LENGTH_SHORT).show();
+                                imgadapt.update(R.drawable.button_off, positionFinal);
+                                imgadapt.notifyDataSetChanged();
+                                break;
+//                                    return false;
+                        }
+
+                        return true;
+                    }
+                });
+
 
                 // TODO Listener für Button-Berührung
 
