@@ -545,7 +545,7 @@ public class Gui extends View implements IObserver {
     private void setTouchListenerForButtons(Project project, final ImageAdapter imgadapt) {
         for(int i = 0; i < imgadapt.getCount(); i++) {
             View v = project.getGui().getGridView().getChildAt(i);
-                try {
+            try {
                 Object tag = v.getTag();
 
                 int p = 0;
@@ -557,7 +557,7 @@ public class Gui extends View implements IObserver {
                     project.getGui().getGridView().getChildAt(btnPosition).setOnTouchListener(new OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
-                        Toast.makeText(getContext(), event.getAction() + "", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), event.getAction() + "", Toast.LENGTH_SHORT).show();
                             switch (event.getAction()) {
 
                                 case MotionEvent.ACTION_DOWN:
@@ -607,19 +607,25 @@ public class Gui extends View implements IObserver {
                 project.getGui().getGridView().getChildAt(positionFinal).setOnTouchListener(new OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
-                        Toast.makeText(getContext(), event.getAction() + "", Toast.LENGTH_SHORT).show();
+                        Object tag = v.getTag();
+                        int p = 0;
+                        if (tag != null)  // Button
+                            p = (Integer) tag;
+
+                        final int btnPosition = p;
+                        Toast.makeText(getContext(), event.getAction() + " Position: " + btnPosition, Toast.LENGTH_SHORT).show();
                         switch (event.getAction()) {
 
                             case MotionEvent.ACTION_DOWN:
                                 Toast.makeText(getContext(), "Button unten", Toast.LENGTH_SHORT).show();
-                                imgadapt.update(R.drawable.button_on, positionFinal);
+                                imgadapt.update(R.drawable.button_on, btnPosition);
                                 imgadapt.notifyDataSetChanged();
                                 break;
 //                                    return true;
 
                             case MotionEvent.ACTION_UP:
                                 Toast.makeText(getContext(), "TouchListener oben", Toast.LENGTH_SHORT).show();
-                                imgadapt.update(R.drawable.button_off, positionFinal);
+                                imgadapt.update(R.drawable.button_off, btnPosition);
                                 imgadapt.notifyDataSetChanged();
                                 break;
 //                                    return false;
