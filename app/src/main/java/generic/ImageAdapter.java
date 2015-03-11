@@ -1,7 +1,11 @@
 package generic;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -40,6 +44,7 @@ public class ImageAdapter extends BaseAdapter {
     private final String LOG_TAG = "ImageAdapter";
     private final String ELEMENT_NAME =  "element";
     private static int elementCount = 0;
+    private Activity activity;
 
     public void update(int name, int id) {
 
@@ -74,11 +79,12 @@ public class ImageAdapter extends BaseAdapter {
 
 
     //Die Methoden com.example.test.ImageAdapter, getCount, getItem, getItemId müssen überschrieben werden
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, Activity activity) {
         mContext = c;
+        this.activity = activity;
 
-        //sollte verhindern, dass buttons nach dem Drehen, sprich wenn der standardkonstruktor wieder aufgerufen wird, wieder neu gezeichnet werden
-        //wenn etwas vorhanden, dass soll das gezeichnet werden -> intialisierung soll nur einmal passieren.
+        //sollte verhindern, dass Buttons nach dem Drehen, sprich wenn der Standardkonstruktor wieder aufgerufen wird, wieder neu gezeichnet werden
+        //wenn etwas vorhanden, dass soll das gezeichnet werden -> Intialisierung soll nur einmal passieren.
         for (int i =0;i<40;i++){
             imgRes.put(i,R.drawable.add1); // TODO in die gui !!
         }
@@ -120,7 +126,6 @@ public class ImageAdapter extends BaseAdapter {
         View view;
 
         if (convertView == null) {
-
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.image, null);
         }
@@ -137,8 +142,79 @@ public class ImageAdapter extends BaseAdapter {
         TextView txtView = (TextView)view.findViewById(R.id.textView5);
 
         imgView.setImageResource(getItemInt(position));
+        imgView.setTag(getItemInt(position));
 
         setImgVisability(txtView,position);
+
+        if((Integer)imgView.getTag() == R.drawable.button_off) {
+//            imgView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    ImageView iv = (ImageView) v;
+//                    Log.d("SSSSSSSS", "Geklickt: " + iv.getClass().toString() + " " + iv.getTag());
+//                }
+//            });
+
+            imgView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    ImageView iv = (ImageView) v;
+                    int btnPosition = (Integer)iv.getTag();
+                    switch(event.getAction()) {
+
+                        case MotionEvent.ACTION_DOWN:
+
+                            Log.d("EEEE", "Touch unten");
+                            update(R.drawable.button_on, btnPosition);
+//                            notifyDataSetChanged();
+
+
+
+                            Runnable runnableNotify = new RunnableNotify();
+                            activity.runOnUiThread(runnableNotify);
+//                            Handler handler = new Handler();
+//                            handler.post(runnableNotify);
+//                            Thread threadNotify = new Thread(runnableNotify);
+//                            threadNotify.start();
+
+
+//                           activity.runOnUiThread(new Runnable() {
+//                               @Override
+//                               public void run() {
+//                                   notifyDataSetChanged();
+//                               }
+//                           });
+//
+                            return true;
+
+                        case MotionEvent.ACTION_UP:
+                            Log.d("EEEE", "Touch oben");
+                            update(R.drawable.button_off, btnPosition);
+//                            notifyDataSetChanged();
+                            Runnable runnableNotify2 = new RunnableNotify();
+                            activity.runOnUiThread(runnableNotify2);
+
+//                            Handler handler2 = new Handler();
+//                            handler2.post(runnableNotify2);
+//                            Thread threadNotify2 = new Thread(runnableNotify2);
+//                            threadNotify2.start();
+//
+//                            activity.runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    notifyDataSetChanged();
+//                                }
+//                            });
+
+                            return true;
+
+                        default:
+                            return false;
+                    }
+                }
+            });
+        }
 
 
 //        imgView.setOnTouchListener(new View.OnTouchListener() {
@@ -192,76 +268,103 @@ public class ImageAdapter extends BaseAdapter {
     }
 */
 
-}
-private void setImgVisability(TextView txtView, int position){
-
-    if (getItemInt(position)==R.drawable.pwm_0){
-        txtView.setText(getTextRes(position));
-
-
-        txtView.setVisibility(View.VISIBLE);
     }
-    else if (getItemInt(position)==R.drawable.pwm_25_5){
+    private void setImgVisability(TextView txtView, int position){
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
+        if (getItemInt(position)==R.drawable.pwm_0){
+            txtView.setText(getTextRes(position));
+
+
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_25_5){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_51){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_76_5){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_102){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_127_5){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_153){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_178_5){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_204){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+
+        else if (getItemInt(position)==R.drawable.pwm_229_5){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_255){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+        else if (getItemInt(position)==R.drawable.pwm_slider){
+
+            txtView.setText(getTextRes(position));
+            txtView.setVisibility(View.VISIBLE);
+        }
+
+        else {
+            txtView.setVisibility(View.INVISIBLE);
+        }
     }
-    else if (getItemInt(position)==R.drawable.pwm_51){
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_76_5){
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_102){
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_127_5){
+    private class RunnableNotify implements Runnable {
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_153){
+        @Override
+        public void run() {
+            notifyDataSetChanged();
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_178_5){
-
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_204){
-
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
+//            notifyDataSetInvalidated();
+            Log.d("AAAAAAAAAAA", "In Thread");
+        }
     }
 
-    else if (getItemInt(position)==R.drawable.pwm_229_5){
+    private class TaskNotify extends AsyncTask<Void, Void, String> {
 
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_255){
-
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
-    }
-    else if (getItemInt(position)==R.drawable.pwm_slider){
-
-        txtView.setText(getTextRes(position));
-        txtView.setVisibility(View.VISIBLE);
+        @Override
+        protected String doInBackground(Void... params) {
+//            notifyDataSetChanged();
+            Log.d("AAAAAAAAAAA", "In AsyncTask");
+            return  "";
+        }
     }
 
-    else {
-        txtView.setVisibility(View.INVISIBLE);
-    }
-}
 
+    public HashMap<Integer, Integer> getImgRes() {
+        return imgRes;
+    }
 
 }

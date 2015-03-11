@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import database.DatabaseHandler;
 import generic.ExpListAdapterAllPro;
 import observer.Project;
 
@@ -44,6 +45,7 @@ public class ProjectActivity extends  Activity {
     private ArrayList<String> listDataHeader;
     static HashMap<String, ArrayList<String>> mapListDataChild;
     private ExpListAdapterAllPro expListAdapter;
+    private DatabaseHandler dbHandler;
 
 
     @Override
@@ -103,6 +105,7 @@ public class ProjectActivity extends  Activity {
                                         MainActivity.removeProject(keyChosen);
                                     }
                                     expListAdapter.notifyDataSetChanged();
+                                    dbHandler.deleteProjectDb(keyChosen);
                                     return true;
 
                                 case R.id.alterEntry:
@@ -135,27 +138,7 @@ public class ProjectActivity extends  Activity {
                                         @Override
                                         public void onClick(View v) {
 
-                                            String newProName = etProNameAlter.getText().toString();
-                                            boolean isUnique = isProNameUnique(newProName, proFinal.getName());
-                                            if(isUnique) {
-                                                if(!newProName.equals("")) {
-                                                    proFinal.setName(newProName);
-                                                    MainActivity.getAllProjects().set(positionFinal, proFinal);
-                                                    allProName.set(positionFinal, newProName);
-                                                    mapListDataChild.remove(keyChosen);
-
-                                                    ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
-                                                    child.add("Erstellt am: " + allProCreationDates.get(positionFinal));
-                                                    child.add("Zuletzt geändert: " + allProLastModifiedDates.get(positionFinal));
-                                                    mapListDataChild.put(newProName, child);
-                                                    expListAdapter.notifyDataSetChanged();
-                                                    dialogAlterPro.dismiss();
-                                                }
-                                                else
-                                                    Toast.makeText(getBaseContext(), "Name darf nicht leer sein", Toast.LENGTH_SHORT).show();
-                                            }
-                                            else
-                                                Toast.makeText(getBaseContext(), "Name bereits vorhanden", Toast.LENGTH_SHORT).show();
+                                            btnAlterSubmitClicked(etProNameAlter, proFinal, positionFinal, allProName, keyChosen, allProCreationDates, allProLastModifiedDates);
                                         }
                                     });
 
@@ -177,8 +160,37 @@ public class ProjectActivity extends  Activity {
                 return false;
             }
         });
+
+        dbHandler = new DatabaseHandler(this);
+        dbHandler.setDb(dbHandler.getWritableDatabase());
     }
 
+    private void btnAlterSubmitClicked(EditText etProNameAlter, Project proFinal, int positionFinal, ArrayList<String> allProName, String keyChosen, ArrayList<String> allProCreationDates, ArrayList<String> allProLastModifiedDates) {
+        String newProName = etProNameAlter.getText().toString();
+        boolean isUnique = isProNameUnique(newProName, proFinal.getName());
+        if(isUnique) {
+            if(!newProName.equals("")) {
+                proFinal.setName(newProName);
+                MainActivity.getAllProjects().set(positionFinal, proFinal);
+                allProName.set(positionFinal, newProName);
+                mapListDataChild.remove(keyChosen);
+
+                ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+                child.add("Erstellt am: " + allProCreationDates.get(positionFinal));
+                child.add("Zuletzt geändert: " + allProLastModifiedDates.get(positionFinal));
+                mapListDataChild.put(newProName, child);
+
+                dbHandler.updateProjectDb(newProName, keyChosen);
+
+                expListAdapter.notifyDataSetChanged();
+                dialogAlterPro.dismiss();
+            }
+            else
+                Toast.makeText(getBaseContext(), "Name darf nicht leer sein", Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getBaseContext(), "Name bereits vorhanden", Toast.LENGTH_SHORT).show();
+    }
 
 
     @Override
@@ -239,7 +251,7 @@ public class ProjectActivity extends  Activity {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProBtnSubmitClicked(v);
+                proBtnSubmitClicked(v);
             }
         });
 
@@ -247,23 +259,25 @@ public class ProjectActivity extends  Activity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ProBtnCancelClicked(dialogNewPro);
+                proBtnCancelClicked(dialogNewPro);
             }
         });
         dialogNewPro.show();
     }
 
-    public void ProBtnSubmitClicked(View v) {
-        String ProName = proName.getText().toString();
+    public void proBtnSubmitClicked(View v) {
+        String proName = this.proName.getText().toString();
+        boolean isUnique = isProNameUnique(proName);
 
-
-        if (ProName != "") { // Bluetooth oder Ethernet
-            // Log.d(LOG_TAG, Integer.toString(conType));
-            dialogNewPro.dismiss();
-            setResultToActivity(ProName); // Variablen conType, strConName und address zur�ckliefern
-        }
-        else // nichts ausgew�hlt - sollte �berhaupt nicht vorkommen (als Absicherung wird es abgefangen)
-            Toast.makeText(getApplicationContext(), "Es wurde nichts ausgew�hlt. ", Toast.LENGTH_SHORT).show();
+        if(isUnique) {
+            if (proName != "") { // Bluetooth oder Ethernet
+                // Log.d(LOG_TAG, Integer.toString(conType));
+                dialogNewPro.dismiss();
+                setResultToActivity(proName); // Variablen conType, strConName und address zur�ckliefern
+            } else // nichts ausgew�hlt - sollte �berhaupt nicht vorkommen (als Absicherung wird es abgefangen)
+                Toast.makeText(getApplicationContext(), "Es wurde nichts ausgew�hlt. ", Toast.LENGTH_SHORT).show();
+        } else
+            Toast.makeText(this, getString(R.string.errorNameNotUnique), Toast.LENGTH_SHORT).show();
     }
 
     private void setResultToActivity(String name) {
@@ -278,7 +292,7 @@ public class ProjectActivity extends  Activity {
      * Methode wird ausgef�hrt, wenn Button "Abbrechen" geklickt wurde
      * @param
      */
-    public void ProBtnCancelClicked(Dialog dialog) {
+    public void proBtnCancelClicked(Dialog dialog) {
         dialog.cancel();
     }
 

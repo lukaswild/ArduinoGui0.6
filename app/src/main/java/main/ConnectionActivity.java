@@ -128,94 +128,112 @@ public class ConnectionActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                final int positionFinal = position;
-                final PopupMenu popupConOptions = new PopupMenu(getApplicationContext(), view);
-                popupConOptions.inflate(R.menu.menu_popup_entries);
-                final String keyChosen = parent.getItemAtPosition(position).toString();
+                if(MainActivity.getCurrentConnection() == null) {
 
-                if(allConsHeader.contains(keyChosen)) {
-                    popupConOptions.show();
+                    final int positionFinal = position;
+                    final PopupMenu popupConOptions = new PopupMenu(getApplicationContext(), view);
+                    popupConOptions.inflate(R.menu.menu_popup_entries);
+                    final String keyChosen = parent.getItemAtPosition(position).toString();
 
-                    Log.d(LOG_TAG, view.getClass().toString());
-                    Log.d(LOG_TAG, parent.getClass().toString());
-                    Log.d(LOG_TAG, parent.getItemAtPosition(position).getClass().toString());
-                    Log.d(LOG_TAG, keyChosen);
+                    if (allConsHeader.contains(keyChosen)) {
+                        popupConOptions.show();
 
-                    popupConOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
+                        Log.d(LOG_TAG, view.getClass().toString());
+                        Log.d(LOG_TAG, parent.getClass().toString());
+                        Log.d(LOG_TAG, parent.getItemAtPosition(position).getClass().toString());
+                        Log.d(LOG_TAG, keyChosen);
 
-                            switch (item.getItemId()) {
+                        popupConOptions.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
 
-                                case R.id.removeEntry:
-                                    if (mapListDataChild.containsKey(keyChosen)) {
-                                        mapListDataChild.remove(keyChosen);
-                                        allConsHeader.remove(keyChosen);
-                                        MainActivity.removeConnection(keyChosen);
-                                    }
-                                    Log.d(LOG_TAG, "Entfernen des Eintrags " + keyChosen);
-                                    expListAdapter.notifyDataSetChanged();
-                                    return true;
+                                switch (item.getItemId()) {
 
+                                    case R.id.removeEntry:
+                                        if (mapListDataChild.containsKey(keyChosen)) {
+                                            mapListDataChild.remove(keyChosen);
+                                            int pos = 0;
+                                            for (int i = 0; i < allConsHeader.size(); i++) {
+                                                if (allConsHeader.get(i).equals(keyChosen)) {
+                                                    try {
+                                                        allConsHeader.remove(i);
+                                                        allConsAddress.remove(i);
+                                                        allConsType.remove(i);
+                                                    } catch (Exception e) {
+                                                        Toast.makeText(getBaseContext(), "Fehler beim Löschen. Beenden Sie die aktuelle Verbindung und versuchen es erneut", Toast.LENGTH_LONG).show();
+                                                    }
+                                                }
+                                            }
 
-                                case R.id.alterEntry:
+                                            MainActivity.removeConnection(keyChosen);
 
-                                    refreshListData(allConsType, allConsAddress, allConsHeader);
-
-                                    IConnection con = null;
-                                    Log.d(LOG_TAG, MainActivity.getAllConnections().size() + "ddd");
-                                    for (IConnection c : MainActivity.getAllConnections()) {
-                                        if (c.getConNameDeclaration().equals(keyChosen))
-                                            con = c;
-                                    }
-
-                                    if(con == null) {
-                                        Toast.makeText(getBaseContext(), "Es ist leider ein Fehler aufgetreten", Toast.LENGTH_SHORT).show();
-                                        Log.e(LOG_TAG, "Bearbeiten nicht möglich, kein passender Eintrag in Liste gefunden");
-                                        return false;
-                                    }
-
-                                    dialogAlterCon = new Dialog(ConnectionActivity.this);
-                                    dialogAlterCon.setTitle("Verbindung bearbeiten");
-                                    dialogAlterCon.setContentView(R.layout.alter_connection);
-
-                                    final IConnection conFinal = con;
-                                    TextView tvConAddressAlter = (TextView) dialogAlterCon.findViewById(R.id.tvConAddressAlter);
-                                    TextView tvConNameAlter = (TextView) dialogAlterCon.findViewById(R.id.tvConNameAlter);
-                                    final EditText etConNameAlter = (EditText) dialogAlterCon.findViewById(R.id.etConNameAlter);
-                                    final EditText etConAddressAlter = (EditText) dialogAlterCon.findViewById(R.id.etConAddressAlter);
-                                    Button btnSubmitAlter = (Button) dialogAlterCon.findViewById(R.id.btnSubmitAlter);
-                                    Button btnCancelAlter = (Button) dialogAlterCon.findViewById(R.id.btnCancelAlter);
-
-                                    if(conFinal instanceof BTConnection) {
-                                        tvConAddressAlter.setText(getBaseContext().getString(R.string.txtMacAddressBT));
-                                        etConAddressAlter.setHint(getBaseContext().getString(R.string.txtMacAddress));
-                                    }
-                                    else {
-                                        tvConAddressAlter.setText(getBaseContext().getString(R.string.txtIpAddressArduino));
-                                        etConAddressAlter.setHint(getBaseContext().getString(R.string.txtIpAddress));
-                                    }
-
-                                    etConNameAlter.setText(con.getConNameDeclaration());
-                                    etConAddressAlter.setText(con.getConAddressDeclaration());
+                                            dbHandler.deleteConnectionDb(keyChosen);
+                                        }
+                                        Log.d(LOG_TAG, "Entfernen des Eintrags " + keyChosen);
+                                        expListAdapter.notifyDataSetChanged();
+                                        return true;
 
 
-                                    setButtonSubmitAlterOnClickListener(conFinal, etConNameAlter, etConAddressAlter, btnSubmitAlter,
-                                            position, positionFinal, allConsHeader, allConsAddress, keyChosen, allConsType);
+                                    case R.id.alterEntry:
 
-                                    btnCancelAlterSetOnClickListener(btnCancelAlter);
-                                    dialogAlterCon.show();
-                                    return true;
+                                        refreshListData(allConsType, allConsAddress, allConsHeader);
+
+                                        IConnection con = null;
+                                        Log.d(LOG_TAG, MainActivity.getAllConnections().size() + "ddd");
+                                        for (IConnection c : MainActivity.getAllConnections()) {
+                                            if (c.getConNameDeclaration().equals(keyChosen))
+                                                con = c;
+                                        }
+
+                                        if (con == null) {
+                                            Toast.makeText(getBaseContext(), "Es ist leider ein Fehler aufgetreten", Toast.LENGTH_SHORT).show();
+                                            Log.e(LOG_TAG, "Bearbeiten nicht möglich, kein passender Eintrag in Liste gefunden");
+                                            return false;
+                                        }
+
+                                        dialogAlterCon = new Dialog(ConnectionActivity.this);
+                                        dialogAlterCon.setTitle("Verbindung bearbeiten");
+                                        dialogAlterCon.setContentView(R.layout.alter_connection);
+
+                                        final IConnection conFinal = con;
+                                        TextView tvConAddressAlter = (TextView) dialogAlterCon.findViewById(R.id.tvConAddressAlter);
+                                        TextView tvConNameAlter = (TextView) dialogAlterCon.findViewById(R.id.tvConNameAlter);
+                                        final EditText etConNameAlter = (EditText) dialogAlterCon.findViewById(R.id.etConNameAlter);
+                                        final EditText etConAddressAlter = (EditText) dialogAlterCon.findViewById(R.id.etConAddressAlter);
+                                        Button btnSubmitAlter = (Button) dialogAlterCon.findViewById(R.id.btnSubmitAlter);
+                                        Button btnCancelAlter = (Button) dialogAlterCon.findViewById(R.id.btnCancelAlter);
+
+                                        if (conFinal instanceof BTConnection) {
+                                            tvConAddressAlter.setText(getBaseContext().getString(R.string.txtMacAddressBT));
+                                            etConAddressAlter.setHint(getBaseContext().getString(R.string.txtMacAddress));
+                                        } else {
+                                            tvConAddressAlter.setText(getBaseContext().getString(R.string.txtIpAddressArduino));
+                                            etConAddressAlter.setHint(getBaseContext().getString(R.string.txtIpAddress));
+                                        }
+
+                                        etConNameAlter.setText(con.getConNameDeclaration());
+                                        etConAddressAlter.setText(con.getConAddressDeclaration());
+
+
+                                        setButtonSubmitAlterOnClickListener(conFinal, etConNameAlter, etConAddressAlter, btnSubmitAlter,
+                                                position, positionFinal, allConsHeader, allConsAddress, keyChosen, allConsType);
+
+                                        btnCancelAlterSetOnClickListener(btnCancelAlter);
+                                        dialogAlterCon.show();
+                                        return true;
+                                }
+                                return false;
                             }
-                            return false;
-                        }
-                    });
-                }
+                        });
+                    }
+                } else
+                Toast.makeText(getBaseContext(), "Um Verbindung bearbeiten zu können bitte zuerst aktuelle Verbindung beenden", Toast.LENGTH_LONG).show();
                 return false;
             }
         });
 
         dbHandler = new DatabaseHandler(this);
+        dbHandler.setDb(dbHandler.getWritableDatabase());
     }
 
 
@@ -250,6 +268,8 @@ public class ConnectionActivity extends Activity {
                         child.add(allConsType.get(position));
                         child.add(newConAddress);
                         mapListDataChild.put(newConName, child);
+
+                        dbHandler.updateConnectionDb(conFinal, keyChosen);
 
                         expListAdapter.notifyDataSetChanged();
                         dialogAlterCon.dismiss();
@@ -363,7 +383,7 @@ public class ConnectionActivity extends Activity {
 
 
 
-    public void createNewConnection(View v) { // TODO name muss unique sein und nicht ""
+    public void createNewConnection(View v) {
 
         dialogNewCon = new Dialog(this);
         dialogNewCon.setContentView(R.layout.new_connection);
@@ -637,6 +657,7 @@ public class ConnectionActivity extends Activity {
         expListAdapter.getListDataHeader().add(conName);
         ArrayList<String> listChildrenToAdd = createListChildrenToAdd(strConType, conAddress);
         mapExpListView.put(conName, listChildrenToAdd);
+        dbHandler.insertConnection(conToAdd, dbHandler.getDb());
         dialogNewCon.cancel();
     }
 

@@ -28,9 +28,10 @@ public class Observable {
 //        }
 //    }
 
-    public void notify(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition) {
+    // TODO mit nur zwei Parameter, wobei der zweite ein Object ist --> Für unterschiedlich benötigte Daten Klassen erzeugen
+    public void notify(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
         for (IObserver o : observers) {
-            o.update(senderClass, modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
+            o.update(senderClass, modelInput, modelToUpdate, inputElementPosition, outputElementPosition, projectId, actionNr);
         }
     }
 	

@@ -873,10 +873,10 @@ containing a value of this type.
         public static final int switch_on=0x7f02006c;
     }
     public static final class id {
-        public static final int AddButton=0x7f090089;
         public static final int AddLED=0x7f090087;
         public static final int AddPWMCol=0x7f09008a;
         public static final int AddPWMView=0x7f09008b;
+        public static final int AddPushButton=0x7f090089;
         public static final int AddSwitch=0x7f090088;
         public static final int DialogProBtnSubmit=0x7f09005f;
         public static final int a1=0x7f0900a3;

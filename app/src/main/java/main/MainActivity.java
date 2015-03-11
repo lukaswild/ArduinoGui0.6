@@ -86,6 +86,11 @@ public class MainActivity extends Activity {
         currentProject.addToObservers(dbHandler); // TODO richtig hier ?
     }
 
+    public static void setCurrentProjectFirstTime(Project currentProject) {
+        MainActivity.currentProject = currentProject;
+        currentProject.setLastOpenedDate(Calendar.getInstance());
+    }
+
     public static IConnection getCurrentConnection() {
         return currentConnection;
     }
@@ -99,16 +104,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //wdb.execSQL("INSERT INTO connections VALUES (null,'HC-05','89', 13, 'off', 'P6', 1)");
-
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment()).commit();
 
         }
 
-        imgadapt = new ImageAdapter(this);
-        setCurrentProject(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt));
+        imgadapt = new ImageAdapter(this, MainActivity.this);
+        setCurrentProjectFirstTime(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt)); // weiter unten in else nun
 
         // Auslesen aus der Datenbank
         GridView gridView = (GridView) findViewById(R.id.gridview);
@@ -144,7 +147,8 @@ public class MainActivity extends Activity {
 
                     currentProject.setName(edit.getText().toString());
                     allProjects.add(currentProject);
-                    SetCurrentProjByName(edit.getText().toString());
+                    setCurrentProjByName(edit.getText().toString());
+                    dbHandler.addProjectToDb(currentProject);
                     popDialog.dismiss();
                 }
 
@@ -154,12 +158,47 @@ public class MainActivity extends Activity {
 
         else {
             // Current Projekt setzen, welches zuletzt geöffnet war
+//            setCurrentProject(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt));
             setProjectLastOpened();
         }
+
+        for(int i = 0; i < imgadapt.getCount(); i++) {
+            if(!currentProject.getMapAllViewModels().containsKey(i)) {
+//                currentProject.getMapAllViewModels().put(i, new EmptyElement());
+                imgadapt.update(R.drawable.add1, i);
+                currentProject.getGui().addToMapAndNotifyDb(i, currentProject, new EmptyElement());
+            }
+
+        }
+        imgadapt.notifyDataSetChanged();
+
+
+//        currentProject.getMapAllViewModels().size();
+//        Toast.makeText(this, currentProject.getMapAllViewModels().size()+"größe mapallviewmodels", Toast.LENGTH_SHORT).show();
+//        Iterator iteratorMap = currentProject.getMapAllViewModels().entrySet().iterator();
+
 
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         showName();
 
+
+//        while(iteratorMap.hasNext()) {
+//            Map.Entry entry = (Map.Entry) iteratorMap.next();
+//            final Integer key = (Integer) entry.getKey();
+//            Element elementActual = (Element) entry.getValue();
+//            Log.d("DDDD", key + "\t" + elementActual.getKind());
+//
+//
+////            if (elementActual.getKind() != null) {
+////                currentProject.getGui().getGridView().getChildAt(key).setOnClickListener(new View.OnClickListener() {
+////                    @Override
+////                    public void onClick(View v) {
+////                        Toast.makeText(getBaseContext(), "Auf Element " + key + " geklickt", Toast.LENGTH_SHORT).show();
+////                    }
+////                });
+////            }
+//
+//        }
     }
 
     private void setProjectLastOpened() {
@@ -188,6 +227,9 @@ public class MainActivity extends Activity {
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         loadImgRes();
 //        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
+
+        HashMap<Integer, Integer> imgadaptImgRes = imgadapt.getImgRes();
+        Log.d("SSSSSSSSSSSS", imgadapt.getCount()+"");
     }
 
    /* @Override
@@ -206,38 +248,27 @@ public class MainActivity extends Activity {
             BTConnection.closeConnection();
         currentConnection = null;
 
-        // Abspeichern der Connections in der DB
+        // Abspeichern der Connections in der DB - alte Variante
 //        storeDataInDb();
 
 //       allProjects.clear();
- //      db.execSQL("DROP TABLE IF EXISTS connections");
-  //     db.execSQL("DROP TABLE IF EXISTS projects");
-  //      db.execSQL("DROP TABLE IF EXISTS elements");
+//       dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
+//
+//       dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
+//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-//        Toast.makeText(this, "in onPause", Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-//        Toast.makeText(this, "in onStop", Toast.LENGTH_SHORT).show();
-//        storeDataInDb();
-    }
-
-    private void storeDataInDb() {
-        ArrayList<String> allConsName = new ArrayList<String>();
-        ArrayList<String> allConsType = new ArrayList<String>();
-        ArrayList<String> allConsAddress = new ArrayList<String>();
-        splitConsIntoLists(allConsType, allConsName, allConsAddress);
-        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
-
-        // Eintragen der Projekte in die DB
-        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
-    }
+//    private void storeDataInDb() {
+//        ArrayList<String> allConsName = new ArrayList<String>();
+//        ArrayList<String> allConsType = new ArrayList<String>();
+//        ArrayList<String> allConsAddress = new ArrayList<String>();
+//        splitConsIntoLists(allConsType, allConsName, allConsAddress);
+//        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
+//
+//        // Eintragen der Projekte in die DB
+//        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
+//    }
 
 
     public void showName(){
@@ -544,6 +575,7 @@ public class MainActivity extends Activity {
                     proName = data.getExtras().getString("name");
                     Project newProj = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))), proName, imgadapt); // TODO hier darf nicht der mit Elementen versehene imgadapt übergeben werden
                     allProjects.add(newProj);
+                    dbHandler.addProjectToDb(newProj);
                     setCurrentProject(newProj);
                     currentProject.setName(proName);
                 }
@@ -551,22 +583,22 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static void loadImgRes(){
+    public static void loadImgRes() {
         //Zuerst muss die hashmap aus dem projekt(int, element) zu einer hashmap im imgadapt(int, int) gecastet werden
 
         for (int i=0;i<imgadapt.getCount();i++){
             imgadapt.update(R.drawable.add1,i);
         }
 
-        for (int i=0;i<currentProject.getMapAllViewModels().size();i++){
+        for (int i=0;i<currentProject.getMapAllViewModels().size();i++) {
             //Plus hinzuzufügen wäre ja unnötgi, da die hashmap im imagedapter beim Erzeugen sowieso mit plus befüllt wird
             //es soll nur ausgetauscht werden, was kein Plus ist.
 
-            if (!(currentProject.getElementFromMap(i) instanceof EmptyElement)){
-                imgadapt.update(currentProject.getRessourceFromMap(i),i);
+            if (!(currentProject.getElementFromMap(i) instanceof EmptyElement)) {
+                imgadapt.update(currentProject.getRessourceFromMap(i), i);
                 Log.d(LOG_TAG, "Ressource: " + currentProject.getRessourceFromMap(i));
-                Log.d(LOG_TAG, "Led: " + R.drawable.lamp_off + " " + R.drawable.lamp_on);
-                Log.d(LOG_TAG, "Led: " + R.drawable.switch_off + " " + R.drawable.switch_on);
+//                Log.d(LOG_TAG, "Led: " + R.drawable.lamp_off + " " + R.drawable.lamp_on);
+//                Log.d(LOG_TAG, "Led: " + R.drawable.switch_off + " " + R.drawable.switch_on);
 
             }
         }
@@ -574,14 +606,10 @@ public class MainActivity extends Activity {
     }
 
 
-    public static void SetCurrentProjByName(String name){
+    public static void setCurrentProjByName(String name){
         for (Project p: allProjects) {
-            if (p.getName().equals(name)) {
+            if (p.getName().equals(name))
                 setCurrentProject(p);
-
-            } else {
-                //es wird kein Projekt gefunden
-            }
         }
     }
 }
