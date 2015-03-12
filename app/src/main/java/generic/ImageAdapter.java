@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -145,17 +144,30 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         final ImageView imgView = (ImageView) view.findViewById(R.id.imageview);
+
         imgView.setLayoutParams(new LinearLayout.LayoutParams(length, length));
         imgView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imgView.setPadding(10, 10, 10, 3);
         TextView txtView = (TextView)view.findViewById(R.id.textView5);
 
+
         imgView.setImageResource(getItemInt(position));
+
+        if (imgRes.get(position)==R.drawable.button_off||imgRes.get(position)==R.drawable.button_on) {
+           imgView.setImageResource(0);
+        }
+
         imgView.setTag(getItemInt(position));
 
         setImgVisability(txtView,position);
 
         if((Integer)imgView.getTag() == R.drawable.button_off) {
+            imgView.setBackgroundResource(R.drawable.selector_btn_default);
+
+
+
+
+
 //            imgView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {
@@ -164,65 +176,65 @@ public class ImageAdapter extends BaseAdapter {
 //                }
 //            });
 
-            imgView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    ImageView iv = (ImageView) v;
-                    int btnPosition = (Integer)iv.getTag();
-                    switch(event.getAction()) {
-
-                        case MotionEvent.ACTION_DOWN:
-
-                            Log.d("EEEE", "Touch unten");
-                            update(R.drawable.button_on, btnPosition);
-//                            notifyDataSetChanged();
-
-
-
-                            Runnable runnableNotify = new RunnableNotify();
-                            activity.runOnUiThread(runnableNotify);
-//                            Handler handler = new Handler();
-//                            handler.post(runnableNotify);
-//                            Thread threadNotify = new Thread(runnableNotify);
-//                            threadNotify.start();
-
-
-//                           activity.runOnUiThread(new Runnable() {
-//                               @Override
-//                               public void run() {
-//                                   notifyDataSetChanged();
-//                               }
-//                           });
+//            imgView.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
 //
-                            return true;
-
-                        case MotionEvent.ACTION_UP:
-                            Log.d("EEEE", "Touch oben");
-                            update(R.drawable.button_off, btnPosition);
-//                            notifyDataSetChanged();
-                            Runnable runnableNotify2 = new RunnableNotify();
-                            activity.runOnUiThread(runnableNotify2);
-
-//                            Handler handler2 = new Handler();
-//                            handler2.post(runnableNotify2);
-//                            Thread threadNotify2 = new Thread(runnableNotify2);
-//                            threadNotify2.start();
+//                    ImageView iv = (ImageView) v;
+//                    int btnPosition = (Integer)iv.getTag();
+//                    switch(event.getAction()) {
 //
-//                            activity.runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    notifyDataSetChanged();
-//                                }
-//                            });
-
-                            return true;
-
-                        default:
-                            return false;
-                    }
-                }
-            });
+//                        case MotionEvent.ACTION_DOWN:
+//
+//                            Log.d("EEEE", "Touch unten");
+//                            update(R.drawable.button_on, btnPosition); // Change the image in the ImageAdapter to the new one
+////                            notifyDataSetChanged(); // Tell the ImageAdapter to update the gui
+//
+//
+//
+//                            Runnable runnableNotify = new RunnableNotify();
+//                            activity.runOnUiThread(runnableNotify);
+////                            Handler handler = new Handler();
+////                            handler.post(runnableNotify);
+////                            Thread threadNotify = new Thread(runnableNotify);
+////                            threadNotify.start();
+//
+//
+////                           activity.runOnUiThread(new Runnable() {
+////                               @Override
+////                               public void run() {
+////                                   notifyDataSetChanged();
+////                               }
+////                           });
+////
+//                            return true;
+//
+//                        case MotionEvent.ACTION_UP:
+//                            Log.d("EEEE", "Touch oben");
+//                            update(R.drawable.button_off, btnPosition);
+////                            notifyDataSetChanged();
+//                            Runnable runnableNotify2 = new RunnableNotify();
+//                            activity.runOnUiThread(runnableNotify2);
+//
+////                            Handler handler2 = new Handler();
+////                            handler2.post(runnableNotify2);
+////                            Thread threadNotify2 = new Thread(runnableNotify2);
+////                            threadNotify2.start();
+////
+////                            activity.runOnUiThread(new Runnable() {
+////                                @Override
+////                                public void run() {
+////                                    notifyDataSetChanged();
+////                                }
+////                            });
+//
+//                            return true;
+//
+//                        default:
+//                            return false;
+//                    }
+//                }
+//            });
         }
 
 

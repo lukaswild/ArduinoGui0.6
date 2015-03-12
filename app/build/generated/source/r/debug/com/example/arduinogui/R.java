@@ -869,8 +869,9 @@ containing a value of this type.
         public static final int pwm_51=0x7f020068;
         public static final int pwm_76_5=0x7f020069;
         public static final int pwm_slider=0x7f02006a;
-        public static final int switch_off=0x7f02006b;
-        public static final int switch_on=0x7f02006c;
+        public static final int selector_btn_default=0x7f02006b;
+        public static final int switch_off=0x7f02006c;
+        public static final int switch_on=0x7f02006d;
     }
     public static final class id {
         public static final int AddLED=0x7f090087;

@@ -498,18 +498,16 @@ public class Gui extends View implements IObserver {
                             switch (event.getAction()) {
 
                                 case MotionEvent.ACTION_DOWN:
-//                                    Toast.makeText(getContext(), "Button unten", Toast.LENGTH_SHORT).show();
+                                    Log.d(LOG_TAG, "Button down");
                                     imgadapt.update(R.drawable.button_on, btnPosition);
                                     imgadapt.notifyDataSetChanged();
                                     break;
-//                                    return true;
 
                                 case MotionEvent.ACTION_UP:
-//                                    Toast.makeText(getContext(), "TouchListener oben", Toast.LENGTH_SHORT).show();
+                                    Log.d(LOG_TAG, "Button up");
                                     imgadapt.update(R.drawable.button_off, btnPosition);
                                     imgadapt.notifyDataSetChanged();
                                     break;
-//                                    return false;
                             }
 
                             return true;
@@ -517,7 +515,6 @@ public class Gui extends View implements IObserver {
                     });
                 }
             } catch (NullPointerException e) {
-                // Kein PushButton
             }
 
         }

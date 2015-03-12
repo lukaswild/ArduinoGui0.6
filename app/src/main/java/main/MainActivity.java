@@ -248,9 +248,6 @@ public class MainActivity extends Activity {
             BTConnection.closeConnection();
         currentConnection = null;
 
-        // Abspeichern der Connections in der DB - alte Variante
-//        storeDataInDb();
-
 //       allProjects.clear();
 //       dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
 //
