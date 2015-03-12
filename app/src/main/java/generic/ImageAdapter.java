@@ -45,6 +45,7 @@ public class ImageAdapter extends BaseAdapter {
     private final String ELEMENT_NAME =  "element";
     private static int elementCount = 0;
     private Activity activity;
+    private int numberOfElements;
 
     public void update(int name, int id) {
 
@@ -79,13 +80,14 @@ public class ImageAdapter extends BaseAdapter {
 
 
     //Die Methoden com.example.test.ImageAdapter, getCount, getItem, getItemId müssen überschrieben werden
-    public ImageAdapter(Context c, Activity activity) {
+    public ImageAdapter(Context c, Activity activity, int numberOfElements) {
         mContext = c;
         this.activity = activity;
+        this.numberOfElements = numberOfElements;
 
         //sollte verhindern, dass Buttons nach dem Drehen, sprich wenn der Standardkonstruktor wieder aufgerufen wird, wieder neu gezeichnet werden
         //wenn etwas vorhanden, dass soll das gezeichnet werden -> Intialisierung soll nur einmal passieren.
-        for (int i =0;i<40;i++){
+        for (int i =0;i<numberOfElements;i++){
             imgRes.put(i,R.drawable.add1); // TODO in die gui !!
         }
     }
@@ -110,6 +112,13 @@ public class ImageAdapter extends BaseAdapter {
 
     }
 
+    public int getNumberOfElements() {
+        return numberOfElements;
+    }
+
+    public void setNumberOfElements(int numberOfElements) {
+        this.numberOfElements = numberOfElements;
+    }
 
     public int getItemInt(int position){
         return imgRes.get(position);

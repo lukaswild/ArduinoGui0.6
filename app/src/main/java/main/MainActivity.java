@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
 
         }
 
-        imgadapt = new ImageAdapter(this, MainActivity.this);
+        imgadapt = new ImageAdapter(this, MainActivity.this, 40);
         setCurrentProjectFirstTime(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt)); // weiter unten in else nun
 
         // Auslesen aus der Datenbank
