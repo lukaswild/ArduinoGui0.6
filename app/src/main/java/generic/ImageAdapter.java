@@ -132,6 +132,7 @@ public class ImageAdapter extends BaseAdapter {
     // Hier wird eine neue View erzeugt
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;
+        final int positionFinal = position;
 
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -159,138 +160,54 @@ public class ImageAdapter extends BaseAdapter {
 
         imgView.setTag(getItemInt(position));
 
-        setImgVisability(txtView,position);
+        setImgVisability(txtView, position);
 
         if((Integer)imgView.getTag() == R.drawable.button_off) {
             imgView.setBackgroundResource(R.drawable.selector_btn_default);
         }
-        else {imgView.setBackgroundResource(0);}
-
-
-
-
-//            imgView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    ImageView iv = (ImageView) v;
-//                    Log.d("SSSSSSSS", "Geklickt: " + iv.getClass().toString() + " " + iv.getTag());
-//                }
-//            });
-
+//
 //            imgView.setOnTouchListener(new View.OnTouchListener() {
 //                @Override
 //                public boolean onTouch(View v, MotionEvent event) {
 //
-//                    ImageView iv = (ImageView) v;
-//                    int btnPosition = (Integer)iv.getTag();
-//                    switch(event.getAction()) {
+//                    switch(event.getAction() & MotionEvent.ACTION_MASK) {
 //
 //                        case MotionEvent.ACTION_DOWN:
+//                            v.setPressed(true);
+//                            try {
+//                                project.sendDataUpdateGui(v, MainActivity.getCurrentConnection(), positionFinal, false);
+//                                update(R.drawable.switch_on, positionFinal);
+//                            }catch (NullPointerException e) {
+////                                makeToastNoConnection();
+//                            }
+//                            Log.d(LOG_TAG, "Button down");
+//                            break;
 //
-//                            Log.d("EEEE", "Touch unten");
-//                            update(R.drawable.button_on, btnPosition); // Change the image in the ImageAdapter to the new one
-////                            notifyDataSetChanged(); // Tell the ImageAdapter to update the gui
-//
-//
-//
-//                            Runnable runnableNotify = new RunnableNotify();
-//                            activity.runOnUiThread(runnableNotify);
-////                            Handler handler = new Handler();
-////                            handler.post(runnableNotify);
-////                            Thread threadNotify = new Thread(runnableNotify);
-////                            threadNotify.start();
-//
-//
-////                           activity.runOnUiThread(new Runnable() {
-////                               @Override
-////                               public void run() {
-////                                   notifyDataSetChanged();
-////                               }
-////                           });
-////
-//                            return true;
-//
+//                        case MotionEvent.ACTION_OUTSIDE:
+//                        case MotionEvent.ACTION_CANCEL:
 //                        case MotionEvent.ACTION_UP:
-//                            Log.d("EEEE", "Touch oben");
-//                            update(R.drawable.button_off, btnPosition);
-////                            notifyDataSetChanged();
-//                            Runnable runnableNotify2 = new RunnableNotify();
-//                            activity.runOnUiThread(runnableNotify2);
-//
-////                            Handler handler2 = new Handler();
-////                            handler2.post(runnableNotify2);
-////                            Thread threadNotify2 = new Thread(runnableNotify2);
-////                            threadNotify2.start();
-////
-////                            activity.runOnUiThread(new Runnable() {
-////                                @Override
-////                                public void run() {
-////                                    notifyDataSetChanged();
-////                                }
-////                            });
-//
-//                            return true;
+//                            v.setPressed(false);
+//                            try {
+//                                project.sendDataUpdateGui(v, MainActivity.getCurrentConnection(), positionFinal, true);
+//                                update(R.drawable.switch_on, positionFinal);
+//                            }catch (NullPointerException e) {
+////                                makeToastNoConnection();
+//                            }
+//                            Log.d(LOG_TAG, "Button up");
+//                            break;
 //
 //                        default:
 //                            return false;
 //                    }
+//                    return true;
 //                }
 //            });
-
-
-
-//        imgView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-//                switch(event.getAction()) {
-//
-//                    case MotionEvent.ACTION_DOWN:
-//
-//                        return true;
-//
-//                    case MotionEvent.ACTION_UP:
-//
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
+//        }
 
         return view;
-
-
-        ///ALTER IMAGEADAPTER///
-        /*
-        // ImageView imageView;
-        MyImageView imageView;
-        //ViewHolderItem viewHolder;
-        if (convertView == null) {
-            // wenn die view leer ist -> Daten sollen hineingeschrieben werden
-            imageView = new MyImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(length, length));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(10, 10, 10, 10);
-            imageView.setName(ELEMENT_NAME + position);
-
-        }
-        else {
-            imageView = (MyImageView) convertView;//auskommentieren ?
-        }
-
-        imageView.setImageResource((getItemInt(position)));
-        imageView.setId(position);
-
-        if (getItemInt(position)==R.drawable.button_off){
-            imageView.setName("button");
-        }
-
-        return imageView;
-
     }
-*/
 
-    }
+
     private void setImgVisability(TextView txtView, int position){
 
         if (getItemInt(position)==R.drawable.pwm_0){
@@ -388,5 +305,7 @@ public class ImageAdapter extends BaseAdapter {
     public HashMap<Integer, Integer> getImgRes() {
         return imgRes;
     }
+
+
 
 }

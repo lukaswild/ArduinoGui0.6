@@ -298,12 +298,13 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                 String eType = cElements.getString(2);
                 int position = cElements.getInt(3); // Key in HashMap
                 int status = cElements.getInt(4);
+                String statusStr = cElements.getString(4);
                 String identifier = cElements.getString(5);
                 int resource = cElements.getInt(6);
                 int project_fk = cElements.getInt(7);
 
                 Log.d(LOG_TAG, pName + " ID: " + eId + " Art: " + eKind + " Typ: " + eType + " Position: " + position +
-                        " Status: " + status + "Identifier: " + identifier + " Ressource: " + resource + " ProjectFk: " + project_fk);
+                        " Status: " + statusStr + "Identifier: " + identifier + " Ressource: " + resource + " ProjectFk: " + project_fk);
 
                 // Erzeugen eines neuen Elements mit genau diesen Daten, um die HashMap zu füllen
                 Element e;

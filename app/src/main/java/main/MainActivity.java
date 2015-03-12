@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
     private static int elementCount = 0;
     private final static String LOG_TAG = "MainActivity";
     private static DatabaseHandler dbHandler; // TODO passt static ?
-//    private SQLiteDatabase db;
+    //    private SQLiteDatabase db;
     private boolean editmode = false;
 
 
@@ -178,7 +178,7 @@ public class MainActivity extends Activity {
 //        Toast.makeText(this, currentProject.getMapAllViewModels().size()+"größe mapallviewmodels", Toast.LENGTH_SHORT).show();
 //        Iterator iteratorMap = currentProject.getMapAllViewModels().entrySet().iterator();
 
-
+        currentProject.setImageAdapter(imgadapt);
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         showName();
 
@@ -200,7 +200,7 @@ public class MainActivity extends Activity {
 ////            }
 //
 //        }
-       // allProjects.clear();
+        // allProjects.clear();
 
     }
 
@@ -251,15 +251,11 @@ public class MainActivity extends Activity {
             BTConnection.closeConnection();
         currentConnection = null;
 
-//       allProjects.clear();
-//       dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
+//        allProjects.clear();
+//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
 //
-//       dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
+//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
 //        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
-        // Abspeichern der Connections in der DB - alte Variante
-      // storeDataInDb();
-
-
     }
 
 
@@ -292,7 +288,7 @@ public class MainActivity extends Activity {
                 Log.d(LOG_TAG, "Aktuell keine Verbindung ausgewählt");
             }
 
-       }
+        }
 
     }
 
@@ -327,12 +323,17 @@ public class MainActivity extends Activity {
 
     }
 
+    public void pushButtonSelected() {
+
+    }
+
     public void EditMode(View view) {
         if (editmode ==true){
             editmode =false;
             //Beim Ändern des editmode muss die initialize ui neu aufgerufen werden, da sonst die initilize ui mit dem "alte" edit mode arbietet,
             //mitdem sie vorher aufgerufen wurde, das produziert fehler
             currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+
 
         }
         else{

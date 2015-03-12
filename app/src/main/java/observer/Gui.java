@@ -50,6 +50,8 @@ public class Gui extends View implements IObserver {
     private int imgLedOff = R.drawable.lamp_off;
     private int imgSwitchOff = R.drawable.switch_off;
     private int imgSwitchOn = R.drawable.switch_on;
+    private int imgButtonOff = R.drawable.button_off;
+    private int imgButtonOn = R.drawable.button_on;
 
 
     /**
@@ -108,7 +110,7 @@ public class Gui extends View implements IObserver {
                 Log.d(LOG_TAG, "Neuer Status aufgezeichnet");
 
                 if (modelToUpdate instanceof LedModel) {
-                    if ((Integer) imageAdapter.getItem(inputElementPosition) == imgSwitchOff)
+                    if ((Integer) imageAdapter.getItem(inputElementPosition) == imgSwitchOff || (Integer)imageAdapter.getItem(inputElementPosition) == imgButtonOff)
                         updateLedStatus(imageAdapter, outputElementPosition, true);
                     else
                         updateLedStatus(imageAdapter, outputElementPosition, false);
@@ -153,11 +155,12 @@ public class Gui extends View implements IObserver {
         project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
 
-        ////Edit Modus ausgeschaltet, Benutzer will Schalter einschalten usw.
+
         setOnClickListener(project, imgadapt, currentConnection, editmode); // TODO OnClickListener hier oder unten?
     }
 
     private void setOnClickListener(Project project, ImageAdapter imgadapt, IConnection currentConnection, boolean editmode) {
+        ////Edit Modus ausgeschaltet, Benutzer will Schalter einschalten usw.
         if (!editmode)
             setGridViewItemClickListenerNonEditMode(project, imgadapt, currentConnection);
         else if (editmode)
@@ -477,55 +480,14 @@ public class Gui extends View implements IObserver {
     }
 
 
-
-    private void setTouchListenerForButtons(Project project, final ImageAdapter imgadapt, IConnection currentConnection, boolean editmode) {
-        for(int i = 0; i < imgadapt.getCount(); i++) {
-            View v = project.getGui().getGridView().getChildAt(i);
-
-            try {
-                Object tag = v.getTag();
-
-                int p = 0;
-
-                if (tag != null) { // Button
-                    p = (Integer) tag;
-
-                    final int btnPosition = p;
-                    project.getGui().getGridView().getChildAt(btnPosition).setOnTouchListener(new OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            Toast.makeText(getContext(), event.getAction() + "", Toast.LENGTH_SHORT).show();
-                            switch (event.getAction()) {
-
-                                case MotionEvent.ACTION_DOWN:
-                                    Log.d(LOG_TAG, "Button down");
-                                    imgadapt.update(R.drawable.button_on, btnPosition);
-                                    imgadapt.notifyDataSetChanged();
-                                    break;
-
-                                case MotionEvent.ACTION_UP:
-                                    Log.d(LOG_TAG, "Button up");
-                                    imgadapt.update(R.drawable.button_off, btnPosition);
-                                    imgadapt.notifyDataSetChanged();
-                                    break;
-                            }
-
-                            return true;
-                        }
-                    });
-                }
-            } catch (NullPointerException e) {
-            }
-
-        }
-    }
-
     private void makeToastNoConnection() {
         Toast.makeText(getContext(), "Bitte zuerst eine Verbindung auswählen", Toast.LENGTH_LONG).show();
     }
 
 
-    private boolean addButtonPressed(MenuItem item, final ImageAdapter imgadapt, int position, Project project, IConnection currentConnection, boolean editMode) {
+    private boolean addButtonPressed(MenuItem item, final ImageAdapter imgadapt, final int position, Project project, final IConnection currentConnection, boolean editMode) {
+        final Project projectFinal = project;
+
         switch (item.getItemId()) {
 
             case R.id.AddPushButton: // PushButton adden
@@ -534,11 +496,55 @@ public class Gui extends View implements IObserver {
 
                 imgadapt.update(R.drawable.button_off, position);
                 imgadapt.notifyDataSetChanged();
-                project.addModelToMap(position, new PushButtonModel("Button"));
-                project.getGui().getGridView().getChildAt(position).setTag(position);
+                PushButtonModel newPushBtn = new PushButtonModel("Button");
+                addToMapAndNotifyDb(position, project, newPushBtn);
+//                project.addModelToMap(position, new PushButtonModel("Button"));
+
+
+                View vAtPosition = project.getGui().getGridView().getChildAt(position);
+                vAtPosition.setTag(position);
 //                setTouchListenerForButtons(project, imgadapt, currentConnection, editMode);
 
-                // TODO Listener für Button-Berührung
+
+//                vAtPosition.setBackgroundResource(R.drawable.selector_btn_default);
+//                vAtPosition.setLayoutParams(new AbsListView.LayoutParams(256,256));
+
+                vAtPosition.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+
+                        switch(event.getAction()/* & MotionEvent.ACTION_MASK*/) {
+
+                            case MotionEvent.ACTION_DOWN:
+                                v.setPressed(true);
+                                try {
+                                    projectFinal.sendDataUpdateGui(v, currentConnection, positionFinal, false);
+                                    imgadapt.update(R.drawable.button_on, position);
+                                }catch (NullPointerException e) {
+                                    makeToastNoConnection();
+                                }
+                                Log.d(LOG_TAG, "Button down");
+                                break;
+
+                            case MotionEvent.ACTION_OUTSIDE:
+                            case MotionEvent.ACTION_CANCEL:
+                            case MotionEvent.ACTION_UP:
+                                v.setPressed(false);
+                                try {
+                                    projectFinal.sendDataUpdateGui(v, currentConnection, positionFinal, true);
+                                    imgadapt.update(R.drawable.button_off, positionFinal);
+                                }catch (NullPointerException e) {
+                                    makeToastNoConnection();
+                                }
+                                Log.d(LOG_TAG, "Button up");
+                                break;
+
+                            default:
+                                return false;
+                        }
+                        return true;
+                    }
+                });
 
                 return true;
 

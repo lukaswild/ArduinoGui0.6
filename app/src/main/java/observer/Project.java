@@ -47,11 +47,21 @@ public class Project extends Observable {
 
     private SwitchModel elementSwitch;
     private LedModel elementLed;
+
     private ImageAdapter imageAdapter;
     private HashMap<Integer, Element> mapAllViewModels; // Speichern aller Modelelemente mit ihrer Position als Key
 
 
     //Getter und Setter
+
+    public ImageAdapter getImageAdapter() {
+        return imageAdapter;
+    }
+
+    public void setImageAdapter(ImageAdapter imageAdapter) {
+        this.imageAdapter = imageAdapter;
+    }
+
     public String getName() {
         return name;
     }
