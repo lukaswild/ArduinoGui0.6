@@ -48,8 +48,8 @@
     <string name="txtMacAddress">MAC-Adresse</string>
     <string name="txtIpAddressArduino">IP-Adresse des Arduinos</string>
     <string name="txtIpAddress">IP-Adresse</string>
-    <string name="addPwmView">PWM - Regler hinzufügen</string>
-    <string name="addPwmCol">PWM - Anzeige hinzufügen</string>
+    <string name="addPwmView">ADC - Regler hinzufügen</string>
+    <string name="addPwmCol">ADC - Anzeige hinzufügen</string>
     <string name="errorNameEmpty">Name darf nicht leer sein</string>
     <string name="errorNameNotUnique">Name bereits vorhanden</string>
     <string name="errInvalidMacAddress">Ungültige MAC-Adresse</string>
@@ -64,6 +64,8 @@
     <string name="btnAddDataPoints">Daten hinzufügen</string>
     <string name="btnRemoveDataPoints">Daten entfernen</string>
     <string name="txtAvailableElements">Verfügbare Elemente</string>
+    <string name="noProjekt">kein Projekt</string>
+    <string name="noConnection">keine Verbindung</string>
 
     <string-array name="arrConTypeEntries">
         <item>Bitte wählen Sie</item>

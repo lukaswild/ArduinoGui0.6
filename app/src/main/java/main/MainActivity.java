@@ -111,7 +111,7 @@ public class MainActivity extends Activity {
         }
 
         imgadapt = new ImageAdapter(this, MainActivity.this, 40);
-        setCurrentProjectFirstTime(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt)); // weiter unten in else nun
+        setCurrentProjectFirstTime(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),getString(R.string.noProjekt),  imgadapt)); // weiter unten in else nun
 
         // Auslesen aus der Datenbank
         GridView gridView = (GridView) findViewById(R.id.gridview);
@@ -150,6 +150,7 @@ public class MainActivity extends Activity {
                     setCurrentProjByName(edit.getText().toString());
                     dbHandler.addProjectToDb(currentProject);
                     popDialog.dismiss();
+                    showName();
                 }
 
             });
@@ -199,6 +200,8 @@ public class MainActivity extends Activity {
 ////            }
 //
 //        }
+       // allProjects.clear();
+
     }
 
     private void setProjectLastOpened() {
@@ -253,6 +256,10 @@ public class MainActivity extends Activity {
 //
 //       dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
 //        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
+        // Abspeichern der Connections in der DB - alte Variante
+      // storeDataInDb();
+
+
     }
 
 

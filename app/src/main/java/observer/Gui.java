@@ -395,7 +395,7 @@ public class Gui extends View implements IObserver {
                         final View viewlayout = inflater.inflate(R.layout.pwm_seekbar,(ViewGroup)findViewById(R.id.seekBarPWM));
 
                         popDialog.setContentView(viewlayout);
-                        popDialog.setTitle("Einstellungen");
+                        popDialog.setTitle("ADC Wert");
                         popDialog.show();
 
                         final SeekBar seek1 = (SeekBar)viewlayout.findViewById(R.id.seekBarPWM);

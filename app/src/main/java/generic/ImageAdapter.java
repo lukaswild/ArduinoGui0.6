@@ -163,7 +163,8 @@ public class ImageAdapter extends BaseAdapter {
 
         if((Integer)imgView.getTag() == R.drawable.button_off) {
             imgView.setBackgroundResource(R.drawable.selector_btn_default);
-
+        }
+        else {imgView.setBackgroundResource(0);}
 
 
 
@@ -235,7 +236,7 @@ public class ImageAdapter extends BaseAdapter {
 //                    }
 //                }
 //            });
-        }
+
 
 
 //        imgView.setOnTouchListener(new View.OnTouchListener() {

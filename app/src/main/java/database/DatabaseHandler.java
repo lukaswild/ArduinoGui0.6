@@ -68,12 +68,13 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
+      // db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
+      // db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
+      // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
 
         Log.d(LOG_TAG, "Erzeugen der Datenbank...");
-        this.db = db = this.getWritableDatabase();
+        this.db = db;
+       // db=this.getWritableDatabase();
         createTableConnections(db);
         createTableProjects(db);
         createTableElements(db);
@@ -83,6 +84,9 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
         Log.d(LOG_TAG, "Öffnen der Datenbank...");
+        //db.execSQL("DROP TABLE IF EXISTS connections");
+       // db.execSQL("DROP TABLE IF EXISTS projects");
+       // db.execSQL("DROP TABLE IF EXISTS elements");
         createTableConnections(db);
         createTableProjects(db);
         createTableElements(db);
