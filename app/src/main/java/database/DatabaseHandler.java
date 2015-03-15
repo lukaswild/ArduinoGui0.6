@@ -69,13 +69,13 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-      // db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
-      // db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
-      // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
+        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
+        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
+        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
 
         Log.d(LOG_TAG, "Erzeugen der Datenbank...");
         this.db = db;
-       // db=this.getWritableDatabase();
+        // db=this.getWritableDatabase();
         createTableConnections(db);
         createTableProjects(db);
         createTableElements(db);
@@ -86,8 +86,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
         super.onOpen(db);
         Log.d(LOG_TAG, "Öffnen der Datenbank...");
         //db.execSQL("DROP TABLE IF EXISTS connections");
-       // db.execSQL("DROP TABLE IF EXISTS projects");
-       // db.execSQL("DROP TABLE IF EXISTS elements");
+        // db.execSQL("DROP TABLE IF EXISTS projects");
+        // db.execSQL("DROP TABLE IF EXISTS elements");
         createTableConnections(db);
         createTableProjects(db);
         createTableElements(db);
@@ -371,8 +371,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
         // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delete)
 
-        Log.d(LOG_TAG, "Updaten der DB über Observer");
-//        ContentValues values = new ContentValues();
+        if(actionNr != ACTION_NOTHING)
+            Log.d(LOG_TAG, "Updaten der DB über Observer");
 
         switch (actionNr) {
 

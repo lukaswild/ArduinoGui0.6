@@ -346,31 +346,10 @@ public class Gui extends View implements IObserver {
     }
 
     private void setGridViewItemClickListenerNonEditMode(final Project project, final ImageAdapter imgadapt, final IConnection currentConnection) {
-
-
-        // TODO das sind die listeners - nur anmerkung
-
-
-        Toast.makeText(getContext(), project.getGui().getGridView().getAdapter().getCount() + "", Toast.LENGTH_SHORT).show();
-
-
         for(int i = 0; i < imgadapt.getCount(); i++) {
             final int iFinal = i;
             if(imgadapt.getItemInt(i) == imgButtonOff) {
                 Log.d(LOG_TAG, "ID: " + imgadapt.getItemInt(i) + ", Position: " + i);
-//                ViewTreeObserver vTreeObserver = gridView.getViewTreeObserver();
-//                if(vTreeObserver.isAlive()) {
-//
-//                    if((Integer)imgadapt.getItem(i) == imgButtonOff) {
-//                        Object o = gridView.getItemAtPosition(i);
-//                        Log.d(LOG_TAG, o.getClass().toString());
-//                        Log.d("EEEEEEEEEEE", "Button auf Position " + i);
-//                    }
-//
-//                }
-//                View vAtPosition = gridView.getChildAt(i);
-//                if(vAtPosition != null)
-//                    Log.d("QQQQQQQQQQQQ", "Position: " + i + " " + vAtPosition.getClass().toString());
 
                 gridView.getViewTreeObserver().addOnGlobalLayoutListener(
                         new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -381,9 +360,6 @@ public class Gui extends View implements IObserver {
                                     once = true;
                                     View vAtPosition = gridView.getChildAt(iFinal);
                                     pushBtnSetTouchListener(imgadapt, currentConnection, project, iFinal, vAtPosition);
-                                    Log.d("WWWWWW", gridView.getChildAt(iFinal).getClass().toString() + " " + iFinal);
-
-
                                 }
                             }
                         });
