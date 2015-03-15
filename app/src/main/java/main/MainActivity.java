@@ -107,7 +107,6 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment()).commit();
-
         }
 
         imgadapt = new ImageAdapter(this, MainActivity.this, 40);
@@ -158,8 +157,6 @@ public class MainActivity extends Activity {
         }
 
         else {
-            // Current Projekt setzen, welches zuletzt geöffnet war
-//            setCurrentProject(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),"projekt X",  imgadapt));
             setProjectLastOpened();
         }
 
@@ -173,35 +170,9 @@ public class MainActivity extends Activity {
         }
         imgadapt.notifyDataSetChanged();
 
-
-//        currentProject.getMapAllViewModels().size();
-//        Toast.makeText(this, currentProject.getMapAllViewModels().size()+"größe mapallviewmodels", Toast.LENGTH_SHORT).show();
-//        Iterator iteratorMap = currentProject.getMapAllViewModels().entrySet().iterator();
-
         currentProject.setImageAdapter(imgadapt);
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         showName();
-
-
-//        while(iteratorMap.hasNext()) {
-//            Map.Entry entry = (Map.Entry) iteratorMap.next();
-//            final Integer key = (Integer) entry.getKey();
-//            Element elementActual = (Element) entry.getValue();
-//            Log.d("DDDD", key + "\t" + elementActual.getKind());
-//
-//
-////            if (elementActual.getKind() != null) {
-////                currentProject.getGui().getGridView().getChildAt(key).setOnClickListener(new View.OnClickListener() {
-////                    @Override
-////                    public void onClick(View v) {
-////                        Toast.makeText(getBaseContext(), "Auf Element " + key + " geklickt", Toast.LENGTH_SHORT).show();
-////                    }
-////                });
-////            }
-//
-//        }
-        // allProjects.clear();
-
     }
 
     private void setProjectLastOpened() {
@@ -232,7 +203,6 @@ public class MainActivity extends Activity {
 //        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
 
         HashMap<Integer, Integer> imgadaptImgRes = imgadapt.getImgRes();
-        Log.d("SSSSSSSSSSSS", imgadapt.getCount()+"");
     }
 
    /* @Override

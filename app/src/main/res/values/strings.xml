@@ -14,7 +14,7 @@
     <string name="etConNameHint">Bezeichnung</string>
     <string name="btnSubmit">OK</string>
     <string name="btnCancel">Abbrechen</string>
-    <string name="menu_popup_identifyer">Identifyer</string>
+    <string name="menu_popup_identifyer">Identifier</string>
     <string name="menu_popup_delete">Element löschen</string>
     <string name="txtAllCons">Verfügbare Verbindungen</string>
     <string name="btnNewCon">Neue Verbindung einrichten</string>
