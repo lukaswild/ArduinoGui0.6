@@ -51,6 +51,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     public static final int ACTION_UPDATE_ELEMENT = 1;
     public static final int ACTION_REMOVE_ELEMENT = 2;
     public static final int ACTION_UPDATE_IDENTIFIER = 3;
+    public static final int ACTION_NOTHING = 5;
 
 
     public DatabaseHandler(Context context) {
@@ -393,6 +394,9 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
             case ACTION_REMOVE_ELEMENT:
                 deleteElementDb(outputElementPosition, projectId);
+                break;
+
+            case ACTION_NOTHING:
                 break;
         }
     }

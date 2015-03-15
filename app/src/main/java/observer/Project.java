@@ -37,7 +37,6 @@ public class Project extends Observable {
 
     private Calendar creationDate = Calendar.getInstance();
     private Calendar lastModifiedDate;
-
     private Calendar lastOpenedDate;
     private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd/HH/mm/ss");
     private DateFormat dateFormatFormatted = new SimpleDateFormat("dd.MM.yyyy HH:mm");
@@ -265,7 +264,7 @@ public class Project extends Observable {
         if(model != null)
             Log.d(LOG_TAG, "Modelname : " + model.getName());
         else
-            Log.e(LOG_TAG, "Model ist  NULL");
+            Log.e(LOG_TAG, "Model ist NULL");
 
         if(model instanceof BoolElement) {
             Log.d(LOG_TAG, "Model ist ein BoolElement");
@@ -295,7 +294,6 @@ public class Project extends Observable {
 
                     Iterator iterator = mapAllViewModels.entrySet().iterator();
                     while (iterator.hasNext()) {
-                        Log.d(LOG_TAG, "Größe der Map: " + String.valueOf(mapAllViewModels.size()));
                         Map.Entry entry = (Map.Entry) iterator.next();
                         Element currentElement = (Element) entry.getValue();
 
@@ -366,7 +364,6 @@ public class Project extends Observable {
 
                     Iterator iterator2 = mapAllViewModels.entrySet().iterator();
                     while (iterator2.hasNext()) {
-                        Log.d(LOG_TAG, "Größe der Map: " + String.valueOf(mapAllViewModels.size()));
                         Map.Entry entry = (Map.Entry) iterator2.next();
                         Element currentElement = (Element) entry.getValue();
 
@@ -438,11 +435,86 @@ public class Project extends Observable {
     }
 
 
+    public void sendDataUpdateGuiButton(View v, IConnection currentConnection, int position, boolean newStatus) {
+        Element model = mapAllViewModels.get(position);
+        Log.d(LOG_TAG, "Position: " + position);
+
+        if(model != null)
+            Log.d(LOG_TAG, "Modelname : " + model.getName());
+        else
+            Log.e(LOG_TAG, "Model ist NULL");
+
+        if(model instanceof BoolElement) {
+            Log.d(LOG_TAG, "Model ist ein BoolElement");
+
+            if(model.getIdentifier() != null) {
+                boolean bStatus = !newStatus;
+                int statusInt = 0;
+                String code = CodeGenerator.generateCodeToSend(bStatus, model.getIdentifier()); //////////////////////////
+                Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
+
+                // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
+                if (model instanceof InputElement) { // sollte true sein - als Absicherung trotzdem abfragen
+                    Log.d(LOG_TAG, "Model ist ein InputElement");
+                    Log.d(LOG_TAG, "Senden an Arduino...");
+                    if(bStatus)
+                        statusInt = 1;
+                    else
+                        statusInt = 0;
+                    ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
+                    Log.d(LOG_TAG, "Gesendet");
+
+                    // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
+                    String codeSuccessStr =  BTConnection.receiveData();
+                    Log.d(LOG_TAG, codeSuccessStr);
+                    Log.d(LOG_TAG, BTConnection.receiveData());
+                    Log.d(LOG_TAG, BTConnection.receiveData());
+
+                    Iterator iterator = mapAllViewModels.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry entry = (Map.Entry) iterator.next();
+                        Element currentElement = (Element) entry.getValue();
+
+                        if (currentElement instanceof OutputElement) {
+                            String identifierCurEl = currentElement.getIdentifier();
+                            if(model.getIdentifier().equals(identifierCurEl)) {
+                                // Dazugehöriges OutputElement gefunden
+                                Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
+                                Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
+
+                                codeSuccessStr.trim();
+                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
+
+                                if (codeSuccessStr.contains("100")) {
+                                    // �nderung des Status im Model
+                                    if(model instanceof BoolElement && currentElement instanceof BoolElement) {
+                                        ((BoolElement) model).setStatusHigh(newStatus);
+                                        ((BoolElement)currentElement).setStatusHigh(newStatus);
+                                        ((BoolElement)model).setResource(newStatus);
+                                        ((BoolElement)currentElement).setResource(newStatus);
+                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                } else
+                    Log.e(LOG_TAG, "Error - Kein InputElement");
+            } else
+                Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
+        }
+        else
+            Log.d(LOG_TAG, "Kein BoolElement");
+
+    }
+
+
     public void addModelToMap(int position, Element model) {
         mapAllViewModels.put(position, model);
         setLastModifiedDate(Calendar.getInstance());
         Log.d(LOG_TAG, "Model wurde Map hinzugefügt");
-        Log.d(LOG_TAG, "Größe der Map: " + mapAllViewModels.size());
     }
 
 

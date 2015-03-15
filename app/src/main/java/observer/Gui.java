@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -76,8 +78,9 @@ public class Gui extends View implements IObserver {
 
 
     @Override
-    public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
-        if(actionNr == DatabaseHandler.ACTION_UPDATE_ELEMENT) {
+    public void update(Observable senderClass, Element modelInput,
+                       Element modelOutput, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
+        if(actionNr == DatabaseHandler.ACTION_UPDATE_ELEMENT || actionNr == DatabaseHandler.ACTION_NOTHING) {
             Log.d(LOG_TAG, "Updaten der Gui...");
             Log.d(LOG_TAG, "outputElementPosition: " + outputElementPosition);
             View child = gridView.getChildAt(outputElementPosition);
@@ -85,40 +88,40 @@ public class Gui extends View implements IObserver {
             ImageAdapter imageAdapter = (ImageAdapter) gridView.getAdapter();
             Integer o = (Integer) imageAdapter.getItem(outputElementPosition);
             Log.d(LOG_TAG, o.getClass().toString());
-            if (modelToUpdate.isFirstInteraction()) {
-                modelToUpdate.setMillisFirstInteraction(System.currentTimeMillis());
-                modelToUpdate.setFirstInteraction(false);
+            if (modelOutput.isFirstInteraction()) {
+                modelOutput.setMillisFirstInteraction(System.currentTimeMillis());
+                modelOutput.setFirstInteraction(false);
             }
 
-            long timeDifference = (System.currentTimeMillis() - modelToUpdate.getMillisFirstInteraction()) / 1000;
+            long timeDifference = (System.currentTimeMillis() - modelOutput.getMillisFirstInteraction()) / 1000;
         /*
         Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
         Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
         nochmals in die Liste eingetragen werden
          */
-            if (!modelToUpdate.getTimeRecord().isEmpty() && !modelToUpdate.getDataRecord().isEmpty()) {
-                modelToUpdate.getTimeRecord().add((int) timeDifference);
-                modelToUpdate.getDataRecord().add(modelToUpdate.getDataRecord().get(modelToUpdate.getDataRecord().size() - 1));
+            if (!modelOutput.getTimeRecord().isEmpty() && !modelOutput.getDataRecord().isEmpty()) {
+                modelOutput.getTimeRecord().add((int) timeDifference);
+                modelOutput.getDataRecord().add(modelOutput.getDataRecord().get(modelOutput.getDataRecord().size() - 1));
             }
-            modelToUpdate.getTimeRecord().add((int) timeDifference); // TODO Sollen diese Listen auch in der DB gespeichert werden? eher nicht
+            modelOutput.getTimeRecord().add((int) timeDifference);
             int statusToAdd = 0;
 
-            if (modelToUpdate instanceof BoolElement) {
-                if (!((BoolElement) modelToUpdate).isStatusHigh())
+            if (modelOutput instanceof BoolElement) {
+                if (!((BoolElement) modelOutput).isStatusHigh())
                     statusToAdd = 1;
-                modelToUpdate.getDataRecord().add(statusToAdd);
+                modelOutput.getDataRecord().add(statusToAdd);
                 Log.d(LOG_TAG, "Neuer Status aufgezeichnet");
 
-                if (modelToUpdate instanceof LedModel) {
+                if (modelOutput instanceof LedModel) {
                     if ((Integer) imageAdapter.getItem(inputElementPosition) == imgSwitchOff || (Integer)imageAdapter.getItem(inputElementPosition) == imgButtonOff)
                         updateLedStatus(imageAdapter, outputElementPosition, true);
                     else
                         updateLedStatus(imageAdapter, outputElementPosition, false);
                 }
-            } else if (modelToUpdate instanceof PwmElement) {
-                Log.d(LOG_TAG, "PWM der säule:" + ((PwmElement) modelToUpdate).getCurrentPwm());
-                ((PwmElement) modelToUpdate).refreshRes();
-                imageAdapter.update(modelToUpdate.getResource(), outputElementPosition);
+            } else if (modelOutput instanceof PwmElement) {
+                Log.d(LOG_TAG, "PWM der säule:" + ((PwmElement) modelOutput).getCurrentPwm());
+                ((PwmElement) modelOutput).refreshRes();
+                imageAdapter.update(modelOutput.getResource(), outputElementPosition);
                 imageAdapter.updateTextRes(Integer.toString(statusToAdd), outputElementPosition);
 
             }
@@ -136,11 +139,16 @@ public class Gui extends View implements IObserver {
      */
     private void updateLedStatus(ImageAdapter imageAdapter, int position, boolean high) {
         if(high)
-            imageAdapter.update(imgLedOn, position);
+            setLedStatus(imageAdapter, position, imgLedOn);
         else
-            imageAdapter.update(imgLedOff, position);
+            setLedStatus(imageAdapter, position, imgLedOff);
+    }
 
-        imageAdapter.notifyDataSetChanged();
+    private void setLedStatus(ImageAdapter imageAdapter, int position, int resource) {
+        imageAdapter.update(resource, position);
+        View view = gridView.getChildAt(position);
+        final ImageView imgView = (ImageView) view.findViewById(R.id.imageview);
+        imgView.setImageResource(resource);
     }
 
 
@@ -214,7 +222,7 @@ public class Gui extends View implements IObserver {
                                         @Override
                                         public boolean onMenuItemClick(MenuItem item2) {
 
-                                            //createHashmap(); //TODO switch casese durch hashmap ersetzen
+                                            //createHashmap(); //TODO switch case durch hashmap ersetzen
                                             //auf die Eingabe reagierne, und dementsprechend den Identifyer des Elements setzen
 
                                             switch (item2.getItemId()) {
@@ -341,7 +349,51 @@ public class Gui extends View implements IObserver {
 
 
         // TODO das sind die listeners - nur anmerkung
-        Toast.makeText(getContext(), project.getGui().getGridView().getChildCount() + "", Toast.LENGTH_SHORT).show();
+
+
+        Toast.makeText(getContext(), project.getGui().getGridView().getAdapter().getCount() + "", Toast.LENGTH_SHORT).show();
+
+
+        for(int i = 0; i < imgadapt.getCount(); i++) {
+            final int iFinal = i;
+            if(imgadapt.getItemInt(i) == imgButtonOff) {
+                Log.d(LOG_TAG, "ID: " + imgadapt.getItemInt(i) + ", Position: " + i);
+//                ViewTreeObserver vTreeObserver = gridView.getViewTreeObserver();
+//                if(vTreeObserver.isAlive()) {
+//
+//                    if((Integer)imgadapt.getItem(i) == imgButtonOff) {
+//                        Object o = gridView.getItemAtPosition(i);
+//                        Log.d(LOG_TAG, o.getClass().toString());
+//                        Log.d("EEEEEEEEEEE", "Button auf Position " + i);
+//                    }
+//
+//                }
+//                View vAtPosition = gridView.getChildAt(i);
+//                if(vAtPosition != null)
+//                    Log.d("QQQQQQQQQQQQ", "Position: " + i + " " + vAtPosition.getClass().toString());
+
+                gridView.getViewTreeObserver().addOnGlobalLayoutListener(
+                        new ViewTreeObserver.OnGlobalLayoutListener() {
+                            boolean once = false;
+                            @Override
+                            public void onGlobalLayout() {
+                                if (!once) {
+                                    once = true;
+                                    View vAtPosition = gridView.getChildAt(iFinal);
+                                    pushBtnSetTouchListener(imgadapt, currentConnection, project, iFinal, vAtPosition);
+                                    Log.d("WWWWWW", gridView.getChildAt(iFinal).getClass().toString() + " " + iFinal);
+
+
+                                }
+                            }
+                        });
+
+//                pushBtnSetTouchListener(imgadapt, currentConnection, project, i, vAtPosition);
+                Log.d(LOG_TAG, "TouchListener für PushButton gesetzt");
+            }
+        }
+
+
         project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View v, final int position, long id) {
@@ -449,7 +501,7 @@ public class Gui extends View implements IObserver {
 
 ////////// sollte aktiviert bleiben, solange angeklickt ////////////////
                     case R.drawable.button_off:
-
+//                        Toast.makeText(getContext(), "button", Toast.LENGTH_SHORT).show();
                         break;
 
                     case R.drawable.button_on:
@@ -466,6 +518,9 @@ public class Gui extends View implements IObserver {
             }
 
         });
+
+
+
     }
 
 
@@ -498,53 +553,11 @@ public class Gui extends View implements IObserver {
                 imgadapt.notifyDataSetChanged();
                 PushButtonModel newPushBtn = new PushButtonModel("Button");
                 addToMapAndNotifyDb(position, project, newPushBtn);
-//                project.addModelToMap(position, new PushButtonModel("Button"));
-
 
                 View vAtPosition = project.getGui().getGridView().getChildAt(position);
-                vAtPosition.setTag(position);
-//                setTouchListenerForButtons(project, imgadapt, currentConnection, editMode);
+                pushBtnSetTouchListener(imgadapt, currentConnection, projectFinal, positionFinal, vAtPosition);
 
 
-//                vAtPosition.setBackgroundResource(R.drawable.selector_btn_default);
-//                vAtPosition.setLayoutParams(new AbsListView.LayoutParams(256,256));
-
-                vAtPosition.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-
-                        switch(event.getAction()/* & MotionEvent.ACTION_MASK*/) {
-
-                            case MotionEvent.ACTION_DOWN:
-                                v.setPressed(true);
-                                try {
-                                    projectFinal.sendDataUpdateGui(v, currentConnection, positionFinal, false);
-                                    imgadapt.update(R.drawable.button_on, position);
-                                }catch (NullPointerException e) {
-                                    makeToastNoConnection();
-                                }
-                                Log.d(LOG_TAG, "Button down");
-                                break;
-
-                            case MotionEvent.ACTION_OUTSIDE:
-                            case MotionEvent.ACTION_CANCEL:
-                            case MotionEvent.ACTION_UP:
-                                v.setPressed(false);
-                                try {
-                                    projectFinal.sendDataUpdateGui(v, currentConnection, positionFinal, true);
-                                    imgadapt.update(R.drawable.button_off, positionFinal);
-                                }catch (NullPointerException e) {
-                                    makeToastNoConnection();
-                                }
-                                Log.d(LOG_TAG, "Button up");
-                                break;
-
-                            default:
-                                return false;
-                        }
-                        return true;
-                    }
-                });
 
                 return true;
 
@@ -598,8 +611,73 @@ public class Gui extends View implements IObserver {
         }
     }
 
+    private void pushBtnSetTouchListener(final ImageAdapter imgadapt, final IConnection currentConnection, final Project projectFinal, final int positionFinal, View vAtPosition) {
+        vAtPosition.setTag(positionFinal);
+        vAtPosition.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()/* & MotionEvent.ACTION_MASK*/) {
+
+                    case MotionEvent.ACTION_DOWN:
+                        v.setPressed(true);
+                        try {
+                            projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, false);
+                            imgadapt.update(R.drawable.button_on, positionFinal);
+                        } catch (NullPointerException e) {
+                            makeToastNoConnection();
+                        }
+                        Log.d(LOG_TAG, "Button down");
+                        break;
+
+                    case MotionEvent.ACTION_OUTSIDE:
+                    case MotionEvent.ACTION_CANCEL:
+                    case MotionEvent.ACTION_UP:
+                        v.setPressed(false);
+                        try {
+                            projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, true);
+                            imgadapt.update(R.drawable.button_off, positionFinal);
+                        } catch (NullPointerException e) {
+                            makeToastNoConnection();
+                        }
+                        Log.d(LOG_TAG, "Button up");
+                        break;
+
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
+    }
+
     public void addToMapAndNotifyDb(int position, Project project, Element element) {
         project.addModelToMap(position, element);
         project.notify(null, null, element, -1, position, project.getId(), DatabaseHandler.ACTION_UPDATE_ELEMENT_TYPE);
+    }
+
+
+//    projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, false);
+
+    private class RunnableSendDataGuiButton implements Runnable {
+
+        private Project project;
+        private View v;
+        private IConnection connection;
+        private int position;
+        private boolean status;
+
+        public RunnableSendDataGuiButton(Project project, View v, IConnection connection, int position, boolean status) {
+            this.project = project;
+            this.v = v;
+            this.connection = connection;
+            this.position = position;
+            this.status = status;
+        }
+
+        @Override
+        public void run() {
+            project.sendDataUpdateGuiButton(v, connection, position, false);
+        }
     }
 }

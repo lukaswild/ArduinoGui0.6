@@ -138,9 +138,7 @@ public class ImageAdapter extends BaseAdapter {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.image, null);
         }
-
         else {
-
             view = convertView;
         }
 
@@ -160,55 +158,19 @@ public class ImageAdapter extends BaseAdapter {
 
         imgView.setTag(getItemInt(position));
 
-        setImgVisability(txtView, position);
+        setImgVisibility(txtView, position);
 
         if((Integer)imgView.getTag() == R.drawable.button_off) {
             imgView.setBackgroundResource(R.drawable.selector_btn_default);
         }
-//
-//            imgView.setOnTouchListener(new View.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//
-//                    switch(event.getAction() & MotionEvent.ACTION_MASK) {
-//
-//                        case MotionEvent.ACTION_DOWN:
-//                            v.setPressed(true);
-//                            try {
-//                                project.sendDataUpdateGui(v, MainActivity.getCurrentConnection(), positionFinal, false);
-//                                update(R.drawable.switch_on, positionFinal);
-//                            }catch (NullPointerException e) {
-////                                makeToastNoConnection();
-//                            }
-//                            Log.d(LOG_TAG, "Button down");
-//                            break;
-//
-//                        case MotionEvent.ACTION_OUTSIDE:
-//                        case MotionEvent.ACTION_CANCEL:
-//                        case MotionEvent.ACTION_UP:
-//                            v.setPressed(false);
-//                            try {
-//                                project.sendDataUpdateGui(v, MainActivity.getCurrentConnection(), positionFinal, true);
-//                                update(R.drawable.switch_on, positionFinal);
-//                            }catch (NullPointerException e) {
-////                                makeToastNoConnection();
-//                            }
-//                            Log.d(LOG_TAG, "Button up");
-//                            break;
-//
-//                        default:
-//                            return false;
-//                    }
-//                    return true;
-//                }
-//            });
-//        }
+        else
+            imgView.setBackgroundResource(0);
 
         return view;
     }
 
 
-    private void setImgVisability(TextView txtView, int position){
+    private void setImgVisibility(TextView txtView, int position){
 
         if (getItemInt(position)==R.drawable.pwm_0){
             txtView.setText(getTextRes(position));
@@ -301,11 +263,8 @@ public class ImageAdapter extends BaseAdapter {
         }
     }
 
-
     public HashMap<Integer, Integer> getImgRes() {
         return imgRes;
     }
-
-
 
 }
