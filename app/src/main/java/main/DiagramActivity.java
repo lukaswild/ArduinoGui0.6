@@ -176,7 +176,13 @@ public class DiagramActivity extends Activity {
                     if(elementAtPos.getKind().equals("Switch"))
                         titleSeries.append("Schalter ");
                     else if (elementAtPos.getKind().equals("Led"))
-                        titleSeries.append("Led "); // TODO weitere Elemente
+                        titleSeries.append("Led ");
+                    else if (elementAtPos.getKind().equals("Button"))
+                        titleSeries.append("Button ");
+                    else if (elementAtPos.getKind().equals("Adc-Input"))
+                        titleSeries.append("ADC-Regler ");
+                    else if (elementAtPos.getKind().equals("Adc-Element"))
+                        titleSeries.append("ADC-Anzeige ");
                     titleSeries.append(elementAtPos.getIdentifier());
                     seriesToAdd.setTitle(titleSeries.toString());
                     seriesToAdd.setColor(graphColorStack.pop());

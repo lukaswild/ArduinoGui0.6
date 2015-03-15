@@ -18,7 +18,7 @@ public class PushButtonModel extends BoolElement implements InputElement {
     public PushButtonModel(String name) {
         super.name = name;
         super.setStatusHigh(false);
-        super.setKind("Button");
+        super.kind = "Button";
         setResource(false);
     }
 
