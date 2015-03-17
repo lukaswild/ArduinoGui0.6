@@ -25,6 +25,6 @@ public class PwmInputModel extends PwmElement implements InputElement {
     @Override
     public void sendDataToArduino(IConnection connection, String dataCode, int status) {
         connection.sendData(dataCode);
-
+        // TODO Daten für Diagramm aufzeichnen
     }
 }

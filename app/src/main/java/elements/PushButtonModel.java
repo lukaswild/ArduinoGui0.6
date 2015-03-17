@@ -69,6 +69,9 @@ public class PushButtonModel extends BoolElement implements InputElement {
         if(!getTimeRecord().isEmpty() && !getDataRecord().isEmpty()) {
             getTimeRecord().add((int) timeDifference);
             getDataRecord().add(getDataRecord().get(getDataRecord().size() - 1));
+        } else {
+            getTimeRecord().add((int) timeDifference);
+            getDataRecord().add(0);
         }
 
         getTimeRecord().add((int) timeDifference); // TODO Sollen diese Listen auch in der DB gespeichert werden? eher nicht

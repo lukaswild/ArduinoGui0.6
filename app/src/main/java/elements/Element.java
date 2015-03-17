@@ -8,11 +8,11 @@ public abstract class Element {
 	protected String name;  // TODO notwendig?
     protected String kind;
 	protected String identifier;
-    private boolean isFirstInteraction = true;
+    private static boolean isFirstInteraction = true;
 
     private ArrayList<Integer> timeRecord = new ArrayList<Integer>();
     private ArrayList<Integer> dataRecord = new ArrayList<Integer>();
-    private long millisFirstInteraction;
+    private static long millisFirstInteraction;
 
     protected int resource;
 	
@@ -56,12 +56,12 @@ public abstract class Element {
 
 //    public abstract void setResource(boolean status);
 
-    public boolean isFirstInteraction() {
+    public static boolean isFirstInteraction() {
         return isFirstInteraction;
     }
 
-    public void setFirstInteraction(boolean isFirstInteraction) {
-        this.isFirstInteraction = isFirstInteraction;
+    public static void setFirstInteraction(boolean isFirstInteraction) {
+        Element.isFirstInteraction = isFirstInteraction;
     }
 
     public ArrayList<Integer> getTimeRecord() {
@@ -80,12 +80,12 @@ public abstract class Element {
         this.dataRecord = dataRecord;
     }
 
-    public long getMillisFirstInteraction() {
+    public static long getMillisFirstInteraction() {
         return millisFirstInteraction;
     }
 
-    public void setMillisFirstInteraction(long millisFirstInteraction) {
-        this.millisFirstInteraction = millisFirstInteraction;
+    public static void setMillisFirstInteraction(long millisFirstInteraction) {
+        Element.millisFirstInteraction = millisFirstInteraction;
     }
 
 }

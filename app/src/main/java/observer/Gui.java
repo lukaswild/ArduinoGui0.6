@@ -102,6 +102,9 @@ public class Gui extends View implements IObserver {
             if (!modelOutput.getTimeRecord().isEmpty() && !modelOutput.getDataRecord().isEmpty()) {
                 modelOutput.getTimeRecord().add((int) timeDifference);
                 modelOutput.getDataRecord().add(modelOutput.getDataRecord().get(modelOutput.getDataRecord().size() - 1));
+            } else {
+                modelOutput.getTimeRecord().add((int) timeDifference);
+                modelOutput.getDataRecord().add(0);
             }
             modelOutput.getTimeRecord().add((int) timeDifference);
             int statusToAdd = 0;
@@ -602,9 +605,9 @@ public class Gui extends View implements IObserver {
 //                            imgadapt.update(R.drawable.button_on, positionFinal);
 
 
-                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
-                            runSend.setStatus(false);
-                            Thread threadSend = new Thread(runSend);
+//                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
+//                            runSend.setStatus(false);
+//                            Thread threadSend = new Thread(runSend);
                             RunnableUpdate runUpdate = new RunnableUpdate(imgadapt);
                             runUpdate.setResourcePosition(R.drawable.button_on, positionFinal);
                             Thread threadUpdate = new Thread(runUpdate);
@@ -626,9 +629,9 @@ public class Gui extends View implements IObserver {
                             projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, true);
 //                            imgadapt.update(R.drawable.button_off, positionFinal);
 
-                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
-                            runSend.setStatus(true);
-                            Thread threadSend = new Thread(runSend);
+//                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
+//                            runSend.setStatus(true);
+//                            Thread threadSend = new Thread(runSend);
                             RunnableUpdate runUpdate = new RunnableUpdate(imgadapt);
                             runUpdate.setResourcePosition(R.drawable.button_off, positionFinal);
                             Thread threadUpdate = new Thread(runUpdate);
