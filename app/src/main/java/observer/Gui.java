@@ -123,7 +123,6 @@ public class Gui extends View implements IObserver {
                 ((PwmElement) modelOutput).refreshRes();
                 imageAdapter.update(modelOutput.getResource(), outputElementPosition);
                 imageAdapter.updateTextRes(Integer.toString(statusToAdd), outputElementPosition);
-
             }
 
             Log.d(LOG_TAG, "Gui aktualisiert");
@@ -145,6 +144,7 @@ public class Gui extends View implements IObserver {
     }
 
     private void setLedStatus(ImageAdapter imageAdapter, int position, int resource) {
+        Log.d("GGGGGG", resource + "");
         imageAdapter.update(resource, position);
         View view = gridView.getChildAt(position);
         final ImageView imgView = (ImageView) view.findViewById(R.id.imageview);
@@ -599,7 +599,19 @@ public class Gui extends View implements IObserver {
                         v.setPressed(true);
                         try {
                             projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, false);
-                            imgadapt.update(R.drawable.button_on, positionFinal);
+//                            imgadapt.update(R.drawable.button_on, positionFinal);
+
+
+                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
+                            runSend.setStatus(false);
+                            Thread threadSend = new Thread(runSend);
+                            RunnableUpdate runUpdate = new RunnableUpdate(imgadapt);
+                            runUpdate.setResourcePosition(R.drawable.button_on, positionFinal);
+                            Thread threadUpdate = new Thread(runUpdate);
+//                            threadSend.start(); // mit diesem Thread: eine Thread Exception wird geworfen (nur originaler Thread hat Zugriff auf Views)
+                            threadUpdate.start();
+
+
                         } catch (NullPointerException e) {
                             makeToastNoConnection();
                         }
@@ -612,7 +624,19 @@ public class Gui extends View implements IObserver {
                         v.setPressed(false);
                         try {
                             projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, true);
-                            imgadapt.update(R.drawable.button_off, positionFinal);
+//                            imgadapt.update(R.drawable.button_off, positionFinal);
+
+                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
+                            runSend.setStatus(true);
+                            Thread threadSend = new Thread(runSend);
+                            RunnableUpdate runUpdate = new RunnableUpdate(imgadapt);
+                            runUpdate.setResourcePosition(R.drawable.button_off, positionFinal);
+                            Thread threadUpdate = new Thread(runUpdate);
+//                            threadSend.start(); // mit diesem Thread: eine Thread Exception wird geworfen (nur originaler Thread hat Zugriff auf Views)
+                            threadUpdate.start();
+
+
+
                         } catch (NullPointerException e) {
                             makeToastNoConnection();
                         }
@@ -633,27 +657,57 @@ public class Gui extends View implements IObserver {
     }
 
 
-//    projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, false);
 
-    private class RunnableSendDataGuiButton implements Runnable {
-
+    private class RunnableSendDataBtn implements Runnable {
         private Project project;
         private View v;
         private IConnection connection;
         private int position;
         private boolean status;
 
-        public RunnableSendDataGuiButton(Project project, View v, IConnection connection, int position, boolean status) {
+        public RunnableSendDataBtn(Project project, View v, IConnection connection, int position) {
             this.project = project;
             this.v = v;
             this.connection = connection;
             this.position = position;
+        }
+
+        public void setStatus(boolean status) {
             this.status = status;
         }
 
         @Override
         public void run() {
-            project.sendDataUpdateGuiButton(v, connection, position, false);
+            sendDataUpdateGuiBtn(v, connection, position, status);
+        }
+
+        private synchronized void sendDataUpdateGuiBtn(View v, IConnection connection, int position, boolean status) {
+            project.sendDataUpdateGuiButton(v, connection, position, status);
+        }
+    }
+
+
+    private class RunnableUpdate implements Runnable {
+        private ImageAdapter imgadapt;
+        private int resource;
+        private int position;
+
+        public RunnableUpdate(ImageAdapter imgadapt) {
+            this.imgadapt = imgadapt;
+        }
+
+        public void setResourcePosition(int resource, int position) {
+            this.resource = resource;
+            this.position = position;
+        }
+
+        @Override
+        public void run() {
+            updateGui(imgadapt, resource, position);
+        }
+
+        private synchronized void updateGui(ImageAdapter imgadapt, int resource, int position) {
+            imgadapt.update(resource, position);
         }
     }
 }

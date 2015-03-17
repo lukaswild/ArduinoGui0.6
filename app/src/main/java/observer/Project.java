@@ -22,6 +22,7 @@ import elements.EmptyElement;
 import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
+import elements.PushButtonModel;
 import elements.PwmElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
@@ -314,8 +315,10 @@ public class Project extends Observable {
                                         ((BoolElement)currentElement).setStatusHigh(newStatus);
                                         ((BoolElement)model).setResource(newStatus);
                                         ((BoolElement)currentElement).setResource(newStatus);
-                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
-
+                                        if(model instanceof PushButtonModel)
+                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
+                                        else
+                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
                                     }
                                 }
                             }
@@ -435,7 +438,9 @@ public class Project extends Observable {
     }
 
 
-    public void sendDataUpdateGuiButton(View v, IConnection currentConnection, int position, boolean newStatus) {
+    public void sendDataUpdateGuiButton(View v, IConnection currentConnection, int position, boolean newStatus) { // TODO Gleichheiten mit sendDataUpdateGui in Methode auslagern
+        Log.d("ButtonOff", R.drawable.button_off+"");
+        Log.d("ButtonOn", R.drawable.button_on+"");
         Element model = mapAllViewModels.get(position);
         Log.d(LOG_TAG, "Position: " + position);
 

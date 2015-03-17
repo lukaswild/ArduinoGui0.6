@@ -197,12 +197,9 @@ public class MainActivity extends Activity {
         super.onResume();
 
         showName();
-//        setProjectLastOpened();
         currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
         loadImgRes();
-//        Toast.makeText(getBaseContext(), "In der Resume !", Toast.LENGTH_SHORT).show();
-
-        HashMap<Integer, Integer> imgadaptImgRes = imgadapt.getImgRes();
+//        HashMap<Integer, Integer> imgadaptImgRes = imgadapt.getImgRes();
     }
 
    /* @Override

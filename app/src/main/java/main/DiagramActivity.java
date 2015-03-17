@@ -78,6 +78,7 @@ public class DiagramActivity extends Activity {
         // TODO Graph sollte zoombar sein
     }
 
+
     private void initialiseGraphColorStack() {
         graphColorStack = new Stack<Integer>();
         graphColorStack.push(Color.LTGRAY);
