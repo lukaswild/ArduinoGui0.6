@@ -77,62 +77,6 @@ public class Gui extends View implements IObserver {
     }
 
 
-//    @Override
-//    public void update(Observable senderClass, Element modelInput,
-//                       Element modelOutput, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
-//        if(actionNr == DatabaseHandler.ACTION_UPDATE_ELEMENT || actionNr == DatabaseHandler.ACTION_NOTHING) {
-//            Log.d(LOG_TAG, "Updaten der Gui...");
-//            Log.d(LOG_TAG, "outputElementPosition: " + outputElementPosition);
-//            View child = gridView.getChildAt(outputElementPosition);
-//            //  if(model instanceof LedModel) {
-//            ImageAdapter imageAdapter = (ImageAdapter) gridView.getAdapter();
-//            Integer o = (Integer) imageAdapter.getItem(outputElementPosition);
-//            Log.d(LOG_TAG, o.getClass().toString());
-//            if (modelOutput.isFirstInteraction()) {
-//                modelOutput.setMillisFirstInteraction(System.currentTimeMillis());
-//                modelOutput.setFirstInteraction(false);
-//            }
-//
-//            long timeDifference = (System.currentTimeMillis() - modelOutput.getMillisFirstInteraction()) / 1000;
-//        /*
-//        Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
-//        Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
-//        nochmals in die Liste eingetragen werden
-//         */
-//            if (!modelOutput.getTimeRecord().isEmpty() && !modelOutput.getDataRecord().isEmpty()) {
-//                modelOutput.getTimeRecord().add((int) timeDifference);
-//                modelOutput.getDataRecord().add(modelOutput.getDataRecord().get(modelOutput.getDataRecord().size() - 1));
-//            } else {
-//                modelOutput.getTimeRecord().add((int) timeDifference);
-//                modelOutput.getDataRecord().add(0);
-//            }
-//            modelOutput.getTimeRecord().add((int) timeDifference);
-//            int statusToAdd = 0;
-//
-//            if (modelOutput instanceof BoolElement) {
-//                if (!((BoolElement) modelOutput).isStatusHigh())
-//                    statusToAdd = 1;
-//                modelOutput.getDataRecord().add(statusToAdd);
-//                Log.d(LOG_TAG, "Neuer Status aufgezeichnet");
-//
-//                if (modelOutput instanceof LedModel) {
-//                    if ((Integer) imageAdapter.getItem(inputElementPosition) == imgSwitchOff || (Integer)imageAdapter.getItem(inputElementPosition) == imgButtonOff)
-//                        updateLedStatus(imageAdapter, outputElementPosition, true);
-//                    else
-//                        updateLedStatus(imageAdapter, outputElementPosition, false);
-//                }
-//            } else if (modelOutput instanceof PwmElement) {
-//                Log.d(LOG_TAG, "PWM der säule:" + ((PwmElement) modelOutput).getCurrentPwm());
-//                ((PwmElement) modelOutput).refreshRes();
-//                imageAdapter.update(modelOutput.getResource(), outputElementPosition);
-//                imageAdapter.updateTextRes(Integer.toString(statusToAdd), outputElementPosition);
-//            }
-//
-//            Log.d(LOG_TAG, "Gui aktualisiert");
-//        }
-//    }
-
-
     @Override
     public void update(Observable senderClass, Object msg) {
 

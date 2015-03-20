@@ -528,7 +528,7 @@ public class MainActivity extends Activity {
                     int conTypeInt = data.getExtras().getInt("conType");
                     if (conTypeInt == 1) { // Bluetooth
                         // Verbindung von currentProject holen
-                        //  BTConnection btConnection = BTConnection.initialiseConnection(name, address); // TODO wenn Verbindung am Arduino unterbrochen --> wird nicht mehr aufgebaut, da bei App bereits instantiiert
+                        //  BTConnection btConnection = BTConnection.initialiseConnection(name, address);
                         // currentProject.setCurrentConnection(btConnection);
 
                     }

@@ -364,41 +364,6 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     }
 
 
-//    @Override
-//    public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
-//        // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delete)
-//
-//        if(actionNr != ACTION_NOTHING)
-//            Log.d(LOG_TAG, "Updaten der DB über Observer");
-//
-//        switch (actionNr) {
-//
-//            case ACTION_INSERT_ELEMENT:
-//                insertElementDb(modelToUpdate, outputElementPosition, projectId);
-//                break;
-//
-//            case ACTION_UPDATE_ELEMENT_TYPE:
-//                replaceElementDb(modelToUpdate, outputElementPosition, projectId);
-//                break;
-//
-//            case ACTION_UPDATE_ELEMENT:
-//                updateElementDb(modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
-//                break;
-//
-//            case ACTION_UPDATE_IDENTIFIER:
-//                updateElementIdentifier(modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
-//                break;
-//
-//            case ACTION_REMOVE_ELEMENT:
-//                deleteElementDb(outputElementPosition, projectId);
-//                break;
-//
-//            case ACTION_NOTHING:
-//                break;
-//        }
-//    }
-
-
     @Override
     public void update(Observable senderClass, Object msg) {
         // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delete)
