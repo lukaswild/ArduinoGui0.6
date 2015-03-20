@@ -2,8 +2,6 @@ package observer;
 
 import java.util.ArrayList;
 
-import elements.Element;
-
 public class Observable {
 
 	private ArrayList<IObserver> observers;
@@ -28,10 +26,16 @@ public class Observable {
 //        }
 //    }
 
-    // TODO mit nur zwei Parameter, wobei der zweite ein Object ist --> Für unterschiedlich benötigte Daten Klassen erzeugen
-    public void notify(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
-        for (IObserver o : observers) {
-            o.update(senderClass, modelInput, modelToUpdate, inputElementPosition, outputElementPosition, projectId, actionNr);
+
+//    public void notify(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
+//        for (IObserver o : observers) {
+//            o.update(senderClass, modelInput, modelToUpdate, inputElementPosition, outputElementPosition, projectId, actionNr);
+//        }
+//    }
+
+    public void notify(Observable senderClass, Object msg) {
+        for(IObserver o : observers) {
+            o.update(senderClass, msg);
         }
     }
 	

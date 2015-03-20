@@ -25,6 +25,7 @@ import elements.PushButtonModel;
 import elements.PwmElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
+import generic.ComObjectStd;
 import generic.ImageAdapter;
 
 public class Project extends Observable {
@@ -317,10 +318,15 @@ public class Project extends Observable {
                                         ((BoolElement)currentElement).setStatusHigh(newStatus);
                                         ((BoolElement)model).setResource(newStatus);
                                         ((BoolElement)currentElement).setResource(newStatus);
+                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
                                         if(model instanceof PushButtonModel)
-                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
-                                        else
-                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                            notify(this, comObj);
+//                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
+                                        else {
+                                            comObj.setActionNr(DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                            notify(this, comObj);
+//                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                        }
                                     }
 //                                }
                             }
@@ -415,7 +421,9 @@ public class Project extends Observable {
 //                                        ((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
 //                                        ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
                                         Log.d(LOG_TAG, "im instanceof");
-                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                        notify(this, comObj);
+//                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
 //                                        imageAdapter.notifyDataSetChanged(); // Das gehören in update in Gui
 //                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
 
@@ -440,82 +448,82 @@ public class Project extends Observable {
     }
 
 
-    public void sendDataUpdateGuiButton(View v, IConnection currentConnection, int position, boolean newStatus) { // TODO Gleichheiten mit sendDataUpdateGui in Methode auslagern
-        Log.d("ButtonOff", R.drawable.button_off+"");
-        Log.d("ButtonOn", R.drawable.button_on+"");
-        Element model = mapAllViewModels.get(position);
-        Log.d(LOG_TAG, "Position: " + position);
-
-        if(model != null)
-            Log.d(LOG_TAG, "Modelname : " + model.getName());
-        else
-            Log.e(LOG_TAG, "Model ist NULL");
-
-        if(model instanceof BoolElement) {
-            Log.d(LOG_TAG, "Model ist ein BoolElement");
-
-            if(model.getIdentifier() != null) {
-                boolean bStatus = !newStatus;
-                int statusInt = 0;
-                String code = CodeGenerator.generateCodeToSend(bStatus, model.getIdentifier()); //////////////////////////
-                Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
-
-                // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
-                if (model instanceof InputElement) { // sollte true sein - als Absicherung trotzdem abfragen
-                    Log.d(LOG_TAG, "Model ist ein InputElement");
-                    Log.d(LOG_TAG, "Senden an Arduino...");
-                    if(bStatus)
-                        statusInt = 1;
-                    else
-                        statusInt = 0;
-                    ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
-                    Log.d(LOG_TAG, "Gesendet");
-
-                    // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
-                    String codeSuccessStr =  BTConnection.receiveData();
-                    Log.d(LOG_TAG, codeSuccessStr);
-                    Log.d(LOG_TAG, BTConnection.receiveData());
-                    Log.d(LOG_TAG, BTConnection.receiveData());
-
-                    Iterator iterator = mapAllViewModels.entrySet().iterator();
-                    while (iterator.hasNext()) {
-                        Map.Entry entry = (Map.Entry) iterator.next();
-                        Element currentElement = (Element) entry.getValue();
-
-                        if (currentElement instanceof OutputElement) {
-                            String identifierCurEl = currentElement.getIdentifier();
-                            if(model.getIdentifier().equals(identifierCurEl)) {
-                                // Dazugehöriges OutputElement gefunden
-                                Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
-                                Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
-
-                                codeSuccessStr.trim();
-                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
-
-                                if (codeSuccessStr.contains("100")) {
-                                    // �nderung des Status im Model
-                                    if(model instanceof BoolElement && currentElement instanceof BoolElement) {
-                                        ((BoolElement) model).setStatusHigh(newStatus);
-                                        ((BoolElement)currentElement).setStatusHigh(newStatus);
-                                        ((BoolElement)model).setResource(newStatus);
-                                        ((BoolElement)currentElement).setResource(newStatus);
-                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
-
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                } else
-                    Log.e(LOG_TAG, "Error - Kein InputElement");
-            } else
-                Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
-        }
-        else
-            Log.d(LOG_TAG, "Kein BoolElement");
-
-    }
+//    public void sendDataUpdateGuiButton(View v, IConnection currentConnection, int position, boolean newStatus) { // TODO Gleichheiten mit sendDataUpdateGui in Methode auslagern
+//        Log.d("ButtonOff", R.drawable.button_off+"");
+//        Log.d("ButtonOn", R.drawable.button_on+"");
+//        Element model = mapAllViewModels.get(position);
+//        Log.d(LOG_TAG, "Position: " + position);
+//
+//        if(model != null)
+//            Log.d(LOG_TAG, "Modelname : " + model.getName());
+//        else
+//            Log.e(LOG_TAG, "Model ist NULL");
+//
+//        if(model instanceof BoolElement) {
+//            Log.d(LOG_TAG, "Model ist ein BoolElement");
+//
+//            if(model.getIdentifier() != null) {
+//                boolean bStatus = !newStatus;
+//                int statusInt = 0;
+//                String code = CodeGenerator.generateCodeToSend(bStatus, model.getIdentifier()); //////////////////////////
+//                Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
+//
+//                // Element, welches Event ausgel�st hat, sollte im Normalfall ein InputElement sein
+//                if (model instanceof InputElement) { // sollte true sein - als Absicherung trotzdem abfragen
+//                    Log.d(LOG_TAG, "Model ist ein InputElement");
+//                    Log.d(LOG_TAG, "Senden an Arduino...");
+//                    if(bStatus)
+//                        statusInt = 1;
+//                    else
+//                        statusInt = 0;
+//                    ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
+//                    Log.d(LOG_TAG, "Gesendet");
+//
+//                    // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
+//                    String codeSuccessStr =  BTConnection.receiveData();
+//                    Log.d(LOG_TAG, codeSuccessStr);
+//                    Log.d(LOG_TAG, BTConnection.receiveData());
+//                    Log.d(LOG_TAG, BTConnection.receiveData());
+//
+//                    Iterator iterator = mapAllViewModels.entrySet().iterator();
+//                    while (iterator.hasNext()) {
+//                        Map.Entry entry = (Map.Entry) iterator.next();
+//                        Element currentElement = (Element) entry.getValue();
+//
+//                        if (currentElement instanceof OutputElement) {
+//                            String identifierCurEl = currentElement.getIdentifier();
+//                            if(model.getIdentifier().equals(identifierCurEl)) {
+//                                // Dazugehöriges OutputElement gefunden
+//                                Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
+//                                Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
+//
+//                                codeSuccessStr.trim();
+//                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
+//
+//                                if (codeSuccessStr.contains("100")) {
+//                                    // �nderung des Status im Model
+//                                    if(model instanceof BoolElement && currentElement instanceof BoolElement) {
+//                                        ((BoolElement) model).setStatusHigh(newStatus);
+//                                        ((BoolElement)currentElement).setStatusHigh(newStatus);
+//                                        ((BoolElement)model).setResource(newStatus);
+//                                        ((BoolElement)currentElement).setResource(newStatus);
+//                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
+//
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                } else
+//                    Log.e(LOG_TAG, "Error - Kein InputElement");
+//            } else
+//                Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
+//        }
+//        else
+//            Log.d(LOG_TAG, "Kein BoolElement");
+//
+//    }
 
 
     public void addModelToMap(int position, Element model) {

@@ -28,10 +28,7 @@ import elements.PwmElement;
 import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
-import observer.Gui;
-import observer.IObserver;
-import observer.Observable;
-import observer.Project;
+import generic.ComObjectStd;
 
 
 public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
@@ -367,37 +364,83 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     }
 
 
+//    @Override
+//    public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
+//        // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delete)
+//
+//        if(actionNr != ACTION_NOTHING)
+//            Log.d(LOG_TAG, "Updaten der DB über Observer");
+//
+//        switch (actionNr) {
+//
+//            case ACTION_INSERT_ELEMENT:
+//                insertElementDb(modelToUpdate, outputElementPosition, projectId);
+//                break;
+//
+//            case ACTION_UPDATE_ELEMENT_TYPE:
+//                replaceElementDb(modelToUpdate, outputElementPosition, projectId);
+//                break;
+//
+//            case ACTION_UPDATE_ELEMENT:
+//                updateElementDb(modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
+//                break;
+//
+//            case ACTION_UPDATE_IDENTIFIER:
+//                updateElementIdentifier(modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
+//                break;
+//
+//            case ACTION_REMOVE_ELEMENT:
+//                deleteElementDb(outputElementPosition, projectId);
+//                break;
+//
+//            case ACTION_NOTHING:
+//                break;
+//        }
+//    }
+
+
     @Override
-    public void update(Observable senderClass, Element modelInput, Element modelToUpdate, int inputElementPosition, int outputElementPosition, int projectId, int actionNr) {
+    public void update(Observable senderClass, Object msg) {
         // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delete)
 
-        if(actionNr != ACTION_NOTHING)
-            Log.d(LOG_TAG, "Updaten der DB über Observer");
+        if(msg instanceof ComObjectStd) {
+            ComObjectStd comObj = (ComObjectStd) msg;
+            Element modelInput = comObj.getModelInput();
+            Element modelOutput = comObj.getModelOutput();
+            int inputElementPosition = comObj.getInputElementPosition();
+            int outputElementPosition = comObj.getOutputElementPosition();
+            int projectId = comObj.getProjectId();
+            int actionNr = comObj.getActionNr();
 
-        switch (actionNr) {
 
-            case ACTION_INSERT_ELEMENT:
-                insertElementDb(modelToUpdate, outputElementPosition, projectId);
-                break;
+            if (actionNr != ACTION_NOTHING)
+                Log.d(LOG_TAG, "Updaten der DB über Observer");
 
-            case ACTION_UPDATE_ELEMENT_TYPE:
-                replaceElementDb(modelToUpdate, outputElementPosition, projectId);
-                break;
+            switch (actionNr) {
 
-            case ACTION_UPDATE_ELEMENT:
-                updateElementDb(modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
-                break;
+                case ACTION_INSERT_ELEMENT:
+                    insertElementDb(modelOutput, outputElementPosition, projectId);
+                    break;
 
-            case ACTION_UPDATE_IDENTIFIER:
-                updateElementIdentifier(modelInput, modelToUpdate, inputElementPosition, outputElementPosition);
-                break;
+                case ACTION_UPDATE_ELEMENT_TYPE:
+                    replaceElementDb(modelOutput, outputElementPosition, projectId);
+                    break;
 
-            case ACTION_REMOVE_ELEMENT:
-                deleteElementDb(outputElementPosition, projectId);
-                break;
+                case ACTION_UPDATE_ELEMENT:
+                    updateElementDb(modelInput, modelOutput, inputElementPosition, outputElementPosition);
+                    break;
 
-            case ACTION_NOTHING:
-                break;
+                case ACTION_UPDATE_IDENTIFIER:
+                    updateElementIdentifier(modelInput, modelOutput, inputElementPosition, outputElementPosition);
+                    break;
+
+                case ACTION_REMOVE_ELEMENT:
+                    deleteElementDb(outputElementPosition, projectId);
+                    break;
+
+                case ACTION_NOTHING:
+                    break;
+            }
         }
     }
 
