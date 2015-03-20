@@ -37,7 +37,7 @@ import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
 import connection.IPAddressValidator;
-import database.DatabaseHandler;
+import observer.DatabaseHandler;
 import generic.ExpListAdapterAllCons;
 
 public class ConnectionActivity extends Activity {

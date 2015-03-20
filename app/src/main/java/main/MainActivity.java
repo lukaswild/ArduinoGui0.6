@@ -30,7 +30,7 @@ import java.util.HashMap;
 import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
-import database.DatabaseHandler;
+import observer.DatabaseHandler;
 import elements.EmptyElement;
 import generic.ImageAdapter;
 import observer.Gui;

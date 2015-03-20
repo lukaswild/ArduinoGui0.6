@@ -1,4 +1,4 @@
-package database;
+package observer;
 
 import android.content.Context;
 import android.database.Cursor;

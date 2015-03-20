@@ -25,7 +25,6 @@ import com.example.arduinogui.R;
 import java.util.HashMap;
 
 import connection.IConnection;
-import database.DatabaseHandler;
 import elements.BoolElement;
 import elements.Element;
 import elements.EmptyElement;
@@ -601,7 +600,7 @@ public class Gui extends View implements IObserver {
                     case MotionEvent.ACTION_DOWN:
                         v.setPressed(true);
                         try {
-                            projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, false);
+                            projectFinal.sendDataUpdateGui(v, currentConnection, positionFinal, false);
 //                            imgadapt.update(R.drawable.button_on, positionFinal);
 
 
@@ -626,7 +625,7 @@ public class Gui extends View implements IObserver {
                     case MotionEvent.ACTION_UP:
                         v.setPressed(false);
                         try {
-                            projectFinal.sendDataUpdateGuiButton(v, currentConnection, positionFinal, true);
+                            projectFinal.sendDataUpdateGui(v, currentConnection, positionFinal, true);
 //                            imgadapt.update(R.drawable.button_off, positionFinal);
 
 //                            RunnableSendDataBtn runSend = new RunnableSendDataBtn(projectFinal, v, currentConnection, positionFinal);
@@ -685,7 +684,7 @@ public class Gui extends View implements IObserver {
         }
 
         private synchronized void sendDataUpdateGuiBtn(View v, IConnection connection, int position, boolean status) {
-            project.sendDataUpdateGuiButton(v, connection, position, status);
+            project.sendDataUpdateGui(v, connection, position, status);
         }
     }
 

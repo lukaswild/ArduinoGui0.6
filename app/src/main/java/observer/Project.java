@@ -15,7 +15,6 @@ import java.util.Map;
 
 import connection.BTConnection;
 import connection.IConnection;
-import database.DatabaseHandler;
 import elements.BoolElement;
 import elements.Element;
 import elements.EmptyElement;
@@ -287,11 +286,12 @@ public class Project extends Observable {
                     ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
                     Log.d(LOG_TAG, "Gesendet");
 
+                    // TODO eventuell kurze Verzögerung, um Benutzer daran zu hindern, sehr schnell hintereinander ein/aus zu schalten (Arduino kommt nicht mehr mit)
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
-                    String codeSuccessStr =  BTConnection.receiveData();
-                    Log.d(LOG_TAG, codeSuccessStr);
-                    Log.d(LOG_TAG, BTConnection.receiveData());
-                    Log.d(LOG_TAG, BTConnection.receiveData());
+//                    String codeSuccessStr =  BTConnection.receiveData();
+//                    Log.d(LOG_TAG, codeSuccessStr);
+//                    Log.d(LOG_TAG, BTConnection.receiveData());
+//                    Log.d(LOG_TAG, BTConnection.receiveData());
 
                     Iterator iterator = mapAllViewModels.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -305,10 +305,12 @@ public class Project extends Observable {
                                 Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
                                 Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
 
-                                codeSuccessStr.trim();
-                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
+//                                codeSuccessStr.trim();
+//                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
 
-                                if (codeSuccessStr.contains("100")) {
+                                // CodeSuccessStr wird nicht mehr auf Korrektheit überprüft, da Benutzer mit den gesendeten Daten machen kann,
+                                // was er will
+//                                if (codeSuccessStr.contains("100")) {
                                     // �nderung des Status im Model
                                     if(model instanceof BoolElement && currentElement instanceof BoolElement) {
                                         ((BoolElement) model).setStatusHigh(newStatus);
@@ -320,7 +322,7 @@ public class Project extends Observable {
                                         else
                                             notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
                                     }
-                                }
+//                                }
                             }
                         }
                     }

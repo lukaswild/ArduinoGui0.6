@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import database.DatabaseHandler;
+import observer.DatabaseHandler;
 import generic.ExpListAdapterAllPro;
 import observer.Project;
 
