@@ -65,7 +65,7 @@
     <string name="btnRemoveDataPoints">Daten entfernen</string>
     <string name="txtAvailableElements">Verfügbare Elemente</string>
     <string name="noProjekt">kein Projekt</string>
-    <string name="noConnection">keine Verbindung</string>
+    <string name="noConnection">keine Verb.</string>
     <string name="diagramAdcInput">"ADC-Regler "</string>
     <string name="diagramAdcOutput">"ADC-Anzeige "</string>
 

@@ -421,15 +421,17 @@ public class Project extends Observable {
 
                                     if(model instanceof PwmElement && currentElement instanceof PwmElement) {
 
+                                        Log.d(LOG_TAG, "im instanceof");
                                         ((PwmElement) currentElement).setCurrentPwm(Integer.parseInt(pwm));
                                         ((PwmElement) currentElement).refreshRes();
-                                        //((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
-                                        // ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
-                                        gui.updatePWMElement(model.getIdentifier(),pwm,imageAdapter);
+
+                                        //Der Name sieht aus wie: elemnt20
+                                        //20 wäre die position im imgadapt. diese wird benötigt. Die werte stehen an der Position
+
+                                        gui.updatePWm(currentElement,pwm,imageAdapter);
 
 
 
-                                        Log.d(LOG_TAG, "im instanceof");
                                         ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
                                         notify(this, comObj);
 //                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);

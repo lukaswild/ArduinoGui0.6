@@ -501,11 +501,14 @@ public class Gui extends View implements IObserver {
                                 popDialog.cancel();
                                 //Wert des bild setzen
                                 imgadapt.notifyDataSetChanged();
-                                try {
-                                    project.sendDataUpdateGui(v, currentConnection, position, false);
-                                } catch (NullPointerException e) {
+                                if (null==currentConnection) {
                                     makeToastNoConnection();
                                 }
+                                else{
+                                    project.sendDataUpdateGui(v, currentConnection, position, false);
+                                }
+
+
 
                             }
                         });
@@ -604,7 +607,7 @@ public class Gui extends View implements IObserver {
                 imgadapt.notifyDataSetChanged();
                 PwmModel newPwmModel = new PwmModel(ELEMENT_NAME + Integer.toString(position));
 //                project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
-                imgadapt.updateTextRes("0", position);
+                imgadapt.updateTextRes("20", position);
                 imgadapt.notifyDataSetChanged();
                 addToMapAndNotifyDb(position, project, newPwmModel);
                 return true;
@@ -753,14 +756,35 @@ public class Gui extends View implements IObserver {
         }
     }
 
-    public void updatePWMElement(String identifier,String txt, ImageAdapter imgadapt){
-        for (int i=0;i<imgadapt.getCount();i++){
-            if (!(imgadapt.getItemInt(i)==R.drawable.pwm_slider)&&(imgadapt.getIdentRes(i).equals(identifier))){
-                imgadapt.updateTextRes(txt,i);
-            }
-        }
-        imgadapt.notifyDataSetChanged();
+    public void updatePWm(Element currentElement,String pwm,ImageAdapter imageAdapter){
+       try {
+           Log.d(LOG_TAG,"name:"+currentElement.getName());
+
+           char[] tex = currentElement.getName().toCharArray();
+           String newtex = "";
+           int newpos = 0;
+
+
+           try {
+               newtex += tex[7];
+               newtex += tex[8];
+
+           } catch (IndexOutOfBoundsException e) {
+               newtex="";
+               newtex += tex[7];
+           }
+           newpos = Integer.parseInt(newtex);
+           Log.d(LOG_TAG,"pos"+newpos);
+           Log.d(LOG_TAG,"pwm"+pwm);
+           imageAdapter.updateTextRes("21",newpos);
+           imageAdapter.notifyDataSetChanged();
+           Log.d(LOG_TAG,"wert:"+imageAdapter.getTextRes(newpos));
+
+       }
+       catch(NullPointerException e){
+           Log.d(LOG_TAG,"name ist null");
+       }
+
     }
-
-
 }
+

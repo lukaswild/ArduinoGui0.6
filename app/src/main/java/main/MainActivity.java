@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
         GridView gridView = (GridView) findViewById(R.id.gridview);
         try {
             dbHandler = new DatabaseHandler(this);
-//            db = dbHandler.getWritableDatabase();
+           //db = dbHandler.getWritableDatabase();
             dbHandler.setDb(dbHandler.getWritableDatabase());
             allConnections = dbHandler.selectAllCons(dbHandler.getDb(), this); // funktioniert
             allProjects = dbHandler.selectAllPros(dbHandler.getDb(), this, gridView);
@@ -232,11 +232,12 @@ public class MainActivity extends Activity {
             }
         }
 
-//        allProjects.clear();
-//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
+
+      // allProjects.clear();
+      // dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
 //
-//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
-//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
+      // dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
+      // dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
     }
 
 
