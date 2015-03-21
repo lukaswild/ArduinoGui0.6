@@ -33,6 +33,9 @@ public class ImageAdapter extends BaseAdapter {
     //Felder
     private static HashMap<Integer, Integer> imgRes = new HashMap<Integer, Integer>();
     private static HashMap<Integer, String> textRes = new HashMap<Integer, String>();
+
+    private static HashMap<Integer, String> identRes = new HashMap<Integer, String>();
+
     private Context mContext;
 
     //vorher, war langth und width angegeben, da die symbole quadratisc sind, ist das nicht gut
@@ -56,9 +59,17 @@ public class ImageAdapter extends BaseAdapter {
     public void updateTextRes(String element, int key){
         textRes.put(key, element);
     }
+
+    public void updateIdentRes(String element, int key){
+        identRes.put(key, element);
+    }
     public String getTextRes(int key){
         return  textRes.get(key);
     }
+    public String getIdentRes(int key){
+        return  identRes.get(key);
+    }
+
 
 
     public int getLength() {

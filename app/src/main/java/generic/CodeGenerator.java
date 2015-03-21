@@ -25,6 +25,7 @@ public class CodeGenerator {
 			code = "B0";
 
 		code += "I" + identifier;
+        code.trim();
 		return code; 
 	}
 	

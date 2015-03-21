@@ -312,22 +312,22 @@ public class Project extends Observable {
                                 // CodeSuccessStr wird nicht mehr auf Korrektheit überprüft, da Benutzer mit den gesendeten Daten machen kann,
                                 // was er will
 //                                if (codeSuccessStr.contains("100")) {
-                                    // �nderung des Status im Model
-                                    if(model instanceof BoolElement && currentElement instanceof BoolElement) {
-                                        ((BoolElement) model).setStatusHigh(newStatus);
-                                        ((BoolElement)currentElement).setStatusHigh(newStatus);
-                                        ((BoolElement)model).setResource(newStatus);
-                                        ((BoolElement)currentElement).setResource(newStatus);
-                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
-                                        if(model instanceof PushButtonModel)
-                                            notify(this, comObj);
+                                // �nderung des Status im Model
+                                if(model instanceof BoolElement && currentElement instanceof BoolElement) {
+                                    ((BoolElement) model).setStatusHigh(newStatus);
+                                    ((BoolElement)currentElement).setStatusHigh(newStatus);
+                                    ((BoolElement)model).setResource(newStatus);
+                                    ((BoolElement)currentElement).setResource(newStatus);
+                                    ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
+                                    if(model instanceof PushButtonModel)
+                                        notify(this, comObj);
 //                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
-                                        else {
-                                            comObj.setActionNr(DatabaseHandler.ACTION_UPDATE_ELEMENT);
-                                            notify(this, comObj);
+                                    else {
+                                        comObj.setActionNr(DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                        notify(this, comObj);
 //                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
-                                        }
                                     }
+                                }
 //                                }
                             }
                         }
@@ -394,10 +394,15 @@ public class Project extends Observable {
                                     int receiveInt=0;
 
                                     if (codeSuccessStr.charAt(0)=='1'){
+                                        try {
 
-                                        receive +=codeSuccessStr.charAt(4);
-                                        receive +=codeSuccessStr.charAt(5);
-                                        receive +=codeSuccessStr.charAt(6);
+                                            receive +=codeSuccessStr.charAt(4);
+                                            receive +=codeSuccessStr.charAt(5);
+                                            receive +=codeSuccessStr.charAt(6);
+                                        }
+                                        catch (IndexOutOfBoundsException e){
+                                            Log.d(LOG_TAG,"Fehler im iNdex, bei Project l404 ");
+                                        }
                                     }
                                     else if(codeSuccessStr.charAt(0)=='W'){
 
@@ -416,20 +421,20 @@ public class Project extends Observable {
 
                                     if(model instanceof PwmElement && currentElement instanceof PwmElement) {
 
-                                        ((PwmElement)currentElement).setCurrentPwm(receiveInt);
-                                        ((PwmElement)currentElement).refreshRes();
-//                                        ((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
-//                                        ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
+                                        ((PwmElement) currentElement).setCurrentPwm(Integer.parseInt(pwm));
+                                        ((PwmElement) currentElement).refreshRes();
+                                        //((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
+                                        // ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
+                                        gui.updatePWMElement(model.getIdentifier(),pwm,imageAdapter);
+
+
+
                                         Log.d(LOG_TAG, "im instanceof");
-                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
                                         notify(this, comObj);
 //                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
-//                                        imageAdapter.notifyDataSetChanged(); // Das gehören in update in Gui
-//                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
 
-
-                                    }
-                                }
+                                    }}
                             }
                         }
                     }
