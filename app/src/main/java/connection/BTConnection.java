@@ -27,8 +27,7 @@ public class BTConnection implements IConnection {
 
     private static BluetoothAdapter adapter = null;
     private static BluetoothSocket socket = null;
-//    private static BufferedOutputStream streamOut = null; // TODO BufferedOutputStream - Übertragung geht nicht
-//    private static BufferedInputStream streamIn = null; // TODO BufferedInputStream - Übertragung geht nicht
+
     private static InputStream streamIn = null;
     private static OutputStream streamOut = null;
 
@@ -124,7 +123,7 @@ public class BTConnection implements IConnection {
     }
 
 
-//    @Override
+    //    @Override
     public static String receiveData() {
         SystemClock.sleep(400); // Warten bis Bestätigungsdaten von Arduino am Smartphone angelangt sind: 200 ms sind zu wenig, 300 passen --> zur Sicherheit 400
 
@@ -173,16 +172,19 @@ public class BTConnection implements IConnection {
      * @param macAddress MAC-Adresse des Bluetooth-Devices am Arduino
      */
     public static boolean initialiseConnection(String conName, String macAddress) {
-        // TODO BT Berechtigungsanfrage automatisch, wenn BT disabled
-
         Log.d(LOG_TAG, "Verbinden mit " + macAddress + "...");
 
         if(instance == null) {
             instance = new BTConnection();
-            BTConnection.isConnected = true; // Auf true setzen, wenn etwas schief gehen sollte, wird dieser Wert auf false gesetzt
-            BTConnection.adapter = BluetoothAdapter.getDefaultAdapter();
-            if(BTConnection.adapter == null) {
+            isConnected = true; // Auf true setzen, wenn etwas schief gehen sollte, wird dieser Wert auf false gesetzt
+            adapter = BluetoothAdapter.getDefaultAdapter();
+            if(adapter == null) {
                 Log.e(LOG_TAG, "Bluetooth nicht unterstützt");
+                return false;
+            } else if (adapter.isEnabled() == false) {
+                // Bluetooth nicht eingeschaltet
+                Log.d(LOG_TAG, "Bluetooth nicht enabled");
+
                 return false;
             }
 
@@ -192,10 +194,8 @@ public class BTConnection implements IConnection {
             BTConnection.conName = conName;
             BluetoothDevice remote_device = null;
 
-                remote_device = adapter.getRemoteDevice(BTConnection.macAddress);
-                createConnectSocket(remote_device); // Socket erstellen und verbinden
-
-                // TODO Toast ausgeben, wenn MAC ungültig und ToggleButton nicht verbinden (kann nur über Activity gemacht werden)
+            remote_device = adapter.getRemoteDevice(BTConnection.macAddress);
+            createConnectSocket(remote_device); // Socket erstellen und verbinden
 
             // Outputstream erstellen:
             createOutputStream();
@@ -292,4 +292,5 @@ public class BTConnection implements IConnection {
     public String toString() {
         return conName;
     }
+
 }

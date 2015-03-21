@@ -66,6 +66,8 @@
     <string name="txtAvailableElements">Verfügbare Elemente</string>
     <string name="noProjekt">kein Projekt</string>
     <string name="noConnection">keine Verbindung</string>
+    <string name="diagramAdcInput">"ADC-Regler "</string>
+    <string name="diagramAdcOutput">"ADC-Anzeige "</string>
 
     <string-array name="arrConTypeEntries">
         <item>Bitte wählen Sie</item>

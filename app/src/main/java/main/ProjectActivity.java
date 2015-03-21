@@ -175,7 +175,7 @@ public class ProjectActivity extends  Activity {
                 allProName.set(positionFinal, newProName);
                 mapListDataChild.remove(keyChosen);
 
-                ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+                ArrayList<String> child = new ArrayList<String>();
                 child.add("Erstellt am: " + allProCreationDates.get(positionFinal));
                 child.add("Zuletzt geändert: " + allProLastModifiedDates.get(positionFinal));
                 mapListDataChild.put(newProName, child);
@@ -343,5 +343,7 @@ public class ProjectActivity extends  Activity {
 
         return isUnique;
     }
+
+
 
 }

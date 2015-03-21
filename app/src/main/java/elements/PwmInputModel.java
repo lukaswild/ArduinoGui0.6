@@ -15,16 +15,16 @@ public class PwmInputModel extends PwmElement implements InputElement {
         super.name = name;
         super.setResource(R.drawable.pwm_slider);
         super.setCurrentPwm(0);
-        super.kind = "Adc-Input";
+        super.kind = "ADC-Regler";
     }
 
     public PwmInputModel() {
-        super.kind = "Adc-Input";
+        super.kind = "ADC-Regler";
     }
 
     @Override
     public void sendDataToArduino(IConnection connection, String dataCode, int status) {
         connection.sendData(dataCode);
-        // TODO Daten für Diagramm aufzeichnen
+        registerTimeRecord(status);
     }
 }

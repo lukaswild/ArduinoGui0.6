@@ -3,8 +3,6 @@ package elements;
 
 import com.example.arduinogui.R;
 
-import connection.IConnection;
-
 public class LedModel extends BoolElement implements OutputElement {
 
     int resourceLedOff = R.drawable.lamp_on;
@@ -47,15 +45,6 @@ public class LedModel extends BoolElement implements OutputElement {
 
     public void setResourceLedOff(int resourceLedOff) {
         this.resourceLedOff = resourceLedOff;
-    }
-
-    @Override
-    public String receiveData(IConnection connection) {
-        // TODO Auto-generated method stub; überhaupt notwendig?
-        System.out.println("Empfangen von Daten...");
-
-//        return connection.receiveData();
-        return ""; // TODO void
     }
 
 }

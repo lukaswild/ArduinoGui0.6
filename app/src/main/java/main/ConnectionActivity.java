@@ -37,8 +37,8 @@ import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
 import connection.IPAddressValidator;
-import observer.DatabaseHandler;
 import generic.ExpListAdapterAllCons;
+import observer.DatabaseHandler;
 
 public class ConnectionActivity extends Activity {
 
@@ -264,7 +264,7 @@ public class ConnectionActivity extends Activity {
                         allConsAddress.set(position, newConAddress);
                         mapListDataChild.remove(keyChosen);
 
-                        ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+                        ArrayList<String> child = new ArrayList<String>();
                         child.add(allConsType.get(position));
                         child.add(newConAddress);
                         mapListDataChild.put(newConName, child);
@@ -320,7 +320,7 @@ public class ConnectionActivity extends Activity {
 
     private void fillHashMap(ArrayList<String> allConsType, ArrayList<String> allConsHeader, ArrayList<String> allConsAddress, HashMap<String, ArrayList<String>> mapListDataChild) {
         for(int i = 0; i < allConsType.size(); i++) {
-            ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+            ArrayList<String> child = new ArrayList<String>();
             child.add(allConsType.get(i));
             child.add(allConsAddress.get(i));
 
@@ -420,7 +420,7 @@ public class ConnectionActivity extends Activity {
         });
     }
 
-    // TODO Progress circle während Scannvorgang
+    // TODO Progress circle während Scanvorgang
     private void showDialogAvCons(final ArrayAdapter<String> adapterAvCons, final HashMap<String, String> mapAllDevsWithAddresses) {
         dialogScannedDevs = new AlertDialog.Builder( ConnectionActivity.this);
         dialogScannedDevs.setTitle("Verfügbare Geräte");
@@ -711,12 +711,15 @@ public class ConnectionActivity extends Activity {
         Log.d(LOG_TAG, clickedConType);
         Log.d(LOG_TAG, clickedConName);
 
-        if(clickedConType.equals("Bluetooth-Verbindung")) {
+        if(clickedConType.equals("Bluetooth-Verbindung"))
             initialisingSuccessful = BTConnection.initialiseConnection(clickedConName, clickedConAddress);
-        }
         else
             initialisingSuccessful = EthernetConnection.initialiseConnection(clickedConName, clickedConAddress);
 
         return initialisingSuccessful;
+    }
+
+    public void makeToastBtDisabled() {
+        Toast.makeText(this, "Bitte Bluetooth einschalten", Toast.LENGTH_SHORT).show();
     }
 }

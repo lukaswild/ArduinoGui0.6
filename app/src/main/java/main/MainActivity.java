@@ -26,13 +26,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
-import observer.DatabaseHandler;
+import elements.Element;
 import elements.EmptyElement;
 import generic.ImageAdapter;
+import observer.DatabaseHandler;
 import observer.Gui;
 import observer.Project;
 
@@ -213,10 +216,21 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
         if(BTConnection.isConnected())
             BTConnection.closeConnection();
         currentConnection = null;
+
+        // Verläufe für alle Projekte von allen Elementen zurücksetzten
+        for(Project p : allProjects) {
+            Iterator iterator = p.getMapAllViewModels().entrySet().iterator();
+            while(iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                Element element = (Element) entry.getValue();
+                element.getTimeRecord().clear();
+                element.getDataRecord().clear();
+                Element.setFirstInteraction(true);
+            }
+        }
 
 //        allProjects.clear();
 //        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
@@ -226,16 +240,17 @@ public class MainActivity extends Activity {
     }
 
 
-//    private void storeDataInDb() {
-//        ArrayList<String> allConsName = new ArrayList<String>();
-//        ArrayList<String> allConsType = new ArrayList<String>();
-//        ArrayList<String> allConsAddress = new ArrayList<String>();
-//        splitConsIntoLists(allConsType, allConsName, allConsAddress);
-//        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
-//
-//        // Eintragen der Projekte in die DB
-//        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
-//    }
+    // Alte Methode zum Abspeichern in der DB bei Ausstieg aus der App
+    private void storeDataInDb() {
+        ArrayList<String> allConsName = new ArrayList<String>();
+        ArrayList<String> allConsType = new ArrayList<String>();
+        ArrayList<String> allConsAddress = new ArrayList<String>();
+        splitConsIntoLists(allConsType, allConsName, allConsAddress);
+        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
+
+        // Eintragen der Projekte in die DB
+        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
+    }
 
 
     public void showName(){

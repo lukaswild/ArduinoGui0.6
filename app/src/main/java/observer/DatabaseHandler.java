@@ -118,7 +118,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                 "type text NOT NULL," + // z.B. SwitchModel, LedModel,...
                 "position integer NOT NULL," +
                 "status integer NOT NULL," +
-                "identifier text NULL," + // Wenn identifier noch nicht gesetzt wurde, so darf er null sein // TODO integer oder text???
+                "identifier text NULL," + // Wenn identifier noch nicht gesetzt wurde, so darf er null sein
                 "resource int NULL," + // EmptyElement hat keine Ressource
                 "project_fk int NOT NULL," +
                 "CONSTRAINT project_fk FOREIGN KEY (project_fk) " +

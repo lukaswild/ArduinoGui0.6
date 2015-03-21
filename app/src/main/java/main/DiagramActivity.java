@@ -31,6 +31,7 @@ import observer.Project;
 
 
 public class DiagramActivity extends Activity {
+// TODO Bei Drehen des Handys nachträglich hinzugefügte Graphen verschwinden
 
     private static final String LOG_TAG = "DiagramActivity";
     private GraphView graphView;
@@ -44,9 +45,7 @@ public class DiagramActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diagram);
-
         initialiseGraphColorStack();
-
 
         Intent parentIntent = getIntent();
         getIntentExtras(parentIntent);
@@ -59,7 +58,7 @@ public class DiagramActivity extends Activity {
         else {
             graphView.setTitle("Verlauf");
             graphView.getLegendRenderer().setVisible(true); // Anzeigen der Legende
-            graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP); // TODO wenn möglich Legende unterhalb von Graph
+            graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
             series.setColor(graphColorStack.pop());
 
@@ -71,10 +70,17 @@ public class DiagramActivity extends Activity {
                 titleSeries.append("Led ");
             else if (elementClass.equals(getString(R.string.classSwitchModel)))
                 titleSeries.append("Schalter ");
+            else if(elementClass.equals(getString(R.string.classPushButtonModel)))
+                titleSeries.append("Button ");
+            else if(elementClass.equals(getString(R.string.classPwmInputModel)))
+                titleSeries.append("ADC-Regler ");
+            else if(elementClass.equals(getString(R.string.classPwmModel)))
+                titleSeries.append("ADC-Anzeige ");
             titleSeries.append(elementIdentifier);
             series.setTitle(titleSeries.toString());
 
         }
+
         // TODO Graph sollte zoombar sein
     }
 
@@ -137,7 +143,7 @@ public class DiagramActivity extends Activity {
     }
 
 
-    public void addDataPoints(View v) {
+    public void addDataPoints(View v) { // TODO alle Graphen bis zur Jetztzeit zeichnen
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_datapoint);
         dialog.setTitle("Datenreihe auswählen");
@@ -152,7 +158,6 @@ public class DiagramActivity extends Activity {
             Element element = (Element) entry.getValue();
             if(!(element.getIdentifier() == null)) {
                 allElements.add(element);
-
             }
         }
 
@@ -174,24 +179,35 @@ public class DiagramActivity extends Activity {
                     DataPoint[] dataPointsToAdd = getDataPointsArr(elementAtPos.getTimeRecord(), elementAtPos.getDataRecord());
                     LineGraphSeries<DataPoint> seriesToAdd = new LineGraphSeries<DataPoint>(dataPointsToAdd);
                     StringBuilder titleSeries = new StringBuilder();
-                    if(elementAtPos.getKind().equals("Switch"))
-                        titleSeries.append("Schalter ");
-                    else if (elementAtPos.getKind().equals("Led"))
-                        titleSeries.append("Led ");
-                    else if (elementAtPos.getKind().equals("Button"))
-                        titleSeries.append("Button ");
-                    else if (elementAtPos.getKind().equals("Adc-Input"))
-                        titleSeries.append("ADC-Regler ");
-                    else if (elementAtPos.getKind().equals("Adc-Element"))
-                        titleSeries.append("ADC-Anzeige ");
+//                    if(elementAtPos.getKind().equals("Switch"))
+//                        titleSeries.append("Schalter ");
+//                    else if (elementAtPos.getKind().equals("Led"))
+//                        titleSeries.append("Led ");
+//                    else if (elementAtPos.getKind().equals("Button"))
+//                        titleSeries.append("Button ");
+//                    else if (elementAtPos.getKind().equals("Adc-Input"))
+//                        titleSeries.append(getString(R.string.diagramAdcInput));
+//                    else if (elementAtPos.getKind().equals("Adc-Element"))
+//                        titleSeries.append(getString(R.string.diagramAdcOutput));
+
+                    titleSeries.append(elementAtPos.getKind());
+                    titleSeries.append(" ");
+
                     titleSeries.append(elementAtPos.getIdentifier());
                     seriesToAdd.setTitle(titleSeries.toString());
                     seriesToAdd.setColor(graphColorStack.pop());
                     graphView.addSeries(seriesToAdd);
-                } else
-                    Toast.makeText(getBaseContext(), "Maximale Anzahl an Daten erreicht", Toast.LENGTH_SHORT).show();
 
-                dialog.dismiss();
+                    graphView.getLegendRenderer().setVisible(false);
+                    graphView.getLegendRenderer().setVisible(true);
+                    graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+                    graphView.getLegendRenderer().setWidth(120);
+                    dialog.dismiss();
+
+
+                } else
+                    Toast.makeText(getBaseContext(), "Maximale Anzahl an Datenreihen erreicht", Toast.LENGTH_SHORT).show();
+
             }
         });
 

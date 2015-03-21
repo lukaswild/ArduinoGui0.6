@@ -1,11 +1,11 @@
 package generic;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.arduinogui.R;
 
@@ -38,10 +38,8 @@ public class ExpListAdapterAllPro extends ExpandableListAdapterGeneric {
                 String key = listDataHeader.get(groupPosition).toString();
                 //Das ausgewählte Projekt wird als Current Projekt gesetzt
                 MainActivity.setCurrentProjByName(key);
-                Toast.makeText(context, "Projekt ausgewählt: " + key, Toast.LENGTH_LONG).show();
-                // TODO zu Main zuückkehren          
                 MainActivity.loadImgRes();
-
+                ((Activity)context).finish();
             }
         });
 

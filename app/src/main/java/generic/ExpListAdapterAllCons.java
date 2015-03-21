@@ -64,9 +64,12 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
                     // Wenn bereits eine Verbindung vorhanden ist, so wird keine neue Verbindung aufgebaut --> ToggleButton soll nicht aktiviert werden
                     if (!initialisingNewConSuccessful) {
                         tglBtnChooseCloseCon.setChecked(false);
-                        Toast.makeText(context, "Verbinden nicht möglich \nBereits bestehende Verbindung beenden" +
-                                " oder Adresse überprüfen", Toast.LENGTH_LONG).show();
-                        Log.e(LOG_TAG, "Es besteht entweder bereits eine Verbindung oder die MAC- bzw. IP-Adresse ist falsch");
+                        Toast.makeText(context, "Fehler. Mögliche Ursachen: \n" +
+                                "- Bluetooth ausgeschaltet \n" +
+                                "- Es besteht bereits eine Verbindung\n" +
+                                "- Falsche Adresse", Toast.LENGTH_LONG).show();
+                        Log.e(LOG_TAG, "Es besteht entweder bereits eine Verbindung, die MAC- bzw. IP-Adresse ist falsch oder " +
+                                "BT ist disabled");
                     }
                 } else { // Wenn Verbindung beendet werden soll
                     BTConnection.closeConnection();
