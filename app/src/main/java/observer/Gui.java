@@ -170,13 +170,10 @@ public class Gui extends View implements IObserver {
      */
 
     public void initializeUI(final Project project, final ImageAdapter imgadapt, final IConnection currentConnection, boolean editmode) {
-
         //Löscht zuerst einmal den Inhalt von Gridview
         project.getGui().getGridView().clearAnimation();
         project.getGui().getGridView().setAdapter(imgadapt);
-
-
-        setOnClickListener(project, imgadapt, currentConnection, editmode); // TODO OnClickListener hier oder unten?
+        setOnClickListener(project, imgadapt, currentConnection, editmode);
     }
 
     private void setOnClickListener(Project project, ImageAdapter imgadapt, IConnection currentConnection, boolean editmode) {
@@ -532,7 +529,7 @@ public class Gui extends View implements IObserver {
 
 
     private void makeToastNoConnection() {
-        Toast.makeText(getContext(), "Bitte zuerst eine Verbindung auswählen", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Bitte zuerst eine Verbindung auswählen", Toast.LENGTH_SHORT).show();
     }
 
 

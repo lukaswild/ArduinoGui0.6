@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
     private final static String LOG_TAG = "MainActivity";
-    private static DatabaseHandler dbHandler; // TODO passt static ?
+    private static DatabaseHandler dbHandler;
     //    private SQLiteDatabase db;
     private boolean editmode = false;
 
@@ -86,7 +86,7 @@ public class MainActivity extends Activity {
     public static void setCurrentProject(Project currentProject) {
         MainActivity.currentProject = currentProject;
         currentProject.setLastOpenedDate(Calendar.getInstance()); // Aktuelles Datum setzen
-        currentProject.addToObservers(dbHandler); // TODO richtig hier ?
+        currentProject.addToObservers(dbHandler);
     }
 
     public static void setCurrentProjectFirstTime(Project currentProject) {
@@ -560,7 +560,7 @@ public class MainActivity extends Activity {
                 String proName = "";
                 if (data.getExtras().containsKey("name")) {
                     proName = data.getExtras().getString("name");
-                    Project newProj = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))), proName, imgadapt); // TODO hier darf nicht der mit Elementen versehene imgadapt übergeben werden
+                    Project newProj = new Project(new Gui(getBaseContext(),2,(GridView)(findViewById(R.id.gridview))), proName, imgadapt);
                     allProjects.add(newProj);
                     dbHandler.addProjectToDb(newProj);
                     setCurrentProject(newProj);

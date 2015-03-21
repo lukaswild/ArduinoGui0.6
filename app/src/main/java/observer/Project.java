@@ -418,7 +418,7 @@ public class Project extends Observable {
 
                                         ((PwmElement)currentElement).setCurrentPwm(receiveInt);
                                         ((PwmElement)currentElement).refreshRes();
-//                                        ((PwmElement)model).setCurrentPwm(receiveInt); // TODO gesetzten Status oder tatsächlichen am Arduino setzten?
+//                                        ((PwmElement)model).setCurrentPwm(receiveInt);
 //                                        ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
                                         Log.d(LOG_TAG, "im instanceof");
                                         ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);

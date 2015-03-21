@@ -230,7 +230,7 @@ public class ProjectActivity extends  Activity {
     private void fillHashMap(ArrayList<String> allProName, ArrayList<String> allProCreationDates,
                              ArrayList<String> allProLastModifiedDates, HashMap<String, ArrayList<String>> mapListDataChild) {
         for(int i = 0; i < allProName.size(); i++) {
-            ArrayList<String> child = new ArrayList<String>(); // TODO als String-Array, da die Größe immer 2 ist
+            ArrayList<String> child = new ArrayList<String>();
             Iterator mapIterator = mapListDataChild.entrySet().iterator();
 
             child.add("Erstellt am: " + allProCreationDates.get(i));

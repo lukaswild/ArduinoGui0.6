@@ -1203,7 +1203,7 @@ containing a value of this type.
         public static final int AppTheme=0x7f0c0001;
         public static final int CustomTextStyle=0x7f0c0002;
         public static final int MyAwesomeBackground_PopupStyle=0x7f0c0003;
-        /** TODO Seekbar ändern, dass es zum Hintergrun dbesser passt
+        /** TODO Seekbar ändern, dass es zum Hintergrund besser passt
          */
         public static final int MyAwesomeBackground_SeekBarStyle=0x7f0c0004;
         public static final int TextAppearance_AppCompat_Base_CompactMenu_Dialog=0x7f0c0005;

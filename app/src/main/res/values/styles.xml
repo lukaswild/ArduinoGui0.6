@@ -37,7 +37,7 @@
     </style>
 
     <style name="MyAwesomeBackground.SeekBarStyle" parent="android:Widget.SeekBar">
-        <!--TODO Seekbar ändern, dass es zum Hintergrun dbesser passt-->
+        <!--TODO Seekbar ändern, dass es zum Hintergrund besser passt-->
     </style>
 
 

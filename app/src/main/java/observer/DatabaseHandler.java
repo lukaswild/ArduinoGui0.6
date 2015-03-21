@@ -166,10 +166,11 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     }
 
 
+    // Alte Methode, um Daten am Ende in der onDestroy der MainActivity gesammelt in die DB zu speichern
     public void updateProjects(ArrayList<Project> allProjects, SQLiteDatabase db, Context context) {
 //        db.delete("projects", "", null);
 //        db.delete("elements", "", null);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS); // TODO nur Daten löschen oder ganze Tabelle löschen? Vorteil ganze Tabelle: id beginnt von vorne
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
         onCreate(db);
 
@@ -329,8 +330,6 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                     ((BoolElement) e).setStatusHigh(boolStatus);
                 } else if (eKind.equals("Pwm")) {
                     ((PwmElement) e).setCurrentPwm(status);
-                } else {
-                    //TODO es ist ein empty element. Status ??
                 }
 
 
@@ -366,7 +365,6 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
     @Override
     public void update(Observable senderClass, Object msg) {
-        // TODO Bei Hinzufügen/Löschen eines Elements auch diese Methode über notify aufrufen, evtl. zusätzlicher Parameter (int) zur Indentifikation der gewünschten Operation (insert, update, delete)
 
         if(msg instanceof ComObjectStd) {
             ComObjectStd comObj = (ComObjectStd) msg;
