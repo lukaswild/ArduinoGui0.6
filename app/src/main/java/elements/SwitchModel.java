@@ -30,9 +30,9 @@ public class SwitchModel extends BoolElement implements InputElement {
     @Override
     public void setResource(boolean status) {
         if(status)
-            super.setResource(resourceSwitchOn);
-        else
             super.setResource(resourceSwitchOff);
+        else
+            super.setResource(resourceSwitchOn);
     }
 
     public int getResourceSwitchOff() {

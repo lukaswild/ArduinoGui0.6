@@ -101,6 +101,7 @@ public class Project extends Observable {
             return R.drawable.add1;
         }
     }
+
     public Element getElementFromMap(int key){
         //Die ID der Elemnte ist eine aufsteigende Nummer. Deshalb ist die Size gleich der höchsten nummer
         if (mapAllViewModels.containsKey(key)){
@@ -287,7 +288,7 @@ public class Project extends Observable {
                         statusInt = 0;
                     ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
                     ((BoolElement) model).setStatusHigh(newStatus);
-                    ((BoolElement)model).setResource(newStatus);
+                    ((BoolElement)model).setResource(!newStatus);
 
                     ComObjectSingle comObjectSingle1 = new ComObjectSingle(model, position, id, DatabaseHandler.ACTION_NOTHING);
                     if(model instanceof PushButtonModel)
@@ -298,7 +299,13 @@ public class Project extends Observable {
                     }
                     Log.d(LOG_TAG, "Gesendet");
 
-                    // TODO eventuell kurze Verzögerung, um Benutzer daran zu hindern, sehr schnell hintereinander ein/aus zu schalten (Arduino kommt nicht mehr mit)
+                    // kurze Verzögerung, um Benutzer daran zu hindern, sehr schnell hintereinander Interaktionen zu setzen (Arduino kommt nicht mehr mit)
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        Log.e(LOG_TAG, "Thread.sleep interrupted!");
+                    }
+
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
 //                    String codeSuccessStr =  BTConnection.receiveData();
 //                    Log.d(LOG_TAG, codeSuccessStr);
