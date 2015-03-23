@@ -28,6 +28,7 @@ import elements.PwmElement;
 import elements.PwmInputModel;
 import elements.PwmModel;
 import elements.SwitchModel;
+import generic.ComObjectSingle;
 import generic.ComObjectStd;
 
 
@@ -45,10 +46,11 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
     public static final int ACTION_INSERT_ELEMENT = 0;
     public static final int ACTION_UPDATE_ELEMENT_TYPE = 4;
-    public static final int ACTION_UPDATE_ELEMENT = 1;
+    public static final int ACTION_UPDATE_ELEMENT_BOTH = 1;
     public static final int ACTION_REMOVE_ELEMENT = 2;
     public static final int ACTION_UPDATE_IDENTIFIER = 3;
     public static final int ACTION_NOTHING = 5;
+    public static final int ACTION_UPDATE_SINGLE_ELEMENT = 6;
 
 
     public DatabaseHandler(Context context) {
@@ -67,8 +69,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
-        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
-        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
 
         Log.d(LOG_TAG, "Erzeugen der Datenbank...");
         this.db = db;
@@ -114,6 +116,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     private void createTableElements(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_ELEMENTS + " (" +
                 COLUMN_ID + " integer PRIMARY KEY AUTOINCREMENT," +
+                "name text NULL," + // Name muss nicht bei jedem Element gesetzt werden --> null
                 "kind text NOT NULL," + // Bool oder Pwm
                 "type text NOT NULL," + // z.B. SwitchModel, LedModel,...
                 "position integer NOT NULL," +
@@ -132,6 +135,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     }
 
 
+    // Alte Methode zum Eintragen der Connections
     public void updateConnections(ArrayList<String> allConsName,
                                   ArrayList<String> allConsType, ArrayList<String> allConsAddress, SQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
@@ -293,16 +297,17 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
             Cursor cElements = db.rawQuery(queryAllElements, new String[]{Integer.toString(pInternalId)});
             while ((cElements.moveToNext())) {
                 int eId = cElements.getInt(0);
-                String eKind = cElements.getString(1);
-                String eType = cElements.getString(2);
-                int position = cElements.getInt(3); // Key in HashMap
-                int status = cElements.getInt(4);
-                String statusStr = cElements.getString(4);
-                String identifier = cElements.getString(5);
-                int resource = cElements.getInt(6);
-                int project_fk = cElements.getInt(7);
+                String eName = cElements.getString(1);
+                String eKind = cElements.getString(2);
+                String eType = cElements.getString(3);
+                int position = cElements.getInt(4); // Key in HashMap
+                int status = cElements.getInt(5);
+                String statusStr = cElements.getString(5);
+                String identifier = cElements.getString(6);
+                int resource = cElements.getInt(7);
+                int project_fk = cElements.getInt(8);
 
-                Log.d(LOG_TAG, pName + " ID: " + eId + " Art: " + eKind + " Typ: " + eType + " Position: " + position +
+                Log.d(LOG_TAG, pName + " ID: " + eId + " Name: " + eName + " Art: " + eKind + " Typ: " + eType + " Position: " + position +
                         " Status: " + statusStr + "Identifier: " + identifier + " Ressource: " + resource + " ProjectFk: " + project_fk);
 
                 // Erzeugen eines neuen Elements mit genau diesen Daten, um die HashMap zu füllen
@@ -320,6 +325,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                     e = new PwmModel();
                 else
                     e = new EmptyElement();
+                e.setName(eName);
                 e.setIdentifier(identifier);
                 e.setResource(resource);
 
@@ -331,7 +337,6 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                 } else if (eKind.equals("Pwm")) {
                     ((PwmElement) e).setCurrentPwm(status);
                 }
-
 
                 mapAllViewModels.put(position, e);
                 Log.d(LOG_TAG, eType + " auf Position " + position + " aus DB geholt");
@@ -366,14 +371,32 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     @Override
     public void update(Observable senderClass, Object msg) {
 
+        int actionNr = -1;
+        Element modelInput = null;
+        int inputElementPosition = -1;
+        int projectId = -1;
+        int outputElementPosition = -1;
+        Element modelOutput = null;
+
+        Element model = null;
+        int position = -1;
+
         if(msg instanceof ComObjectStd) {
             ComObjectStd comObj = (ComObjectStd) msg;
-            Element modelInput = comObj.getModelInput();
-            Element modelOutput = comObj.getModelOutput();
-            int inputElementPosition = comObj.getInputElementPosition();
-            int outputElementPosition = comObj.getOutputElementPosition();
-            int projectId = comObj.getProjectId();
-            int actionNr = comObj.getActionNr();
+            modelInput = comObj.getModelInput();
+            modelOutput = comObj.getModelOutput();
+            inputElementPosition = comObj.getInputElementPosition();
+            outputElementPosition = comObj.getOutputElementPosition();
+            projectId = comObj.getProjectId();
+            actionNr = comObj.getActionNr();
+        } else if (msg instanceof ComObjectSingle) {
+
+            ComObjectSingle comObj = (ComObjectSingle) msg;
+            model = comObj.getModel();
+            position = comObj.getPosition();
+            projectId = comObj.getProjectId();
+            actionNr = comObj.getActionNr();
+        }
 
 
             if (actionNr != ACTION_NOTHING)
@@ -389,8 +412,12 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                     replaceElementDb(modelOutput, outputElementPosition, projectId);
                     break;
 
-                case ACTION_UPDATE_ELEMENT:
+                case ACTION_UPDATE_ELEMENT_BOTH:
                     updateElementDb(modelInput, modelOutput, inputElementPosition, outputElementPosition);
+                    break;
+
+                case ACTION_UPDATE_SINGLE_ELEMENT:
+                    updateSingleElementDb(model, position);
                     break;
 
                 case ACTION_UPDATE_IDENTIFIER:
@@ -404,6 +431,31 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                 case ACTION_NOTHING:
                     break;
             }
+
+    }
+
+    private void updateSingleElementDb(Element element, int position) {
+        // TODO update über Methode update (schöner)
+        if (element instanceof BoolElement) {
+            int statusInt;
+            if (((BoolElement) element).isStatusHigh())
+                statusInt = 1;
+            else
+                statusInt = 0;
+//            values.put("projects join elements using ", ((BoolElement)modelToUpdate).isStatusHigh());
+
+//            SQLiteStatement updateOutputEl = db.compileStatement("UPDATE ? SET status = ?, resource = ? WHERE position = ?");
+//            updateOutputEl.bindString(1, TABLE_ELEMENTS);
+//            updateOutputEl.bindLong(2, statusInt);
+//            updateOutputEl.bindLong(3, modelToUpdate.getResource());
+//            updateOutputEl.bindLong(4, outputElementPosition);
+//            updateOutputEl.execute();
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + element.getName() + "', status = " + statusInt + ", identifier = '" + element.getIdentifier() + "', resource = " + element.getResource() + " WHERE position = " + position);
+            Log.d(LOG_TAG, "DB aktualisiert");
+
+        } else if (element instanceof PwmElement) {
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + element.getName() + "', status = " + ((PwmElement) element).getCurrentPwm() + ", identifier = '" + element.getIdentifier() + "', resource = " + element.getResource() + " WHERE position = " + position);
+
         }
     }
 
@@ -417,6 +469,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     }
 
     private void insertElementDb(Element modelToUpdate, int outputElementPosition, int projectId) {
+//        getDb().execSQL("DROP TABLE IF EXISTS projects");
+//        getDb().execSQL("DROP TABLE IF EXISTS elements");
         String elementKind = "";
         int status = 0;
         if (modelToUpdate instanceof BoolElement) {
@@ -433,18 +487,22 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
             elementKind = "NULL";
         }
 
-        SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ?, ? )");
-        cmdInsertElements.bindString(1, elementKind); // Bool- oder Pwm-Element
-        cmdInsertElements.bindString(2, modelToUpdate.getClass().toString()); // z.B. Switch, Led,...
-        cmdInsertElements.bindLong(3, outputElementPosition);
-        cmdInsertElements.bindLong(4, status);
-        if (modelToUpdate.getIdentifier() != null)
-            cmdInsertElements.bindString(5, modelToUpdate.getIdentifier());
+        SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ?, ?, ? )");
+        if(modelToUpdate.getName() != null)
+            cmdInsertElements.bindString(1, modelToUpdate.getName());
         else
-            cmdInsertElements.bindNull(5);
-        cmdInsertElements.bindLong(6, modelToUpdate.getResource());
+            cmdInsertElements.bindNull(1);
+        cmdInsertElements.bindString(2, elementKind); // Bool- oder Pwm-Element
+        cmdInsertElements.bindString(3, modelToUpdate.getClass().toString()); // z.B. Switch, Led,...
+        cmdInsertElements.bindLong(4, outputElementPosition);
+        cmdInsertElements.bindLong(5, status);
+        if (modelToUpdate.getIdentifier() != null)
+            cmdInsertElements.bindString(6, modelToUpdate.getIdentifier());
+        else
+            cmdInsertElements.bindNull(6);
+        cmdInsertElements.bindLong(7, modelToUpdate.getResource());
 //                Log.d(LOG_TAG, "Ressource: " + modelToUpdate.getResource());
-        cmdInsertElements.bindLong(7, projectId);
+        cmdInsertElements.bindLong(8, projectId);
         cmdInsertElements.execute();
         Log.d(LOG_TAG, "Element eingetragen: " + modelToUpdate.getClass().toString() + " Position: " + outputElementPosition + " Projekt: " + projectId);
     }
@@ -466,13 +524,13 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 //            updateOutputEl.bindLong(3, modelToUpdate.getResource());
 //            updateOutputEl.bindLong(4, outputElementPosition);
 //            updateOutputEl.execute();
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + statusInt + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + statusInt + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + statusInt + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelInput.getName() + "', status = " + statusInt + ", identifier = '" + modelInput.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
 //                  db.update(TABLE_ELEMENTS, values, "position = ?", new String[] {outputElementPosition + ""});
             Log.d(LOG_TAG, "DB aktualisiert");
         } else if (modelToUpdate instanceof PwmElement) {
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + ((PwmElement) modelInput).getCurrentPwm() + ", identifier = '" + modelInput.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelInput.getName() + "', status = " + ((PwmElement) modelInput).getCurrentPwm() + ", identifier = '" + modelInput.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
         }
     }
 
@@ -493,12 +551,12 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 //            updateOutputEl.bindLong(4, outputElementPosition);
 //            updateOutputEl.execute();
             Log.d(LOG_TAG, modelToUpdate.getIdentifier());
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + statusInt + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + statusInt + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
 
 //                  db.update(TABLE_ELEMENTS, values, "position = ?", new String[] {outputElementPosition + ""});
             Log.d(LOG_TAG, "DB aktualisiert");
         } else if (modelToUpdate instanceof PwmElement) {
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
             Log.d(LOG_TAG, "DB aktualisiert");
         }
     }

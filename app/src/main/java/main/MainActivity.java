@@ -117,6 +117,10 @@ public class MainActivity extends Activity {
 
         // Auslesen aus der Datenbank
         GridView gridView = (GridView) findViewById(R.id.gridview);
+
+//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
+//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
+
         try {
             dbHandler = new DatabaseHandler(this);
 //            db = dbHandler.getWritableDatabase();
@@ -234,7 +238,6 @@ public class MainActivity extends Activity {
 
 //        allProjects.clear();
 //        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
-//
 //        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
 //        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
     }

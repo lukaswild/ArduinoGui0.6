@@ -75,4 +75,6 @@ public class ComObjectStd {
         this.projectId = projectId;
         this.actionNr = actionNr;
     }
+
+    public ComObjectStd() {}
 }

@@ -19,7 +19,7 @@ public abstract class Element {
 
     protected int resource;
 	
-	protected void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -92,6 +92,7 @@ public abstract class Element {
     }
 
     public void registerTimeRecord(int status) {
+
         if(isFirstInteraction()) {
             setMillisFirstInteraction(System.currentTimeMillis());
             setFirstInteraction(false);

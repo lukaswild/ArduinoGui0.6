@@ -45,9 +45,9 @@ public class PushButtonModel extends BoolElement implements InputElement {
     @Override
     public void setResource(boolean statusHigh) {
         if(statusHigh)
-            super.setResource(resourceButtonOff);
-        else
             super.setResource(resourceButtonOn);
+        else
+            super.setResource(resourceButtonOff);
     }
 
     @Override

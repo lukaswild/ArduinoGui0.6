@@ -98,17 +98,14 @@ public class ImageAdapter extends BaseAdapter {
                 imgRes.put(i,elements.get(i).getResource());
             }
         }
-
     }
+
     public int getCount() {
         return imgRes.size();
-
     }
 
     public Object getItem(int position) {
-
         return  imgRes.get(position);
-
     }
 
     public int getNumberOfElements() {

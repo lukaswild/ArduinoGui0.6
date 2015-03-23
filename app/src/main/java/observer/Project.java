@@ -25,6 +25,7 @@ import elements.PushButtonModel;
 import elements.PwmElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
+import generic.ComObjectSingle;
 import generic.ComObjectStd;
 import generic.ImageAdapter;
 
@@ -285,14 +286,22 @@ public class Project extends Observable {
                     else
                         statusInt = 0;
                     ((InputElement) model).sendDataToArduino(currentConnection, code, statusInt); // Daten an Arduino senden
+                    ((BoolElement) model).setStatusHigh(newStatus);
+                    ((BoolElement)model).setResource(newStatus);
+
+                    ComObjectSingle comObjectSingle1 = new ComObjectSingle(model, position, id, DatabaseHandler.ACTION_NOTHING);
+                    if(model instanceof PushButtonModel)
+                        notify(this, comObjectSingle1);
+                    else {
+                        comObjectSingle1.setActionNr(DatabaseHandler.ACTION_UPDATE_SINGLE_ELEMENT);
+                        notify(this, comObjectSingle1);
+                    }
                     Log.d(LOG_TAG, "Gesendet");
 
                     // TODO eventuell kurze Verzögerung, um Benutzer daran zu hindern, sehr schnell hintereinander ein/aus zu schalten (Arduino kommt nicht mehr mit)
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
 //                    String codeSuccessStr =  BTConnection.receiveData();
 //                    Log.d(LOG_TAG, codeSuccessStr);
-//                    Log.d(LOG_TAG, BTConnection.receiveData());
-//                    Log.d(LOG_TAG, BTConnection.receiveData());
 
                     Iterator iterator = mapAllViewModels.entrySet().iterator();
                     while (iterator.hasNext()) {
@@ -312,23 +321,18 @@ public class Project extends Observable {
                                 // CodeSuccessStr wird nicht mehr auf Korrektheit überprüft, da Benutzer mit den gesendeten Daten machen kann,
                                 // was er will
 //                                if (codeSuccessStr.contains("100")) {
-                                    // �nderung des Status im Model
-                                    if(model instanceof BoolElement && currentElement instanceof BoolElement) {
-                                        ((BoolElement) model).setStatusHigh(newStatus);
-                                        ((BoolElement)currentElement).setStatusHigh(newStatus);
-                                        ((BoolElement)model).setResource(newStatus);
-                                        ((BoolElement)currentElement).setResource(newStatus);
-                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
-                                        if(model instanceof PushButtonModel)
-                                            notify(this, comObj);
-//                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
-                                        else {
-                                            comObj.setActionNr(DatabaseHandler.ACTION_UPDATE_ELEMENT);
-                                            notify(this, comObj);
-//                                            notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
-                                        }
+                                // �nderung des Status im Model
+                                if(model instanceof BoolElement && currentElement instanceof BoolElement) {
+                                    ((BoolElement)currentElement).setStatusHigh(newStatus);
+                                    ((BoolElement)currentElement).setResource(newStatus);
+                                    ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_NOTHING);
+                                    if(model instanceof PushButtonModel)
+                                        notify(this, comObj);
+                                    else {
+                                        comObj.setActionNr(DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH);
+                                        notify(this, comObj);
                                     }
-//                                }
+                                }
                             }
                         }
                     }
@@ -346,17 +350,13 @@ public class Project extends Observable {
                 //wird jetzt eimal der Wert 34, und einmal der Wert 128 gesendet, dann unterscheiden sich
                 //die Werte anhand der Stellen. Das macht die Überprüfung am Arduino schwieriger.
                 //Besser ist 034, oder z.B.: 009, so ist der PWM Wert immer 3 Stellen lang.
-
                 String pwm ="" ;
-                if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==1){
+                if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==1)
                     pwm= "00"+Integer.toString(((PwmElement) model).getCurrentPwm());
-                }
-                else if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==2){
+                else if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==2)
                     pwm="0"+Integer.toString(((PwmElement) model).getCurrentPwm());
-                }
-                else{
+                else
                     pwm=Integer.toString(((PwmElement) model).getCurrentPwm());
-                }
 
                 String code = CodeGenerator.generateCodeToSend(pwm,model.getIdentifier());
                 Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
@@ -365,6 +365,8 @@ public class Project extends Observable {
                     Log.d(LOG_TAG, "Model ist ein InputElement");
                     Log.d(LOG_TAG, "Senden an Arduino...");
                     ((InputElement) model).sendDataToArduino(currentConnection, code, Integer.parseInt(pwm));
+                    ComObjectSingle comObjectSingle = new ComObjectSingle(model, position, id, DatabaseHandler.ACTION_UPDATE_SINGLE_ELEMENT);
+                    notify(this, comObjectSingle);
                     Log.d(LOG_TAG, "Gesendet");
 
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
@@ -394,18 +396,15 @@ public class Project extends Observable {
                                     int receiveInt=0;
 
                                     if (codeSuccessStr.charAt(0)=='1'){
-
                                         receive +=codeSuccessStr.charAt(4);
                                         receive +=codeSuccessStr.charAt(5);
                                         receive +=codeSuccessStr.charAt(6);
                                     }
                                     else if(codeSuccessStr.charAt(0)=='W'){
-
                                         String s="";
                                         for (int i =1;i<codeSuccessStr.length();i++){
                                             s+=codeSuccessStr.charAt(i);
                                             //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
-
                                         }
                                         receiveInt=Integer.parseInt(s);
 
@@ -413,38 +412,19 @@ public class Project extends Observable {
                                     //receiveInt=Integer.parseInt(receive);
                                     Log.d(LOG_TAG, "receiveInt " + receiveInt);
 
-
                                     if(model instanceof PwmElement && currentElement instanceof PwmElement) {
-
                                         ((PwmElement)currentElement).setCurrentPwm(receiveInt);
                                         ((PwmElement)currentElement).refreshRes();
-//                                        ((PwmElement)model).setCurrentPwm(receiveInt);
-//                                        ((PwmElement)model).refreshRes(); // Darf nicht ausgeführt werden, da dadurch das Icon auf das des OutputElements gesetzt wird
-                                        Log.d(LOG_TAG, "im instanceof");
-                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH);
                                         notify(this, comObj);
-//                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
-//                                        imageAdapter.notifyDataSetChanged(); // Das gehören in update in Gui
-//                                        imageAdapter.updateTextRes(Integer.toString(receiveInt),position);
-
-
                                     }
                                 }
                             }
                         }
                     }
-
-
                 }
-
-
-
-
             }
-
         }
-        Log.d(LOG_TAG, "Kein BoolElement");
-
     }
 
 
@@ -465,6 +445,5 @@ public class Project extends Observable {
     public static int ziffernrekursiv(int zahl) {
         return (zahl>0)? 1+ziffernrekursiv(zahl/10) : 0;
     }
-
 
 }

@@ -59,6 +59,7 @@ public class DiagramActivity extends Activity {
             graphView.setTitle("Verlauf");
             graphView.getLegendRenderer().setVisible(true); // Anzeigen der Legende
             graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+            graphView.getLegendRenderer().setWidth(160);
             LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(dataPoints);
             series.setColor(graphColorStack.pop());
 
@@ -179,16 +180,6 @@ public class DiagramActivity extends Activity {
                     DataPoint[] dataPointsToAdd = getDataPointsArr(elementAtPos.getTimeRecord(), elementAtPos.getDataRecord());
                     LineGraphSeries<DataPoint> seriesToAdd = new LineGraphSeries<DataPoint>(dataPointsToAdd);
                     StringBuilder titleSeries = new StringBuilder();
-//                    if(elementAtPos.getKind().equals("Switch"))
-//                        titleSeries.append("Schalter ");
-//                    else if (elementAtPos.getKind().equals("Led"))
-//                        titleSeries.append("Led ");
-//                    else if (elementAtPos.getKind().equals("Button"))
-//                        titleSeries.append("Button ");
-//                    else if (elementAtPos.getKind().equals("Adc-Input"))
-//                        titleSeries.append(getString(R.string.diagramAdcInput));
-//                    else if (elementAtPos.getKind().equals("Adc-Element"))
-//                        titleSeries.append(getString(R.string.diagramAdcOutput));
 
                     titleSeries.append(elementAtPos.getKind());
                     titleSeries.append(" ");
@@ -197,14 +188,7 @@ public class DiagramActivity extends Activity {
                     seriesToAdd.setTitle(titleSeries.toString());
                     seriesToAdd.setColor(graphColorStack.pop());
                     graphView.addSeries(seriesToAdd);
-
-                    graphView.getLegendRenderer().setVisible(false);
-                    graphView.getLegendRenderer().setVisible(true);
-                    graphView.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
-                    graphView.getLegendRenderer().setWidth(120);
                     dialog.dismiss();
-
-
                 } else
                     Toast.makeText(getBaseContext(), "Maximale Anzahl an Datenreihen erreicht", Toast.LENGTH_SHORT).show();
 

@@ -88,7 +88,7 @@ public class Gui extends View implements IObserver {
             int actionNr = comObj.getActionNr();
 
 
-            if (actionNr == DatabaseHandler.ACTION_UPDATE_ELEMENT || actionNr == DatabaseHandler.ACTION_NOTHING) {
+            if (actionNr == DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH || actionNr == DatabaseHandler.ACTION_NOTHING || actionNr == DatabaseHandler.ACTION_UPDATE_SINGLE_ELEMENT) {
                 Log.d(LOG_TAG, "Updaten der Gui...");
                 Log.d(LOG_TAG, "outputElementPosition: " + outputElementPosition);
                 View child = gridView.getChildAt(outputElementPosition);
