@@ -128,8 +128,8 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     public int getItemInt(int position){
-        return imgRes.get(position);
-    }
+            return imgRes.get(position);
+        }
 
 
     public long getItemId(int position) {

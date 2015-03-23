@@ -34,6 +34,8 @@ import connection.EthernetConnection;
 import connection.IConnection;
 import elements.Element;
 import elements.EmptyElement;
+import elements.PwmModel;
+import generic.ComObjectStd;
 import generic.ImageAdapter;
 import observer.DatabaseHandler;
 import observer.Gui;
@@ -496,7 +498,100 @@ public class MainActivity extends Activity {
                                              }
                                          }
         );
+        final SeekBar seek3 = (SeekBar)Viewlayout.findViewById(R.id.seekBar3);
 
+
+        seek3.setProgress(imgadapt.getCount()-10);
+        seek3.setDrawingCacheBackgroundColor(Color.DKGRAY);
+
+        seek3.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                                             @Override
+                                             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                                 progress+=10;//Die Skala wird wieder veschoben, so können nur minimal 10 Elemente besetehen, -> maax 80;
+                                                 int diff =0;
+
+                                                 //Die Anzahl der Elemente wurde verringert
+                                                 try{
+
+                                                 if (progress<imgadapt.getCount()){
+                                                     diff=imgadapt.getCount()-progress;
+                                                     Log.d(LOG_TAG, "ite39:" + imgadapt.getItemInt(39));
+
+
+                                                     for (int i =imgadapt.getCount()-1;i>=imgadapt.getCount()-diff;i--){
+                                                         if (R.drawable.add1==imgadapt.getItemInt(i)){
+                                                             imgadapt.remove(i);
+                                                             currentProject.removeElement(i);
+                                                             imgadapt.notifyDataSetChanged();
+                                                            // EmptyElement emptyElement = new EmptyElement();
+                                                            // ComObjectStd comObj = new ComObjectStd(null, emptyElement, -1, i, currentProject.getId(), DatabaseHandler.ACTION_UPDATE_ELEMENT_TYPE);
+                                                            // currentProject.notify(null, comObj);
+//                                    project.notify(null, null, emptyElement, -1, position, project.getId(), DatabaseHandler.ACTION_UPDATE_ELEMENT_TYPE);
+                                                             currentProject.getMapAllViewModels().remove(i); // Model aus der HashMap entfernen
+                                                            // currentProject.getMapAllViewModels().put(i, emptyElement);
+
+                                                             Log.d(LOG_TAG,"removed 1 element !");
+                                                             Log.d(LOG_TAG,"new size:"+imgadapt.getCount());
+
+                                                             //TODO auch in die DB eintragen ?
+                                                         }
+                                                         else{
+                                                             Toast.makeText(getBaseContext(),"Die Elemente müssen leer sein !",Toast.LENGTH_SHORT).show();;
+                                                         }
+
+                                                     }
+
+                                                 }}
+                                                 catch (NullPointerException e){
+                                                     Log.d(LOG_TAG,"imgadapt:"+imgadapt.getCount());
+                                                     Log.d(LOG_TAG,"diff:"+diff);
+                                                 }
+
+                                                 try {
+
+                                                 //Die anzahl der Elemente wurde erhöht
+                                                 if (progress>imgadapt.getCount()){
+                                                        diff=progress-imgadapt.getCount();
+                                                     for (int i=0;i<diff;i++){
+                                                         imgadapt.update(R.drawable.add1,imgadapt.getCount()+i);
+                                                         currentProject.addModelToMap(imgadapt.getCount()+i,new EmptyElement());
+                                                         imgadapt.notifyDataSetChanged();
+                                                         EmptyElement element;
+//                project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
+                                                         EmptyElement emptyElement = new EmptyElement();
+                                                         ComObjectStd comObj = new ComObjectStd(null, emptyElement, -1, i, currentProject.getId(), DatabaseHandler.ACTION_UPDATE_ELEMENT_TYPE);
+                                                         currentProject.notify(null,comObj);
+
+                                                         Log.d(LOG_TAG,"added 1 element !");
+                                                         Log.d(LOG_TAG,"new size:"+imgadapt.getCount());
+
+                                                         //TODO auch in die DB eintragen ?
+                                                     }
+                                                 }
+                                                 }catch (NullPointerException e){
+                                                     Log.d(LOG_TAG,"imgadapt:"+imgadapt.getCount());
+                                                     Log.d(LOG_TAG,"diff:"+diff);
+                                                 }
+
+                                                 //Anzahl ist gleich geblieben
+                                                 if (progress==imgadapt.getCount()){
+
+                                                 }
+
+
+                                             }
+
+                                             @Override
+                                             public void onStartTrackingTouch(SeekBar seekBar) {
+
+                                             }
+
+                                             @Override
+                                             public void onStopTrackingTouch(SeekBar seekBar) {
+
+                                             }
+                                         }
+        );
 
         final Button button = (Button)Viewlayout.findViewById(R.id.buttonOK);
 
@@ -508,6 +603,8 @@ public class MainActivity extends Activity {
                 currentProject.getGui().getGridView().clearAnimation();
                 popDialog.cancel();
                 currentProject.getGui().initializeUI(currentProject, imgadapt, currentConnection, editmode);
+
+                //Verwaltung von Seekbar3 (Anzahl Elemente)
 
             }
         });

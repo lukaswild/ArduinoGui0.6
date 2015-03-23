@@ -68,11 +68,18 @@
     <string name="noConnection">keine Verb.</string>
     <string name="diagramAdcInput">"ADC-Regler "</string>
     <string name="diagramAdcOutput">"ADC-Anzeige "</string>
+    <string name="txtElementsCount">Anzahl der Elemente</string>
 
     <string-array name="arrConTypeEntries">
         <item>Bitte wählen Sie</item>
         <item>Bluetooth</item>
         <item>Ethernet</item>
+    </string-array>
+
+    <string-array name="languages">
+        <item>Sprache</item>
+        <item>Deutsch</item>
+        <item>English</item>
     </string-array>
 
 </resources>
