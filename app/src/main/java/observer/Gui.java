@@ -134,7 +134,7 @@ public class Gui extends View implements IObserver {
                     ((PwmElement) modelOutput).refreshRes();
                     String pwm = String.valueOf(((PwmElement) modelOutput).getCurrentPwm());
                     imageAdapter.update(modelOutput.getResource(), outputElementPosition);
-                   // imageAdapter.updateTextRes(pwm, outputElementPosition);
+                    // imageAdapter.updateTextRes(pwm, outputElementPosition);
                 }
 
                 Log.d(LOG_TAG, "Gui aktualisiert");
@@ -402,8 +402,6 @@ public class Gui extends View implements IObserver {
                             }
                         });
 
-
-
                         break;
 
                     case R.drawable.switch_off:
@@ -468,7 +466,6 @@ public class Gui extends View implements IObserver {
                                                              }
                                                          }
 
-
                         );
                         final Button button = (Button)viewlayout.findViewById(R.id.buttonOKPWM);
 
@@ -486,11 +483,6 @@ public class Gui extends View implements IObserver {
 
                                     project.sendDataUpdateGui(v, currentConnection, position, false);
                                 }
-
-
-
-
-
                             }
                         });
                         break;
@@ -507,8 +499,7 @@ public class Gui extends View implements IObserver {
                     case R.drawable.pwm_51:
                     case R.drawable.pwm_76_5:
                         makeToastNoInputElement(position);
-
-
+                        break;
 
                     case R.drawable.lamp_off:
                         makeToastNoInputElement(position);
@@ -758,27 +749,27 @@ public class Gui extends View implements IObserver {
 
     public void updatePWm(Element currentElement,ImageAdapter imageAdapter,int pos){
         Log.d(LOG_TAG,"in der updatePWM");
-       try {
-           Log.d(LOG_TAG,"name:"+currentElement.getName());
+        try {
+            Log.d(LOG_TAG,"name:"+currentElement.getName());
 
-           char[] tex = currentElement.getName().toCharArray();
-           String newtex = "";
-           int newpos = 0;
-           try {
-               newtex += tex[7];
-               newtex += tex[8];
+            char[] tex = currentElement.getName().toCharArray();
+            String newtex = "";
+            int newpos = 0;
+            try {
+                newtex += tex[7];
+                newtex += tex[8];
 
-           } catch (IndexOutOfBoundsException e) {
-               newtex="";
-               newtex += tex[7];
-           }
-           newpos = Integer.parseInt(newtex);
-           imageAdapter.copyTXT(pos,newpos);
-           imageAdapter.notifyDataSetChanged();
-       }
-       catch(NullPointerException e){
-           Log.d(LOG_TAG,"name ist null");
-       }
+            } catch (IndexOutOfBoundsException e) {
+                newtex="";
+                newtex += tex[7];
+            }
+            newpos = Integer.parseInt(newtex);
+            imageAdapter.copyTXT(pos,newpos);
+            imageAdapter.notifyDataSetChanged();
+        }
+        catch(NullPointerException e){
+            Log.d(LOG_TAG,"name ist null");
+        }
 
     }
 }
