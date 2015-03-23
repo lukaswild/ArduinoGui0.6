@@ -157,7 +157,6 @@ public class Gui extends View implements IObserver {
     }
 
     private void setLedStatus(ImageAdapter imageAdapter, int position, int resource) {
-        Log.d("GGGGGG", resource + "");
         imageAdapter.update(resource, position);
         View view = gridView.getChildAt(position);
         final ImageView imgView = (ImageView) view.findViewById(R.id.imageview);

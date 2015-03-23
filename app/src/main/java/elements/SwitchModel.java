@@ -18,9 +18,9 @@ public class SwitchModel extends BoolElement implements InputElement {
         super.statusHigh = statusHigh;
         super.kind = "Schalter";
         if(statusHigh)
-            super.setResource(resourceSwitchOn);
-        else
             super.setResource(resourceSwitchOff);
+        else
+            super.setResource(resourceSwitchOn);
     }
 
     public SwitchModel() {
