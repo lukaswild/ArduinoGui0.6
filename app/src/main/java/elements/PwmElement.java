@@ -8,7 +8,6 @@ public abstract class PwmElement extends Element {
 	protected int highestPwm = 255;
 	protected int currentPwm;
 
-
 	public int getCurrentPwm() {
 		return currentPwm;
 	}

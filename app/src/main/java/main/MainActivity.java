@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
 
         try {
             dbHandler = new DatabaseHandler(this);
-//            db = dbHandler.getWritableDatabase();
+           //db = dbHandler.getWritableDatabase();
             dbHandler.setDb(dbHandler.getWritableDatabase());
             allConnections = dbHandler.selectAllCons(dbHandler.getDb(), this); // funktioniert
             allProjects = dbHandler.selectAllPros(dbHandler.getDb(), this, gridView);
@@ -235,11 +235,6 @@ public class MainActivity extends Activity {
                 Element.setFirstInteraction(true);
             }
         }
-
-//        allProjects.clear();
-//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS connections");
-//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS projects");
-//        dbHandler.getDb().execSQL("DROP TABLE IF EXISTS elements");
     }
 
 

@@ -361,7 +361,7 @@ public class Project extends Observable {
                 String code = CodeGenerator.generateCodeToSend(pwm,model.getIdentifier());
                 Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
-                if (model instanceof InputElement){
+                if (model instanceof InputElement) {
                     Log.d(LOG_TAG, "Model ist ein InputElement");
                     Log.d(LOG_TAG, "Senden an Arduino...");
                     ((InputElement) model).sendDataToArduino(currentConnection, code, Integer.parseInt(pwm));
@@ -370,7 +370,7 @@ public class Project extends Observable {
                     Log.d(LOG_TAG, "Gesendet");
 
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
-                    String codeSuccessStr =  BTConnection.receiveData();
+                    String codeSuccessStr = BTConnection.receiveData();
                     Log.d(LOG_TAG, codeSuccessStr);
                     Log.d(LOG_TAG, BTConnection.receiveData());
                     Log.d(LOG_TAG, BTConnection.receiveData());
@@ -382,7 +382,7 @@ public class Project extends Observable {
 
                         if (currentElement instanceof OutputElement) {
                             String identifierCurEl = currentElement.getIdentifier();
-                            if(model.getIdentifier().equals(identifierCurEl)) {
+                            if (model.getIdentifier().equals(identifierCurEl)) {
                                 // Dazugehöriges OutputElement gefunden
                                 Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
                                 Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
@@ -392,35 +392,52 @@ public class Project extends Observable {
 
                                 if (codeSuccessStr.contains("W")) {
                                     // �nderung des Status im Model
-                                    String receive ="";
-                                    int receiveInt=0;
+                                    String receive = "";
+                                    int receiveInt = 0;
 
-                                    if (codeSuccessStr.charAt(0)=='1'){
-                                        receive +=codeSuccessStr.charAt(4);
-                                        receive +=codeSuccessStr.charAt(5);
-                                        receive +=codeSuccessStr.charAt(6);
-                                    }
-                                    else if(codeSuccessStr.charAt(0)=='W'){
-                                        String s="";
-                                        for (int i =1;i<codeSuccessStr.length();i++){
-                                            s+=codeSuccessStr.charAt(i);
+                                    if (codeSuccessStr.charAt(0) == '1') {
+                                        try {
+
+                                            receive += codeSuccessStr.charAt(4);
+                                            receive += codeSuccessStr.charAt(5);
+                                            receive += codeSuccessStr.charAt(6);
+                                        } catch (IndexOutOfBoundsException e) {
+                                            Log.d(LOG_TAG, "Fehler im iNdex, bei Project l404 ");
+                                        }
+                                    } else if (codeSuccessStr.charAt(0) == 'W') {
+                                        String s = "";
+                                        for (int i = 1; i < codeSuccessStr.length(); i++) {
+                                            s += codeSuccessStr.charAt(i);
                                             //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
                                         }
-                                        receiveInt=Integer.parseInt(s);
+                                        receiveInt = Integer.parseInt(s);
 
                                     }
                                     //receiveInt=Integer.parseInt(receive);
                                     Log.d(LOG_TAG, "receiveInt " + receiveInt);
 
-                                    if(model instanceof PwmElement && currentElement instanceof PwmElement) {
-                                        ((PwmElement)currentElement).setCurrentPwm(receiveInt);
-                                        ((PwmElement)currentElement).refreshRes();
-                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer)entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH);
+                                    if (model instanceof PwmElement && currentElement instanceof PwmElement) {
+
+                                        Log.d(LOG_TAG, "im instanceof");
+                                        ((PwmElement) currentElement).setCurrentPwm(Integer.parseInt(pwm));
+                                        ((PwmElement) currentElement).refreshRes();
+
+                                        //Der Name sieht aus wie: elemnt20
+                                        //20 wäre die position im imgadapt. diese wird benötigt. Die werte stehen an der Position
+
+                                        gui.updatePWm(currentElement, pwm, imageAdapter);
+
+
+                                        ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH);
                                         notify(this, comObj);
+//                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
+
                                     }
                                 }
                             }
                         }
+                    
+                
                     }
                 }
             }

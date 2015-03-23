@@ -1,6 +1,6 @@
-F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\classes\debug
-F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-a4e99bb09db83315001218d362c2ad030bbe2f2c.jar
-F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\classes-8d47e7cf8939a02877017d083cc401d1fb29f03b.jar
-F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-c6896383fa0a25f0d486a39f7a7816f9de6e3aa2.jar
-F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\classes-0e20d4da2eb6fd768fa2c556073ceed5e12c5a18.jar
-F:\HTL\DIPLOMARBEIT\AndroidStudio\ArduinoGuiGit\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\classes-0722f220166d9114a75551ad1583a29e8042f890.jar
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\classes\debug
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-973bcfea4eee43b6a9f1f9c9375ff5e83ea01656.jar
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\classes-f1c8fdc5a3fe25daebbf5a64c13da1b0e8a137a5.jar
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-e31a167a2115b3e48205dc4b32b80d273a2d0801.jar
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\classes-e720b045f5ba4d781606ca12da51d75b52e68917.jar
+C:\Users\Lukas\AndroidstudioProjects\ArduinoGui0.6\app\build\intermediates\pre-dexed\debug\classes-74daff9cbb8dcc154939601dea897a0b0ff499e2.jar

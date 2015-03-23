@@ -237,81 +237,101 @@ public class Gui extends View implements IObserver {
                                             switch (item2.getItemId()) {
                                                 case R.id.p1:
                                                     setIdentifier(project, position, "P1");
+                                                    imgadapt.updateIdentRes("P1",position);
                                                     break;
 
                                                 case R.id.p2:
                                                     setIdentifier(project, position, "P2");
+                                                    imgadapt.updateIdentRes("P2",position);
                                                     break;
 
                                                 case R.id.p3:
                                                     setIdentifier(project, position, "P3");
+                                                    imgadapt.updateIdentRes("P3",position);
                                                     break;
 
                                                 case R.id.p4:
                                                     setIdentifier(project, position, "P4");
+                                                    imgadapt.updateIdentRes("P4",position);
                                                     break;
 
                                                 case R.id.p5:
                                                     setIdentifier(project, position, "P5");
+                                                    imgadapt.updateIdentRes("P5",position);
                                                     break;
 
                                                 case R.id.p6:
                                                     setIdentifier(project, position, "P6");
+                                                    imgadapt.updateIdentRes("P6",position);
                                                     break;
 
                                                 case R.id.p7:
                                                     setIdentifier(project, position, "P7");
+                                                    imgadapt.updateIdentRes("P7",position);
                                                     break;
 
                                                 case R.id.p8:
                                                     setIdentifier(project, position, "P8");
+                                                    imgadapt.updateIdentRes("P8",position);
                                                     break;
 
                                                 case R.id.p9:
                                                     setIdentifier(project, position, "P9");
+                                                    imgadapt.updateIdentRes("P9",position);
                                                     break;
 
                                                 case R.id.p10:
                                                     setIdentifier(project, position, "P10");
+                                                    imgadapt.updateIdentRes("P10",position);
                                                     break;
 
                                                 case R.id.p11:
                                                     setIdentifier(project, position, "P11");
+                                                    imgadapt.updateIdentRes("P11",position);
                                                     break;
 
                                                 case R.id.p12:
                                                     setIdentifier(project, position, "P12");
+                                                    imgadapt.updateIdentRes("P12",position);
                                                     break;
 
                                                 case R.id.p13:
                                                     setIdentifier(project, position, "P13");
+                                                    imgadapt.updateIdentRes("P13",position);
                                                     break;
 
                                                 case R.id.p14:
                                                     setIdentifier(project, position, "P14");
+                                                    imgadapt.updateIdentRes("P14",position);
                                                     break;
 
                                                 case R.id.p15:
                                                     setIdentifier(project, position, "P15");
+                                                    imgadapt.updateIdentRes("P15",position);
                                                     break;
 
                                                 case R.id.a1:
                                                     setIdentifier(project, position, "A1");
+                                                    imgadapt.updateIdentRes("A1",position);
                                                     break;
                                                 case R.id.a2:
                                                     setIdentifier(project, position, "A2");
+                                                    imgadapt.updateIdentRes("A2",position);
                                                     break;
 
                                                 case R.id.a3:
                                                     setIdentifier(project, position, "A3");
+                                                    imgadapt.updateIdentRes("A3",position);
                                                     break;
 
                                                 case R.id.a4:
                                                     setIdentifier(project, position, "A4");
+                                                    imgadapt.updateIdentRes("A4",position);
                                                     break;
 
                                                 case R.id.a5:
                                                     setIdentifier(project, position, "A5");
+                                                    imgadapt.updateIdentRes("A5",position);
                                                     break;
 
                                                 default:
@@ -478,11 +498,14 @@ public class Gui extends View implements IObserver {
                                 popDialog.cancel();
                                 //Wert des bild setzen
                                 imgadapt.notifyDataSetChanged();
-                                try {
-                                    project.sendDataUpdateGui(v, currentConnection, position, false);
-                                } catch (NullPointerException e) {
+                                if (null==currentConnection) {
                                     makeToastNoConnection();
                                 }
+                                else{
+                                    project.sendDataUpdateGui(v, currentConnection, position, false);
+                                }
+
+
 
                             }
                         });
@@ -581,7 +604,7 @@ public class Gui extends View implements IObserver {
                 imgadapt.notifyDataSetChanged();
                 PwmModel newPwmModel = new PwmModel(ELEMENT_NAME + Integer.toString(position));
 //                project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
-                imgadapt.updateTextRes("0", position);
+                imgadapt.updateTextRes("20", position);
                 imgadapt.notifyDataSetChanged();
                 addToMapAndNotifyDb(position, project, newPwmModel);
                 return true;
@@ -729,4 +752,36 @@ public class Gui extends View implements IObserver {
             imgadapt.update(resource, position);
         }
     }
+
+    public void updatePWm(Element currentElement,String pwm,ImageAdapter imageAdapter){
+       try {
+           Log.d(LOG_TAG,"name:"+currentElement.getName());
+
+           char[] tex = currentElement.getName().toCharArray();
+           String newtex = "";
+           int newpos = 0;
+
+
+           try {
+               newtex += tex[7];
+               newtex += tex[8];
+
+           } catch (IndexOutOfBoundsException e) {
+               newtex="";
+               newtex += tex[7];
+           }
+           newpos = Integer.parseInt(newtex);
+           Log.d(LOG_TAG,"pos"+newpos);
+           Log.d(LOG_TAG,"pwm"+pwm);
+           imageAdapter.updateTextRes("21",newpos);
+           imageAdapter.notifyDataSetChanged();
+           Log.d(LOG_TAG,"wert:"+imageAdapter.getTextRes(newpos));
+
+       }
+       catch(NullPointerException e){
+           Log.d(LOG_TAG,"name ist null");
+       }
+
+    }
 }
+

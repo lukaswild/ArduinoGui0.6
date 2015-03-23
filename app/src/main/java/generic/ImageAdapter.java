@@ -33,6 +33,9 @@ public class ImageAdapter extends BaseAdapter {
     //Felder
     private static HashMap<Integer, Integer> imgRes = new HashMap<Integer, Integer>();
     private static HashMap<Integer, String> textRes = new HashMap<Integer, String>();
+
+    private static HashMap<Integer, String> identRes = new HashMap<Integer, String>();
+
     private Context mContext;
 
     //vorher, war langth und width angegeben, da die symbole quadratisc sind, ist das nicht gut
@@ -56,9 +59,17 @@ public class ImageAdapter extends BaseAdapter {
     public void updateTextRes(String element, int key){
         textRes.put(key, element);
     }
+
+    public void updateIdentRes(String element, int key){
+        identRes.put(key, element);
+    }
     public String getTextRes(int key){
         return  textRes.get(key);
     }
+    public String getIdentRes(int key){
+        return  identRes.get(key);
+    }
+
 
 
     public int getLength() {
@@ -154,6 +165,7 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         imgView.setTag(getItemInt(position));
+        txtView.setText(textRes.get(position));
 
         setImgVisibility(txtView, position);
 
@@ -170,65 +182,40 @@ public class ImageAdapter extends BaseAdapter {
     private void setImgVisibility(TextView txtView, int position){
 
         if (getItemInt(position)==R.drawable.pwm_0){
-            txtView.setText(getTextRes(position));
-
-
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_25_5){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_51){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_76_5){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_102){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_127_5){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_153){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_178_5){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_204){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
 
         else if (getItemInt(position)==R.drawable.pwm_229_5){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_255){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
         else if (getItemInt(position)==R.drawable.pwm_slider){
-
-            txtView.setText(getTextRes(position));
             txtView.setVisibility(View.VISIBLE);
         }
 
