@@ -511,8 +511,23 @@ public class Gui extends View implements IObserver {
                         });
                         break;
 
+                    case R.drawable.pwm_102:
+                    case R.drawable.pwm_0:
+                    case R.drawable.pwm_127_5:
+                    case R.drawable.pwm_153:
+                    case R.drawable.pwm_178_5:
+                    case R.drawable.pwm_204:
+                    case R.drawable.pwm_229_5:
+                    case R.drawable.pwm_255:
+                    case R.drawable.pwm_25_5:
+                    case R.drawable.pwm_51:
+                    case R.drawable.pwm_76_5:
+                        makeToastNoInputElement(position);
+
+
+
                     case R.drawable.lamp_off:
-                        Toast.makeText(getContext(), "Element " + position + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
+                        makeToastNoInputElement(position);
                         break;
 
 ////////// sollte aktiviert bleiben, solange angeklickt ////////////////
@@ -537,6 +552,10 @@ public class Gui extends View implements IObserver {
 
 
 
+    }
+
+    private void makeToastNoInputElement(int position) {
+        Toast.makeText(getContext(), "Element auf Position " + position + 1 + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
     }
 
 
