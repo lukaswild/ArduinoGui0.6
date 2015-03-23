@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,6 +56,7 @@ public class MainActivity extends Activity {
 
     public static ImageAdapter imgadapt;
     public static Gui gui;
+    public static int lenghtIMGset=0;
 
     private MainFragment dataFragment;
     private final int REQUEST_CODE_NEW_CON = 100;
@@ -115,6 +117,7 @@ public class MainActivity extends Activity {
         }
 
         imgadapt = new ImageAdapter(this, MainActivity.this, 40);
+        getDisplayVals();//legt die Größe der Bilder im Imgadapt fest
         setCurrentProjectFirstTime(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),getString(R.string.noProjekt),  imgadapt)); // weiter unten in else nun
 
         // Auslesen aus der Datenbank
@@ -270,6 +273,25 @@ public class MainActivity extends Activity {
                 Log.d(LOG_TAG, "Aktuell keine Verbindung ausgewählt");
             }
 
+        }
+
+    }
+
+    public void getDisplayVals(){
+        //Die Bilder sollten ungefähr ein viertel der Bildschirmbreite ausmachen.
+        //Um einen absoluten Wert zu erreichen, wird die Displaybreite ausgerechnet -> dpi * pixel = displaybreiet in inch
+
+        //Das ganze soll nur inmal ausgeführt werden
+        if (lenghtIMGset==0) {
+
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int width = (int) (dm.xdpi * dm.widthPixels);
+            int newwidth = (int) ((width / 3.5)/dm.xdpi);
+
+
+            imgadapt.setLength(newwidth);
+            lenghtIMGset=1;
         }
 
     }

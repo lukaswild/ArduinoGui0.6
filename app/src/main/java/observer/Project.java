@@ -357,6 +357,7 @@ public class Project extends Observable {
                 //wird jetzt eimal der Wert 34, und einmal der Wert 128 gesendet, dann unterscheiden sich
                 //die Werte anhand der Stellen. Das macht die Überprüfung am Arduino schwieriger.
                 //Besser ist 034, oder z.B.: 009, so ist der PWM Wert immer 3 Stellen lang.
+
                 String pwm ="" ;
                 if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==1)
                     pwm= "00"+Integer.toString(((PwmElement) model).getCurrentPwm());
@@ -425,16 +426,14 @@ public class Project extends Observable {
 
                                     if (model instanceof PwmElement && currentElement instanceof PwmElement) {
 
+
                                         Log.d(LOG_TAG, "im instanceof");
                                         ((PwmElement) currentElement).setCurrentPwm(Integer.parseInt(pwm));
                                         ((PwmElement) currentElement).refreshRes();
 
-                                        //Der Name sieht aus wie: elemnt20
-                                        //20 wäre die position im imgadapt. diese wird benötigt. Die werte stehen an der Position
+                                       gui.updatePWm(currentElement,imageAdapter,position);
 
-                                        gui.updatePWm(currentElement, pwm, imageAdapter);
-
-
+                                       imageAdapter.notifyDataSetChanged();
                                         ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH);
                                         notify(this, comObj);
 //                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
@@ -446,9 +445,18 @@ public class Project extends Observable {
                     
                 
                     }
+
+
                 }
+
+
+
+
             }
+
         }
+        Log.d(LOG_TAG, "Kein BoolElement");
+
     }
 
 
@@ -469,5 +477,6 @@ public class Project extends Observable {
     public static int ziffernrekursiv(int zahl) {
         return (zahl>0)? 1+ziffernrekursiv(zahl/10) : 0;
     }
+
 
 }
