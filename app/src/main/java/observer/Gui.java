@@ -539,7 +539,7 @@ public class Gui extends View implements IObserver {
     }
 
     private void makeToastNoInputElement(int position) {
-        Toast.makeText(getContext(), "Element auf Position " + position + 1 + " ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Element ist kein Eingabelement!", Toast.LENGTH_SHORT).show();
     }
 
 
