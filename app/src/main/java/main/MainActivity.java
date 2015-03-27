@@ -117,8 +117,9 @@ public class MainActivity extends Activity {
         }
 
         imgadapt = new ImageAdapter(this, MainActivity.this, 40);
-        getDisplayVals();//legt die Größe der Bilder im Imgadapt fest
+      //  getDisplayVals();//legt die Größe der Bilder im Imgadapt fest TODO wieder einbauen
         setCurrentProjectFirstTime(new Project(new Gui(this,2,(GridView)findViewById(R.id.gridview)),getString(R.string.noProjekt),  imgadapt)); // weiter unten in else nun
+        currentProject.getGui().getGridView().setNumColumns(3);
 
         // Auslesen aus der Datenbank
         GridView gridView = (GridView) findViewById(R.id.gridview);
@@ -520,7 +521,9 @@ public class MainActivity extends Activity {
                                              }
                                          }
         );
-        final SeekBar seek3 = (SeekBar)Viewlayout.findViewById(R.id.seekBar3);
+        //TODO wieder einbauen und richten
+        //deaktiviert am27.03, da Martin  Huber
+       /* final SeekBar seek3 = (SeekBar)Viewlayout.findViewById(R.id.seekBar3);
 
 
         seek3.setProgress(imgadapt.getCount()-10);
@@ -614,7 +617,7 @@ public class MainActivity extends Activity {
                                              }
                                          }
         );
-
+*/
         final Button button = (Button)Viewlayout.findViewById(R.id.buttonOK);
 
         button.setOnClickListener(new View.OnClickListener() {

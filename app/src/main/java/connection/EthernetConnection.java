@@ -22,7 +22,7 @@ public class EthernetConnection implements IConnection {
     private final static String LOG_TAG = "EthernetConnection";
     private static String conName = ""; // Name der Connection
     private static String ipAddress = "";
-    private static int conPort = 23; //Telnet
+    private static int conPort = 80; //Telnet
     private static EthernetConnection instance = null;
 
 
