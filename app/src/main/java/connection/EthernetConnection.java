@@ -126,8 +126,7 @@ public class EthernetConnection implements IConnection {
     }
 
 
-    //    @Override
-    public void closeConnection() {
+    public static void closeConnection() {
         instance = null;
     }
 
@@ -160,7 +159,7 @@ public class EthernetConnection implements IConnection {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Error at sending data!!!");
+                Log.e(LOG_TAG, "Fehler beim Senden der Daten");
             }
 
             return null;
@@ -187,12 +186,12 @@ public class EthernetConnection implements IConnection {
                 BufferedReader reader = new BufferedReader(streamReader);
 
                 message = reader.readLine();
-                System.out.println("New message: " + message);
+                Log.d(LOG_TAG, "Neue Nachricht: " + message);
                 reader.close();
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Error at receiving data!!!");
+                Log.e(LOG_TAG, "Error at receiving data!!!");
             }
 
             return message;

@@ -3,10 +3,6 @@ package connection;
 public interface IConnection {
 	
 	public void sendData(String data);
-	
-//	public String receiveData();
-	
-//	public void closeConnection();
 
     public void setConName(String name);
 

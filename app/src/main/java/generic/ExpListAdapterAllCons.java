@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import connection.BTConnection;
+import connection.EthernetConnection;
 import main.ConnectionActivity;
 import main.MainActivity;
 
@@ -66,13 +67,18 @@ public class ExpListAdapterAllCons extends ExpandableListAdapterGeneric {
                         tglBtnChooseCloseCon.setChecked(false);
                         Toast.makeText(context, "Fehler. Mögliche Ursachen: \n" +
                                 "- Bluetooth ausgeschaltet \n" +
+                                "- Keine Netzwerkverbindung \n" +
                                 "- Es besteht bereits eine Verbindung\n" +
                                 "- Falsche Adresse", Toast.LENGTH_LONG).show();
                         Log.e(LOG_TAG, "Es besteht entweder bereits eine Verbindung, die MAC- bzw. IP-Adresse ist falsch oder " +
                                 "BT ist disabled");
                     }
                 } else { // Wenn Verbindung beendet werden soll
-                    BTConnection.closeConnection();
+                    if (MainActivity.getCurrentConnection() instanceof BTConnection)
+                        BTConnection.closeConnection();
+                    else
+                        EthernetConnection.closeConnection();
+
                     MainActivity.setCurrentConnection(null);
                     Log.d(LOG_TAG, "Verbindung wird beendet");
                 }
