@@ -115,6 +115,7 @@ public class Gui extends View implements IObserver {
                     modelOutput.getDataRecord().add(0);
                 }
                 modelOutput.getTimeRecord().add((int) timeDifference);
+                Log.d("EEEEE", "hinzugefügt");
                 int statusToAdd = 0;
 
                 if (modelOutput instanceof BoolElement) {
@@ -134,6 +135,7 @@ public class Gui extends View implements IObserver {
                     ((PwmElement) modelOutput).refreshRes();
                     String pwm = String.valueOf(((PwmElement) modelOutput).getCurrentPwm());
                     imageAdapter.update(modelOutput.getResource(), outputElementPosition);
+                    modelOutput.getDataRecord().add(((PwmElement)modelOutput).getCurrentPwm());
                     // imageAdapter.updateTextRes(pwm, outputElementPosition);
                 }
 

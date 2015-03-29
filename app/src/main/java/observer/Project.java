@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import connection.BTConnection;
 import connection.IConnection;
 import elements.BoolElement;
 import elements.Element;
@@ -377,11 +376,17 @@ public class Project extends Observable {
                     notify(this, comObjectSingle);
                     Log.d(LOG_TAG, "Gesendet");
 
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        Log.e(LOG_TAG, "Thread.sleep interrupted!");
+                    }
+
                     // Überprüfung, ob Erfolgscode 100 von Arduino ankommt. Wenn ja --> Gui aktualisieren
-                    String codeSuccessStr = BTConnection.receiveData();
-                    Log.d(LOG_TAG, codeSuccessStr);
-                    Log.d(LOG_TAG, BTConnection.receiveData());
-                    Log.d(LOG_TAG, BTConnection.receiveData());
+//                    String codeSuccessStr = BTConnection.receiveData();
+//                    Log.d(LOG_TAG, codeSuccessStr);
+//                    Log.d(LOG_TAG, BTConnection.receiveData());
+//                    Log.d(LOG_TAG, BTConnection.receiveData());
 
                     Iterator iterator2 = mapAllViewModels.entrySet().iterator();
                     while (iterator2.hasNext()) {
@@ -395,34 +400,34 @@ public class Project extends Observable {
                                 Log.d(LOG_TAG, "Verknüpftes Outputelement gefunden: " + currentElement.getName() + " Identifier: " + currentElement.getIdentifier());
                                 Log.d(LOG_TAG, "Position des OutputElements: " + entry.getKey());
 
-                                codeSuccessStr.trim();
-                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
+//                                codeSuccessStr.trim();
+//                                Log.d(LOG_TAG, "codeSuccessStr: " + codeSuccessStr);
 
-                                if (codeSuccessStr.contains("W")) {
-                                    // �nderung des Status im Model
-                                    String receive = "";
-                                    int receiveInt = 0;
+//                                if (codeSuccessStr.contains("W")) {
+//                                    // �nderung des Status im Model
+//                                    String receive = "";
+//                                    int receiveInt = 0;
 
-                                    if (codeSuccessStr.charAt(0) == '1') {
-                                        try {
-
-                                            receive += codeSuccessStr.charAt(4);
-                                            receive += codeSuccessStr.charAt(5);
-                                            receive += codeSuccessStr.charAt(6);
-                                        } catch (IndexOutOfBoundsException e) {
-                                            Log.d(LOG_TAG, "Fehler im iNdex, bei Project l404 ");
-                                        }
-                                    } else if (codeSuccessStr.charAt(0) == 'W') {
-                                        String s = "";
-                                        for (int i = 1; i < codeSuccessStr.length(); i++) {
-                                            s += codeSuccessStr.charAt(i);
-                                            //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
-                                        }
-                                        receiveInt = Integer.parseInt(s);
-
-                                    }
+//                                    if (codeSuccessStr.charAt(0) == '1') {
+//                                        try {
+//
+//                                            receive += codeSuccessStr.charAt(4);
+//                                            receive += codeSuccessStr.charAt(5);
+//                                            receive += codeSuccessStr.charAt(6);
+//                                        } catch (IndexOutOfBoundsException e) {
+//                                            Log.e(LOG_TAG, "Fehler im iNdex, bei Project l404 ");
+//                                        }
+//                                    } else if (codeSuccessStr.charAt(0) == 'W') {
+//                                        String s = "";
+//                                        for (int i = 1; i < codeSuccessStr.length(); i++) {
+//                                            s += codeSuccessStr.charAt(i);
+//                                            //receive +=Integer.parseInt((String)codeSuccessStr.charAt(i));
+//                                        }
+//                                        receiveInt = Integer.parseInt(s);
+//
+//                                    }
                                     //receiveInt=Integer.parseInt(receive);
-                                    Log.d(LOG_TAG, "receiveInt " + receiveInt);
+//                                    Log.d(LOG_TAG, "receiveInt " + receiveInt);
 
                                     if (model instanceof PwmElement && currentElement instanceof PwmElement) {
 
@@ -439,7 +444,7 @@ public class Project extends Observable {
 //                                        notify(this, model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT);
 
                                     }
-                                }
+//                                }
                             }
                         }
                     
