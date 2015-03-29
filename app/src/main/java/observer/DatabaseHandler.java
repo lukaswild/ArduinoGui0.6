@@ -80,16 +80,16 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
         createTableElements(db);
     }
 
-    @Override
-    public void onOpen(SQLiteDatabase db) {
-        super.onOpen(db);
-        Log.d(LOG_TAG, "Öffnen der Datenbank...");
-        //db.execSQL("DROP TABLE IF EXISTS connections");
+        @Override
+        public void onOpen(SQLiteDatabase db) {
+            super.onOpen(db);
+            Log.d(LOG_TAG, "Öffnen der Datenbank...");
+            //db.execSQL("DROP TABLE IF EXISTS connections");
 //        db.execSQL("DROP TABLE IF EXISTS projects");
 //        db.execSQL("DROP TABLE IF EXISTS elements");
-        createTableConnections(db);
-        createTableProjects(db);
-        createTableElements(db);
+            createTableConnections(db);
+            createTableProjects(db);
+            createTableElements(db);
     }
 
 
