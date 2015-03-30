@@ -21,6 +21,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.arduinogui.HelpActivity;
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
@@ -35,8 +36,6 @@ import connection.EthernetConnection;
 import connection.IConnection;
 import elements.Element;
 import elements.EmptyElement;
-import elements.PwmModel;
-import generic.ComObjectStd;
 import generic.ImageAdapter;
 import observer.DatabaseHandler;
 import observer.Gui;
@@ -312,7 +311,7 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            ShowDialog();
+            showDialog();
 
             return  false;
         }
@@ -322,6 +321,10 @@ public class MainActivity extends Activity {
         }
         if (id == R.id.newproject) {
             startActivityProject();
+            return true;
+        }
+        if(id == R.id.help) {
+            startActivityHelp();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -363,6 +366,12 @@ public class MainActivity extends Activity {
                     false);
             return rootView;
         }
+    }
+
+    private void startActivityHelp() {
+        Log.d(LOG_TAG, "HelpActivity wird gestartet...");
+        Intent newHelpIntent = new Intent(this, HelpActivity.class);
+        startActivity(newHelpIntent);
     }
 
     private void startActivityConnection() {
@@ -457,7 +466,7 @@ public class MainActivity extends Activity {
     }
 
 
-    public void ShowDialog(){
+    public void showDialog(){
 
         final Dialog popDialog = new Dialog(this);
         popDialog.setCancelable(true);

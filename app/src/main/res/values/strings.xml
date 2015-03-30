@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ArduinoGui</string>
+    <string name="app_name">ArduinoGUI</string>
     <string name="app_name_connection">Verbindung einrichten</string>
     <string name="app_name_project">Projekt einrichten</string>
     <string name="action_settings">Einstellungen</string>
@@ -75,11 +75,64 @@
         <item>Bluetooth</item>
         <item>Ethernet</item>
     </string-array>
-
     <string-array name="languages">
         <item>Sprache</item>
         <item>Deutsch</item>
         <item>English</item>
     </string-array>
+
+    <string name="title_activity_help">Hilfe</string>
+    <string name="start_activity_help">Hilfe</string>
+
+    <string name="strHelpH1">Was ist ein Arduino?</string>
+    <string name="strHelpA1">Beim Arduino handelt es sich um den wohl gängigsten Mikrocontroller am Markt.
+        Ob man damit das eigene Garagentor steuert, oder die Beleuchtung des Eiffelturms, bleibt einem selbst überlassen.
+        Die Grenzen des Machbaren sind dabei meist die Grenzen der eigenen Kreativität, denn der Arduino steht für das Universal -
+        Bastler - Werkzeug schlechthin.
+        Mit ArduinoGUI ist es nun möglich, Ihre eigenen Arudino-Produkte bzw. -Projekte vom
+        Smartphone aus steuern und somit auch von der Ferne aus benutzen zu können. </string>
+
+    <string name="strHelpH2">Wie kann ich ArduinoGUI mit meinem eigenen Arduino-Projekt verwenden?</string>
+    <string name="strHelpA2">Beim ersten Start erscheinen auf der Oberfläche einige Plus-Symbole, welche von Ihnen mit Elementen
+        besetzt werden können.
+        Am unteren Ende des Bildschirms befindet sich in der Mitte ein Button, mit dem der Editier-Modus (Bearbeitungs-Modus)
+        ein- bzw. ausgeschaltet werden kann.
+        Im Edit-Mode können Elemente gelöscht, auf andere Quellen geschaltet werden oder deren Verlaufsdiagramme gezeichnet werden.
+        Ist der Editier-Modus deaktiviert, so können die Elemente wie vorgesehen verwendet werden: Ein Button bleibt solange
+        aktiviert, wie angeklickt, ein Schalter kann Ein-/Aus-Signale senden, ADC-Elemente können Werte von 0 bis 255 annehmen.
+        Ist ein Element hinzugefügt, so kann im Edit-Modus der <i>Idientifier</i> bestimmt werden. Dies ist der Pin, der zusammen mit
+        dem Wert bei Betätigen des Elements an den Arduino gesendet werden soll.
+    </string>
+
+    <string name="strHelpH3">Wie baue ich eine Verbindung auf?</string>
+    <string name="strHelpA3">ArduinoGUI bietet 3 Möglichkeiten sich mit dem Arduino zu verbinden:
+        über Bluetooth, Wlan oder Ethernet. Für alle Betriebsmöglichkeiten wird das entsprechende Shield benötigt.
+        Bluetooth: Einfachste Verbindungsart, einfach von App aus Bluetooth-Modul des Arduinos suchen und verbinden – fertig.
+        Ethernet-/WLAN-Shield: Arduino kann über einen Router in das Netzwerk.
+        Am Smartphone stellt man dann die IP-Adresse des Wlan- bzw. Ethernet- Shields ein – fertig.
+    </string>
+
+    <string name="strHelpH4">Wie bringe ich meinen Arduino dazu, mit der App zu kommunizieren?</string>
+    <string name="strHelpA4">Für die Kommunikation muss die jeweilige Methode in das Arduino-Programm implementiert werden.
+        Für das Auslesen der gesendeten Daten muss die Library ArduinoGui verwendet werden, welche auf unserer Website zum
+        Download zur Verfügung gestellt wird. Auf unserer Website befinden sich ebenso Beispielprogramme zu Bluetooth, Ethernet
+        und WLAN. Sobald im App das mit dem Eingabeelement verbundene Ausgabeelement aktualisiert werden soll, muss vom Arduino
+        aus der empfangene Code einfach an das Smartphone zurückgesendet werden.
+    </string>
+
+    <string name="strHelpH5">Ich sende Daten, aber die Anzeigeelemente werden nicht aktualisiert</string>
+    <string name="strHelpA5">Um die Anzeigeelemente zu aktualisieren, müssen Sie an der gewünschten Stelle den am Arduino
+        empfangenen Code einfach an die App zurück senden. Erst dann erfolgt die Aktualisierung des Anzeigeelements. Somit
+        können Sie die gesendeten Daten noch bearbeiten und das Anzeigeelement auch erst zu einem späteren gewünschten Zeitpunkt
+        aktualisieren.</string>
+
+    <string name="strHelpH6">Die im Diagramm angezeigten Daten sind nicht vollständig</string>
+    <string name="strHelpA6">In den Verlaufsdiagrammen werden nur jene Zustände abgebildet, welche seit dem letzten Start der
+        App geändert wurden. </string>
+
+    <string name="strHelpH7">Der Zeitnullpunkt des Diagramms stimmt nicht</string>
+    <string name="strHelpA7">Zeitnullpunkt der Diagramme ist immer die erste Benutzerinteraktion, bei der Daten gesendet werden,
+        seit neuerlichem Start der App. </string>
+
 
 </resources>

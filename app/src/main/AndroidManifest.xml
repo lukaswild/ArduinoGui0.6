@@ -52,6 +52,14 @@
             android:name="main.DiagramActivity"
             android:label="@string/title_activity_diagram" >
         </activity>
+        <activity
+            android:name="main.HelpActivity"
+            android:label="@string/title_activity_help" >
+        </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/title_activity_help" >
+        </activity>
     </application>
 
 </manifest>
