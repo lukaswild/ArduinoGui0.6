@@ -21,7 +21,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.arduinogui.HelpActivity;
 import com.example.arduinogui.R;
 
 import java.util.ArrayList;
