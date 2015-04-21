@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -25,14 +26,14 @@ import com.example.arduinogui.R;
 import java.util.HashMap;
 
 import connection.IConnection;
+import elements.AdcElement;
+import elements.AdcInputModel;
+import elements.AdcOutputModel;
 import elements.BoolElement;
 import elements.Element;
 import elements.EmptyElement;
 import elements.LedModel;
 import elements.PushButtonModel;
-import elements.PwmElement;
-import elements.PwmInputModel;
-import elements.PwmModel;
 import elements.SwitchModel;
 import generic.ComObjectStd;
 import generic.ImageAdapter;
@@ -76,7 +77,11 @@ public class Gui extends View implements IObserver {
         return gridView;
     }
 
-
+    /**
+     * Die Methode wird ausgesloest, wenn  ein Element aktualisiert werden soll.
+     * @param senderClass Eines der Elemente
+     * @param msg Die Update Message, hier wird meist ein Comobjekt mitgegeben
+     */
     @Override
     public void update(Observable senderClass, Object msg) {
 
@@ -94,19 +99,19 @@ public class Gui extends View implements IObserver {
                 View child = gridView.getChildAt(outputElementPosition);
                 //  if(model instanceof LedModel) {
                 ImageAdapter imageAdapter = (ImageAdapter) gridView.getAdapter();
-                Integer o = (Integer) imageAdapter.getItem(outputElementPosition);
-                Log.d(LOG_TAG, o.getClass().toString());
+//                Integer o = (Integer) imageAdapter.getItem(outputElementPosition);
+//                Log.d(LOG_TAG, o.getClass().toString());
                 if (modelOutput.isFirstInteraction()) {
                     modelOutput.setMillisFirstInteraction(System.currentTimeMillis());
                     modelOutput.setFirstInteraction(false);
                 }
 
                 long timeDifference = (System.currentTimeMillis() - modelOutput.getMillisFirstInteraction()) / 1000;
-        /*
-        Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
-        Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
-        nochmals in die Liste eingetragen werden
-         */
+                /*
+                Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
+                Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
+                nochmals in die Liste eingetragen werden
+                 */
                 if (!modelOutput.getTimeRecord().isEmpty() && !modelOutput.getDataRecord().isEmpty()) {
                     modelOutput.getTimeRecord().add((int) timeDifference);
                     modelOutput.getDataRecord().add(modelOutput.getDataRecord().get(modelOutput.getDataRecord().size() - 1));
@@ -115,7 +120,6 @@ public class Gui extends View implements IObserver {
                     modelOutput.getDataRecord().add(0);
                 }
                 modelOutput.getTimeRecord().add((int) timeDifference);
-                Log.d("EEEEE", "hinzugefügt");
                 int statusToAdd = 0;
 
                 if (modelOutput instanceof BoolElement) {
@@ -130,12 +134,12 @@ public class Gui extends View implements IObserver {
                         else
                             updateLedStatus(imageAdapter, outputElementPosition, false);
                     }
-                } else if (modelOutput instanceof PwmElement) {
-                    Log.d(LOG_TAG, "PWM der säule:" + ((PwmElement) modelOutput).getCurrentPwm());
-                    ((PwmElement) modelOutput).refreshRes();
-                    String pwm = String.valueOf(((PwmElement) modelOutput).getCurrentPwm());
+                } else if (modelOutput instanceof AdcElement) {
+                    Log.d(LOG_TAG, "ADC der säule:" + ((AdcElement) modelOutput).getCurrentValue());
+                    ((AdcElement) modelOutput).refreshRes();
+                    String pwm = String.valueOf(((AdcElement) modelOutput).getCurrentValue());
                     imageAdapter.update(modelOutput.getResource(), outputElementPosition);
-                    modelOutput.getDataRecord().add(((PwmElement)modelOutput).getCurrentPwm());
+                    modelOutput.getDataRecord().add(((AdcElement)modelOutput).getCurrentValue());
                     // imageAdapter.updateTextRes(pwm, outputElementPosition);
                 }
 
@@ -146,7 +150,7 @@ public class Gui extends View implements IObserver {
 
 
     /**
-     * Ändern des Status einer Led und dem ImageAdapter die Änderungen mitteilen
+     * Aendern des Status einer Led und dem ImageAdapter die Aenderungen mitteilen
      * @param imageAdapter - ImageAdapter welcher die Elemente beinhaltet
      * @param position - Position an der sich die Led befindet
      * @param high - Status auf welchen die Led gesetzt werden soll
@@ -170,7 +174,15 @@ public class Gui extends View implements IObserver {
     /* TODO Bei Hinzufügen eines neuen OutputElements bzw. Identifiers Stellung des Schalters überprüfen, da wenn Schalter bereits ein ist das Element auch sofort ein sein soll
      *  --> Einfach Status des realen Elements am Arduino abfragen und unsere Elemene auf diese Status setzen
      */
-
+	 
+    /**
+     * Hier wird die Gui intialisiert. Es werden die Methoden aufgrufen, welche im weiteren dann die onClickListener setzen
+     * Die Methode war urspruenglich in der MainActivity, wurde aber hierher verschoben, um dem MVC Design gerecht zu werden
+     * @param project Das Projekt , meist currentProjekt
+     * @param imgadapt Der Imageadapter
+     * @param currentConnection die aktuelle Verbindung
+     * @param editmode ob der Edit Mode eingeschaltet ist oder nicht
+     */
     public void initializeUI(final Project project, final ImageAdapter imgadapt, final IConnection currentConnection, boolean editmode) {
         //Löscht zuerst einmal den Inhalt von Gridview
         project.getGui().getGridView().clearAnimation();
@@ -178,22 +190,36 @@ public class Gui extends View implements IObserver {
         setOnClickListener(project, imgadapt, currentConnection, editmode);
     }
 
-    private void setOnClickListener(Project project, ImageAdapter imgadapt, IConnection currentConnection, boolean editmode) {
+        /**
+     *Hier wird nun unterschieden, ob der Edit mode eingeschaltet ist oder nicht. Dementsprechen wird ein Listener gesetzt
+     * @param project Das Projekt , meist currentProjekt
+     * @param imgadapt Der Imageadapter
+     * @param currentConnection die aktuelle Verbindung
+     * @param editmode ob der Edit Mode eingeschaltet ist oder nicht
+     */
+	 private void setOnClickListener(Project project, ImageAdapter imgadapt, IConnection currentConnection, boolean editmode) {
         ////Edit Modus ausgeschaltet, Benutzer will Schalter einschalten usw.
         if (!editmode)
             setGridViewItemClickListenerNonEditMode(project, imgadapt, currentConnection);
         else if (editmode)
             setGridViewItemClickListenerEditMode(project, imgadapt, currentConnection);
     }
-
+	
+    /**
+     *Hier werden nun die ganzen Listener gesetzt, und die Auswertung der onClickereignisse geschieht hier.
+     * Dieser Befehl wird benoetigt, wenn der edit mode eingeschaltet ist
+     * @param project Das Projekt , meist currentProjekt
+     * @param imgadapt Der Imageadapter
+     * @param currentConnection die aktuelle Verbindung
+     */
     private void setGridViewItemClickListenerEditMode(final Project project, final ImageAdapter imgadapt, final IConnection currentConnection) {
         project.getGui().getGridView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View v, final int position, long id) {
 
-                //Ist das elemtn ein plus, wenn ja popup mit neuen elementen zeigen
+                //Ist das Element ein Plus, wenn ja popup mit neuen elementen zeigen
                 if (imgadapt.getItemInt(position) == R.drawable.add1) {
-                    Context wrapper = new ContextThemeWrapper(getContext(),R.style.MyAwesomeBackground_PopupStyle);
+                    Context wrapper = new ContextThemeWrapper(getContext(),R.style.background_PopupStyle);
                     final PopupMenu popupMenu = new PopupMenu(wrapper, v);
                     popupMenu.inflate(R.menu.menu_popup);
                     popupMenu.show();
@@ -210,7 +236,7 @@ public class Gui extends View implements IObserver {
                 else {
 
                     final Context context = getContext();
-                    Context wrapper = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
+                    Context wrapper = new ContextThemeWrapper(context,R.style.background_PopupStyle);
                     final PopupMenu popupMenu = new PopupMenu(wrapper, v);
                     popupMenu.inflate(R.menu.menu_popup_clickoptions);
                     popupMenu.show();
@@ -223,7 +249,7 @@ public class Gui extends View implements IObserver {
 
                                 case R.id.identifyer:
                                     popupMenu.dismiss();
-                                    Context wrapper = new ContextThemeWrapper(context,R.style.MyAwesomeBackground_PopupStyle);
+                                    Context wrapper = new ContextThemeWrapper(context,R.style.background_PopupStyle);
                                     final PopupMenu popupMenu2 = new PopupMenu(wrapper, v);
                                     popupMenu2.inflate(R.menu.menu_popup_identifyer);
                                     popupMenu2.show();
@@ -333,7 +359,6 @@ public class Gui extends View implements IObserver {
                                     EmptyElement emptyElement = new EmptyElement();
                                     ComObjectStd comObj = new ComObjectStd(null, emptyElement, -1, position, project.getId(), DatabaseHandler.ACTION_UPDATE_ELEMENT_TYPE);
                                     project.notify(null, comObj);
-//                                    project.notify(null, null, emptyElement, -1, position, project.getId(), DatabaseHandler.ACTION_UPDATE_ELEMENT_TYPE);
                                     project.getMapAllViewModels().remove(position); // Model aus der HashMap entfernen
                                     project.getMapAllViewModels().put(position, emptyElement);
                                     imgadapt.update(R.drawable.add1, position);
@@ -359,7 +384,14 @@ public class Gui extends View implements IObserver {
             project.getElementFromMap(position).setIdentifier(identifier);
         }
     }
-
+	
+    /**
+     *Hier werden nun die ganzen Listener gesetzt, und die Auswertung der onClickereignisse geschieht hier.
+     * Diese Methode wird benoetigt, wenn der edit mode ausgeschaltet ist
+     * @param project Das Projekt , meist currentProjekt
+     * @param imgadapt Der Imageadapter
+     * @param currentConnection die aktuelle Verbindung
+     */
     private void setGridViewItemClickListenerNonEditMode(final Project project, final ImageAdapter imgadapt, final IConnection currentConnection) {
         for(int i = 0; i < imgadapt.getCount(); i++) {
             final int iFinal = i;
@@ -391,14 +423,13 @@ public class Gui extends View implements IObserver {
                 switch (imgadapt.getItemInt(position)) {
 
                     case R.drawable.add1:
-                        Context wrapper = new ContextThemeWrapper(getContext(),R.style.MyAwesomeBackground_PopupStyle);
+                        Context wrapper = new ContextThemeWrapper(getContext(),R.style.background_PopupStyle);
                         final PopupMenu popupMenu = new PopupMenu(wrapper, v);
                         popupMenu.inflate(R.menu.menu_popup);
                         popupMenu.show();
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-
                                 return addButtonPressed(item, imgadapt, position, project, currentConnection, isInEditMode());
                             }
                         });
@@ -427,12 +458,12 @@ public class Gui extends View implements IObserver {
                         }
                         break;
 
-                    case R.drawable.pwm_slider:
+                    case R.drawable.adc_slider:
                         //wenn es ein pwm_slider ist, dann muss das elemnt ein PWmInput sein.
-                        final PwmInputModel pwm = (PwmInputModel)project.getElementFromMap(position);
-
+                        final AdcInputModel adcInputModel = (AdcInputModel)project.getElementFromMap(position);
 
                         final Dialog popDialog = new Dialog(getContext());
+                        popDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT); // http://stackoverflow.com/questions/7933206/android-unable-to-add-window-token-null-is-not-for-an-application-exception
                         popDialog.setCancelable(true);
                         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -440,17 +471,19 @@ public class Gui extends View implements IObserver {
 
                         popDialog.setContentView(viewlayout);
                         popDialog.setTitle("ADC Wert");
+
                         popDialog.show();
 
+
                         final SeekBar seek1 = (SeekBar)viewlayout.findViewById(R.id.seekBarPWM);
-                        seek1.setProgress(pwm.getCurrentPwm());
+                        seek1.setProgress(adcInputModel.getCurrentValue());
                         seek1.setDrawingCacheBackgroundColor(Color.DKGRAY);
 
                         seek1.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                                                              @Override
                                                              public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-                                                                 pwm.setCurrentPwm(progress);
+                                                                 adcInputModel.setCurrentValue(progress);
                                                                  imgadapt.updateTextRes(Integer.toString(progress),position);
                                                                  imgadapt.notifyDataSetChanged();
 
@@ -488,23 +521,25 @@ public class Gui extends View implements IObserver {
                         });
                         break;
 
-                    case R.drawable.pwm_102:
-                    case R.drawable.pwm_0:
-                    case R.drawable.pwm_127_5:
-                    case R.drawable.pwm_153:
-                    case R.drawable.pwm_178_5:
-                    case R.drawable.pwm_204:
-                    case R.drawable.pwm_229_5:
-                    case R.drawable.pwm_255:
-                    case R.drawable.pwm_25_5:
-                    case R.drawable.pwm_51:
-                    case R.drawable.pwm_76_5:
+                    case R.drawable.adc_102:
+                    case R.drawable.adc_0:
+                    case R.drawable.adc_127_5:
+                    case R.drawable.adc_153:
+                    case R.drawable.adc_178_5:
+                    case R.drawable.adc_204:
+                    case R.drawable.adc_229_5:
+                    case R.drawable.adc_255:
+                    case R.drawable.adc_25_5:
+                    case R.drawable.adc_51:
+                    case R.drawable.adc_76_5:
                         makeToastNoInputElement(position);
                         break;
 
                     case R.drawable.lamp_off:
                         makeToastNoInputElement(position);
                         break;
+
+
 
 ////////// sollte aktiviert bleiben, solange angeklickt ////////////////
                     case R.drawable.button_off:
@@ -542,6 +577,7 @@ public class Gui extends View implements IObserver {
         intentDiagram.putExtra("dataRecord", elementClicked.getDataRecord());
         intentDiagram.putExtra("elementClass", elementClicked.getClass().toString());
         intentDiagram.putExtra("elementIdentifier", elementClicked.getIdentifier());
+        intentDiagram.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // http://stackoverflow.com/questions/17999152/start-new-activity-outside-the-activity-context
         getContext().startActivity(intentDiagram);
     }
 
@@ -550,7 +586,15 @@ public class Gui extends View implements IObserver {
         Toast.makeText(getContext(), "Bitte zuerst eine Verbindung auswählen", Toast.LENGTH_SHORT).show();
     }
 
-
+    /**
+     *
+     * @param item Von Diesem Item aus wird das Menue aufgebaut
+     * @param project Das Projekt , meist currentProjekt
+     * @param imgadapt Der Imageadapter
+     * @param currentConnection die aktuelle Verbindung
+     * @param editMode ob der Edit Mode eingeschaltet ist oder nicht
+     * @return
+     */
     private boolean addButtonPressed(MenuItem item, final ImageAdapter imgadapt, final int position, Project project, final IConnection currentConnection, boolean editMode) {
         final Project projectFinal = project;
 
@@ -593,22 +637,22 @@ public class Gui extends View implements IObserver {
                 //     project.addElement(new SwitchModel(ELEMENT_NAME + Integer.toString(position), false));
                 return true;
 
-            case R.id.AddPWMCol:
+            case R.id.AddADCCol:
                 Log.d(LOG_TAG, "Hinzufügen einer PWM Säule");
-                imgadapt.update(R.drawable.pwm_0, position);
+                imgadapt.update(R.drawable.adc_0, position);
                 imgadapt.notifyDataSetChanged();
-                PwmModel newPwmModel = new PwmModel(ELEMENT_NAME + Integer.toString(position));
+                AdcOutputModel newPwmModel = new AdcOutputModel(ELEMENT_NAME + Integer.toString(position));
 //                project.addModelToMap(position, new PwmModel(ELEMENT_NAME + Integer.toString(position)));
                 imgadapt.updateTextRes("0", position);
                 imgadapt.notifyDataSetChanged();
                 addToMapAndNotifyDb(position, project, newPwmModel);
                 return true;
 
-            case R.id.AddPWMView:
+            case R.id.AddADCView:
                 Log.d(LOG_TAG, "Hinzufügen eines PWM Reglers");
-                imgadapt.update(R.drawable.pwm_slider, position);
+                imgadapt.update(R.drawable.adc_slider, position);
                 imgadapt.notifyDataSetChanged();
-                PwmInputModel newPwmInputModel = new PwmInputModel(ELEMENT_NAME + Integer.toString(position));
+                AdcInputModel newPwmInputModel = new AdcInputModel(ELEMENT_NAME + Integer.toString(position));
 //                project.addModelToMap(position, new PwmInputModel(ELEMENT_NAME + Integer.toString(position)));
                 // TextView txtView2 = (TextView) gridView.findViewById(R.id.textView5);
                 imgadapt.updateTextRes("0",position);
@@ -621,7 +665,15 @@ public class Gui extends View implements IObserver {
                 return false;
         }
     }
-
+	
+    /**
+     * Die Methode setzt einen "onToucListener" auf den Pushbutton
+     * @param imgadapt
+     * @param currentConnection
+     * @param projectFinal
+     * @param positionFinal
+     * @param vAtPosition
+     */
     private void pushBtnSetTouchListener(final ImageAdapter imgadapt, final IConnection currentConnection, final Project projectFinal, final int positionFinal, View vAtPosition) {
         vAtPosition.setTag(positionFinal);
         vAtPosition.setOnTouchListener(new OnTouchListener() {
@@ -723,6 +775,38 @@ public class Gui extends View implements IObserver {
         }
     }
 
+	    /**
+     * Diese Methode updatet die ADC Anzeige, wenn am Arduino der Wert veaendert wurde
+     * @param currentElement das zu aendernde Elemente
+     * @param imageAdapter der aktuelle Imageadapter
+     * @param pos die Position in der HAshmap
+     */
+    public void updateAdc(Element currentElement, ImageAdapter imageAdapter, int pos){
+        Log.d(LOG_TAG,"in der updatePWM");
+        try {
+            Log.d(LOG_TAG,"name:"+currentElement.getName());
+
+            char[] tex = currentElement.getName().toCharArray();
+            String newtex = "";
+            int newpos = 0;
+            try {
+                newtex += tex[7];
+                newtex += tex[8];
+
+            } catch (IndexOutOfBoundsException e) {
+                newtex="";
+                newtex += tex[7];
+            }
+            newpos = Integer.parseInt(newtex);
+            imageAdapter.copyTXT(pos,newpos);
+            imageAdapter.notifyDataSetChanged();
+        }
+        catch(NullPointerException e){
+            Log.d(LOG_TAG,"name ist null");
+        }
+    }
+
+
 
     private class RunnableUpdate implements Runnable {
         private ImageAdapter imgadapt;
@@ -746,32 +830,6 @@ public class Gui extends View implements IObserver {
         private synchronized void updateGui(ImageAdapter imgadapt, int resource, int position) {
             imgadapt.update(resource, position);
         }
-    }
-
-    public void updatePWm(Element currentElement,ImageAdapter imageAdapter,int pos){
-        Log.d(LOG_TAG,"in der updatePWM");
-        try {
-            Log.d(LOG_TAG,"name:"+currentElement.getName());
-
-            char[] tex = currentElement.getName().toCharArray();
-            String newtex = "";
-            int newpos = 0;
-            try {
-                newtex += tex[7];
-                newtex += tex[8];
-
-            } catch (IndexOutOfBoundsException e) {
-                newtex="";
-                newtex += tex[7];
-            }
-            newpos = Integer.parseInt(newtex);
-            imageAdapter.copyTXT(pos,newpos);
-            imageAdapter.notifyDataSetChanged();
-        }
-        catch(NullPointerException e){
-            Log.d(LOG_TAG,"name ist null");
-        }
-
     }
 }
 

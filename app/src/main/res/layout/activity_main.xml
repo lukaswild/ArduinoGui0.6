@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/noConnection"
-            android:id="@+id/textView2"
+            android:id="@+id/tvConName"
             android:layout_alignParentRight="true"
             android:layout_gravity="center|right"/>
 
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Project"
-            android:id="@+id/textView3"
+            android:id="@+id/tvProName"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center|left"/>
 
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit"
-            android:id="@+id/switch1"
+            android:id="@+id/switchEditMode"
             android:layout_gravity="center_vertical|center"
             android:onClick="EditMode"/>
 

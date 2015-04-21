@@ -40,8 +40,8 @@
     <string name="classSwitchModel">class elements.SwitchModel</string>
     <string name="classLedModel">"class elements.LedModel"</string>
     <string name="classPushButtonModel">"class elements.PushButtonModel"</string>
-    <string name="classPwmModel">"class elements.PwmModel"</string>
-    <string name="classPwmInputModel">"class elements.PwmInputModel"</string>
+    <string name="classAdcOutputModel">"class elements.AdcOutputModel"</string>
+    <string name="classAdcInputModel">"class elements.AdcInputModel"</string>
     <string name="classEmptyElement">"class elements.EmptyElement"</string>
     <string name="txtAddress">Adresse</string>
     <string name="txtMacAddressBT">MAC-Adresse des Bluetooth-Moduls</string>

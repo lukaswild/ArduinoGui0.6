@@ -99,16 +99,17 @@ public abstract class Element {
         }
 
         long timeDifference = (System.currentTimeMillis() - getMillisFirstInteraction()) / 1000;
+        getTimeRecord().add((int) timeDifference);
         /*
         Der Graph wird so gezeichnet, dass die jeweilen DataPoints mit einer Geraden verbunden werden.
         Um schöne Sprünge von 0 auf 1 zu haben, muss deshalb der jeweils vorherige Eintrag mit der aktuellen Zeit
         nochmals in die Liste eingetragen werden
          */
         if(!getTimeRecord().isEmpty() && !getDataRecord().isEmpty()) {
-            getTimeRecord().add((int) timeDifference);
+//            getTimeRecord().add((int) timeDifference); // außerhalb von if-Bedingung, da in if und else vorkommt
             getDataRecord().add(getDataRecord().get(getDataRecord().size() - 1));
         } else {
-            getTimeRecord().add((int) timeDifference);
+//            getTimeRecord().add((int) timeDifference); // außerhalb von if-Bedingung, da in if und else vorkommt
             getDataRecord().add(0);
         }
 

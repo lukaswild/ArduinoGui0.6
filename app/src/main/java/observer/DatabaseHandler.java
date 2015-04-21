@@ -13,20 +13,18 @@ import com.example.arduinogui.R;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import connection.BTConnection;
 import connection.EthernetConnection;
 import connection.IConnection;
+import elements.AdcElement;
+import elements.AdcInputModel;
+import elements.AdcOutputModel;
 import elements.BoolElement;
 import elements.Element;
 import elements.EmptyElement;
 import elements.LedModel;
 import elements.PushButtonModel;
-import elements.PwmElement;
-import elements.PwmInputModel;
-import elements.PwmModel;
 import elements.SwitchModel;
 import generic.ComObjectSingle;
 import generic.ComObjectStd;
@@ -47,7 +45,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
     public static final int ACTION_INSERT_ELEMENT = 0;
     public static final int ACTION_UPDATE_ELEMENT_TYPE = 4;
     public static final int ACTION_UPDATE_ELEMENT_BOTH = 1;
-    public static final int ACTION_REMOVE_ELEMENT = 2;
+//    public static final int ACTION_REMOVE_ELEMENT = 2;
     public static final int ACTION_UPDATE_IDENTIFIER = 3;
     public static final int ACTION_NOTHING = 5;
     public static final int ACTION_UPDATE_SINGLE_ELEMENT = 6;
@@ -68,9 +66,11 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        // db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
 //        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
 //        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
+//        db.delete("projects", "", null);
+//        db.delete("elements", "", null);
 
         Log.d(LOG_TAG, "Erzeugen der Datenbank...");
         this.db = db;
@@ -80,16 +80,19 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
         createTableElements(db);
     }
 
-        @Override
-        public void onOpen(SQLiteDatabase db) {
-            super.onOpen(db);
-            Log.d(LOG_TAG, "Öffnen der Datenbank...");
-            //db.execSQL("DROP TABLE IF EXISTS connections");
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        Log.d(LOG_TAG, "Öffnen der Datenbank...");
+//        db.execSQL("DROP TABLE IF EXISTS connections");
 //        db.execSQL("DROP TABLE IF EXISTS projects");
 //        db.execSQL("DROP TABLE IF EXISTS elements");
-            createTableConnections(db);
-            createTableProjects(db);
-            createTableElements(db);
+//        db.delete("projects", "", null);
+//        db.delete("elements", "", null);
+
+        createTableConnections(db);
+        createTableProjects(db);
+        createTableElements(db);
     }
 
 
@@ -112,6 +115,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                 "lastOpenedDate text NOT NULL" +
                 ")");
     }
+
 
     private void createTableElements(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE IF NOT EXISTS " + TABLE_ELEMENTS + " (" +
@@ -136,21 +140,21 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
 
     // Alte Methode zum Eintragen der Connections
-    public void updateConnections(ArrayList<String> allConsName,
-                                  ArrayList<String> allConsType, ArrayList<String> allConsAddress, SQLiteDatabase db) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
-        onCreate(db);
-
-        for (int i = 0; i < allConsName.size(); i++) {
-            SQLiteStatement cmdStoreCon = db.compileStatement("INSERT INTO " + TABLE_CONNECTIONS + " VALUES (null, ?, ?, ?)");
-            cmdStoreCon.bindString(1, allConsType.get(i));
-            cmdStoreCon.bindString(2, allConsName.get(i));
-            cmdStoreCon.bindString(3, allConsAddress.get(i));
-            cmdStoreCon.execute();
-
-            Log.d(LOG_TAG, "Connection " + allConsName.get(i) + " in DB eingetragen");
-        }
-    }
+//    public void updateConnections(ArrayList<String> allConsName,
+//                                  ArrayList<String> allConsType, ArrayList<String> allConsAddress, SQLiteDatabase db) {
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONNECTIONS);
+//        onCreate(db);
+//
+//        for (int i = 0; i < allConsName.size(); i++) {
+//            SQLiteStatement cmdStoreCon = db.compileStatement("INSERT INTO " + TABLE_CONNECTIONS + " VALUES (null, ?, ?, ?)");
+//            cmdStoreCon.bindString(1, allConsType.get(i));
+//            cmdStoreCon.bindString(2, allConsName.get(i));
+//            cmdStoreCon.bindString(3, allConsAddress.get(i));
+//            cmdStoreCon.execute();
+//
+//            Log.d(LOG_TAG, "Connection " + allConsName.get(i) + " in DB eingetragen");
+//        }
+//    }
 
 
     public void insertConnection(IConnection connection, SQLiteDatabase db) {
@@ -171,71 +175,71 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
 
     // Alte Methode, um Daten am Ende in der onDestroy der MainActivity gesammelt in die DB zu speichern
-    public void updateProjects(ArrayList<Project> allProjects, SQLiteDatabase db, Context context) {
-//        db.delete("projects", "", null);
-//        db.delete("elements", "", null);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
-        onCreate(db);
-
-//        allProjects.clear();
-
-        for (Project p : allProjects) {
-            // Projekt eintragen
-            SQLiteStatement cmdInsertProj = db.compileStatement("INSERT INTO " + TABLE_PROJECTS + " VALUES ( null, ?, ?, ?, ?, ? )");
-            cmdInsertProj.bindString(1, p.getName());
-            cmdInsertProj.bindLong(2, p.getId());
-            cmdInsertProj.bindString(3, p.getDateString(p.getCreationDate()));
-            cmdInsertProj.bindString(4, p.getDateString(p.getLastModifiedDate()));
-            cmdInsertProj.bindString(5, p.getDateString(p.getLastOpenedDate()));
-            cmdInsertProj.execute();
-            Log.d(LOG_TAG, "Projekt eingetragen: " + p.getName() + " Id: " + p.getId() + " Creation date: " +
-                    p.getDateString(p.getCreationDate()) + " Last modified: " + p.getDateString(p.getLastModifiedDate()) +
-                    " Last opened: " + p.getDateString(p.getLastOpenedDate()));
-
-            // Zugehörige Elemente eintragen
-            HashMap<Integer, Element> mapAllViewModels = p.getMapAllViewModels();
-            Iterator iteratorMap = mapAllViewModels.entrySet().iterator();
-            while (iteratorMap.hasNext()) {
-                Map.Entry entry = (Map.Entry) iteratorMap.next();
-                Integer key = (Integer) entry.getKey();
-                Element element = (Element) entry.getValue();
-                String elementKind = "";
-                String elementType = element.getClass().toString();
-                long status = 0;
-
-                if (element instanceof BoolElement) {
-                    elementKind = "Bool";
-                    if (((BoolElement) element).isStatusHigh())
-                        status = 1;
-                    else
-                        status = 0;
-                    Log.d(LOG_TAG, "ELEMENT STATUS " + status);
-                } else if (element instanceof PwmElement) {
-                    elementKind = "Pwm";
-                    status = ((PwmElement) element).getCurrentPwm();
-                } else if (element instanceof EmptyElement) {
-                    elementKind = "NULL";
-                }
-
-                SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ?, ? )");
-                cmdInsertElements.bindString(1, elementKind); // Bool- oder Pwm-Element
-                cmdInsertElements.bindString(2, elementType); // z.B. Switch, Led,...
-                cmdInsertElements.bindLong(3, key);
-                cmdInsertElements.bindLong(4, status);
-                if (element.getIdentifier() != null)
-                    cmdInsertElements.bindString(5, element.getIdentifier());
-                else
-                    cmdInsertElements.bindNull(5);
-                cmdInsertElements.bindLong(6, element.getResource());
-                Log.d(LOG_TAG, "Ressource: " + element.getResource());
-                cmdInsertElements.bindLong(7, p.getId());
-                cmdInsertElements.execute();
-                Log.d(LOG_TAG, "Element eingetragen: " + elementType + " Position: " + key + " Projekt: " + p.getId());
-            }
-        }
-//        ArrayList<Project> allProsFromDb = selectAllPros(db, context);
-    }
+//    public void updateProjects(ArrayList<Project> allProjects, SQLiteDatabase db, Context context) {
+////        db.delete("projects", "", null);
+////        db.delete("elements", "", null);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PROJECTS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ELEMENTS);
+//        onCreate(db);
+//
+////        allProjects.clear();
+//
+//        for (Project p : allProjects) {
+//            // Projekt eintragen
+//            SQLiteStatement cmdInsertProj = db.compileStatement("INSERT INTO " + TABLE_PROJECTS + " VALUES ( null, ?, ?, ?, ?, ? )");
+//            cmdInsertProj.bindString(1, p.getName());
+//            cmdInsertProj.bindLong(2, p.getId());
+//            cmdInsertProj.bindString(3, p.getDateString(p.getCreationDate()));
+//            cmdInsertProj.bindString(4, p.getDateString(p.getLastModifiedDate()));
+//            cmdInsertProj.bindString(5, p.getDateString(p.getLastOpenedDate()));
+//            cmdInsertProj.execute();
+//            Log.d(LOG_TAG, "Projekt eingetragen: " + p.getName() + " Id: " + p.getId() + " Creation date: " +
+//                    p.getDateString(p.getCreationDate()) + " Last modified: " + p.getDateString(p.getLastModifiedDate()) +
+//                    " Last opened: " + p.getDateString(p.getLastOpenedDate()));
+//
+//            // Zugehörige Elemente eintragen
+//            HashMap<Integer, Element> mapAllViewModels = p.getMapAllViewModels();
+//            Iterator iteratorMap = mapAllViewModels.entrySet().iterator();
+//            while (iteratorMap.hasNext()) {
+//                Map.Entry entry = (Map.Entry) iteratorMap.next();
+//                Integer key = (Integer) entry.getKey();
+//                Element element = (Element) entry.getValue();
+//                String elementKind = "";
+//                String elementType = element.getClass().toString();
+//                long status = 0;
+//
+//                if (element instanceof BoolElement) {
+//                    elementKind = "Bool";
+//                    if (((BoolElement) element).isStatusHigh())
+//                        status = 1;
+//                    else
+//                        status = 0;
+//                    Log.d(LOG_TAG, "ELEMENT STATUS " + status);
+//                } else if (element instanceof AdcElement) {
+//                    elementKind = "Pwm";
+//                    status = ((AdcElement) element).getCurrentValue();
+//                } else if (element instanceof EmptyElement) {
+//                    elementKind = "NULL";
+//                }
+//
+//                SQLiteStatement cmdInsertElements = db.compileStatement("INSERT INTO " + TABLE_ELEMENTS + " VALUES ( null, ?, ?, ?, ?, ?, ?, ? )");
+//                cmdInsertElements.bindString(1, elementKind); // Bool- oder Pwm-Element
+//                cmdInsertElements.bindString(2, elementType); // z.B. Switch, Led,...
+//                cmdInsertElements.bindLong(3, key);
+//                cmdInsertElements.bindLong(4, status);
+//                if (element.getIdentifier() != null)
+//                    cmdInsertElements.bindString(5, element.getIdentifier());
+//                else
+//                    cmdInsertElements.bindNull(5);
+//                cmdInsertElements.bindLong(6, element.getResource());
+//                Log.d(LOG_TAG, "Ressource: " + element.getResource());
+//                cmdInsertElements.bindLong(7, p.getId());
+//                cmdInsertElements.execute();
+//                Log.d(LOG_TAG, "Element eingetragen: " + elementType + " Position: " + key + " Projekt: " + p.getId());
+//            }
+//        }
+////        ArrayList<Project> allProsFromDb = selectAllPros(db, context);
+//    }
 
 
     public void deleteConnectionDb(String conName) {
@@ -319,10 +323,10 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                     e = new LedModel();
                 else if (eType.equals(context.getString(R.string.classPushButtonModel)))
                     e = new PushButtonModel();
-                else if (eType.equals(context.getString(R.string.classPwmInputModel)))
-                    e = new PwmInputModel();
-                else if (eType.equals(context.getString(R.string.classPwmModel)))
-                    e = new PwmModel();
+                else if (eType.equals(context.getString(R.string.classAdcInputModel)))
+                    e = new AdcInputModel();
+                else if (eType.equals(context.getString(R.string.classAdcOutputModel)))
+                    e = new AdcOutputModel();
                 else
                     e = new EmptyElement();
                 e.setName(eName);
@@ -335,7 +339,7 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
                         boolStatus = true;
                     ((BoolElement) e).setStatusHigh(boolStatus);
                 } else if (eKind.equals("Pwm")) {
-                    ((PwmElement) e).setCurrentPwm(status);
+                    ((AdcElement) e).setCurrentValue(status);
                 }
 
                 mapAllViewModels.put(position, e);
@@ -389,8 +393,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
             outputElementPosition = comObj.getOutputElementPosition();
             projectId = comObj.getProjectId();
             actionNr = comObj.getActionNr();
-        } else if (msg instanceof ComObjectSingle) {
 
+        } else if (msg instanceof ComObjectSingle) {
             ComObjectSingle comObj = (ComObjectSingle) msg;
             model = comObj.getModel();
             position = comObj.getPosition();
@@ -399,38 +403,38 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
         }
 
 
-            if (actionNr != ACTION_NOTHING)
-                Log.d(LOG_TAG, "Updaten der DB über Observer");
+        if (actionNr != ACTION_NOTHING)
+            Log.d(LOG_TAG, "Updaten der DB über Observer");
 
-            switch (actionNr) {
+        switch (actionNr) {
 
-                case ACTION_INSERT_ELEMENT:
-                    insertElementDb(modelOutput, outputElementPosition, projectId);
-                    break;
+            case ACTION_INSERT_ELEMENT:
+                insertElementDb(modelOutput, outputElementPosition, projectId);
+                break;
 
-                case ACTION_UPDATE_ELEMENT_TYPE:
-                    replaceElementDb(modelOutput, outputElementPosition, projectId);
-                    break;
+            case ACTION_UPDATE_ELEMENT_TYPE:
+                replaceElementDb(modelOutput, outputElementPosition, projectId);
+                break;
 
-                case ACTION_UPDATE_ELEMENT_BOTH:
-                    updateElementDb(modelInput, modelOutput, inputElementPosition, outputElementPosition);
-                    break;
+            case ACTION_UPDATE_ELEMENT_BOTH:
+                updateElementDb(modelInput, modelOutput, inputElementPosition, outputElementPosition);
+                break;
 
-                case ACTION_UPDATE_SINGLE_ELEMENT:
-                    updateSingleElementDb(model, position);
-                    break;
+            case ACTION_UPDATE_SINGLE_ELEMENT:
+                updateSingleElementDb(model, position);
+                break;
 
-                case ACTION_UPDATE_IDENTIFIER:
-                    updateElementIdentifier(modelInput, modelOutput, inputElementPosition, outputElementPosition);
-                    break;
+            case ACTION_UPDATE_IDENTIFIER:
+                updateElementIdentifier(modelInput, modelOutput, inputElementPosition, outputElementPosition);
+                break;
 
-                case ACTION_REMOVE_ELEMENT:
-                    deleteElementDb(outputElementPosition, projectId);
-                    break;
+//            case ACTION_REMOVE_ELEMENT:
+//                deleteElementDb(outputElementPosition, projectId);
+//                break;
 
-                case ACTION_NOTHING:
-                    break;
-            }
+            case ACTION_NOTHING:
+                break;
+        }
 
     }
 
@@ -453,8 +457,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
             db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + element.getName() + "', status = " + statusInt + ", identifier = '" + element.getIdentifier() + "', resource = " + element.getResource() + " WHERE position = " + position);
             Log.d(LOG_TAG, "DB aktualisiert");
 
-        } else if (element instanceof PwmElement) {
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + element.getName() + "', status = " + ((PwmElement) element).getCurrentPwm() + ", identifier = '" + element.getIdentifier() + "', resource = " + element.getResource() + " WHERE position = " + position);
+        } else if (element instanceof AdcElement) {
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + element.getName() + "', status = " + ((AdcElement) element).getCurrentValue() + ", identifier = '" + element.getIdentifier() + "', resource = " + element.getResource() + " WHERE position = " + position);
 
         }
     }
@@ -480,9 +484,9 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
             else
                 status = 0;
             Log.d(LOG_TAG, "ELEMENT STATUS " + status);
-        } else if (modelToUpdate instanceof PwmElement) {
+        } else if (modelToUpdate instanceof AdcElement) {
             elementKind = "Pwm";
-            status = ((PwmElement) modelToUpdate).getCurrentPwm();
+            status = ((AdcElement) modelToUpdate).getCurrentValue();
         } else if (modelToUpdate instanceof EmptyElement) {
             elementKind = "NULL";
         }
@@ -528,9 +532,9 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
             db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelInput.getName() + "', status = " + statusInt + ", identifier = '" + modelInput.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
 //                  db.update(TABLE_ELEMENTS, values, "position = ?", new String[] {outputElementPosition + ""});
             Log.d(LOG_TAG, "DB aktualisiert");
-        } else if (modelToUpdate instanceof PwmElement) {
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelInput.getName() + "', status = " + ((PwmElement) modelInput).getCurrentPwm() + ", identifier = '" + modelInput.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
+        } else if (modelToUpdate instanceof AdcElement) {
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + ((AdcElement) modelToUpdate).getCurrentValue() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelInput.getName() + "', status = " + ((AdcElement) modelInput).getCurrentValue() + ", identifier = '" + modelInput.getIdentifier() + "', resource = " + modelInput.getResource() + " WHERE position = " + inputElementPosition);
         }
     }
 
@@ -555,8 +559,8 @@ public class DatabaseHandler extends SQLiteOpenHelper implements IObserver {
 
 //                  db.update(TABLE_ELEMENTS, values, "position = ?", new String[] {outputElementPosition + ""});
             Log.d(LOG_TAG, "DB aktualisiert");
-        } else if (modelToUpdate instanceof PwmElement) {
-            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + ((PwmElement) modelToUpdate).getCurrentPwm() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
+        } else if (modelToUpdate instanceof AdcElement) {
+            db.execSQL("UPDATE " + TABLE_ELEMENTS + " SET name = '" + modelToUpdate.getName() + "', status = " + ((AdcElement) modelToUpdate).getCurrentValue() + ", identifier = '" + modelToUpdate.getIdentifier() + "', resource = " + modelToUpdate.getResource() + " WHERE position = " + outputElementPosition);
             Log.d(LOG_TAG, "DB aktualisiert");
         }
     }

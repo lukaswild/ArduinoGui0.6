@@ -15,8 +15,8 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:popupMenuStyle">@style/MyAwesomeBackground.PopupStyle</item>
-       <item name="android:popupWindowStyle">@style/MyAwesomeBackground.PopupStyle</item>
+        <item name="android:popupMenuStyle">@style/background.PopupStyle</item>
+       <item name="android:popupWindowStyle">@style/background.PopupStyle</item>
         <item name="android:textAppearanceLargePopupMenu">@style/CustomTextStyle</item>
         <item name="android:textAppearanceSmallPopupMenu">@style/CustomTextStyle</item>
 
@@ -24,7 +24,7 @@
 
     </style>
 
-    <style name="MyAwesomeBackground.PopupStyle" parent="android:Widget.PopupMenu">
+    <style name="background.PopupStyle" parent="android:Widget.PopupMenu">
         <item name="android:popupBackground">#ffffffff</item>
         <item name="android:textColor">#ff3691ff</item>
         <item name="android:textSize">20sp</item>

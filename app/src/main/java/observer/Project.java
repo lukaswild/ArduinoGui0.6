@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import connection.IConnection;
+import elements.AdcElement;
 import elements.BoolElement;
 import elements.Element;
 import elements.EmptyElement;
@@ -21,7 +22,6 @@ import elements.InputElement;
 import elements.LedModel;
 import elements.OutputElement;
 import elements.PushButtonModel;
-import elements.PwmElement;
 import elements.SwitchModel;
 import generic.CodeGenerator;
 import generic.ComObjectSingle;
@@ -49,6 +49,9 @@ public class Project extends Observable {
     private LedModel elementLed;
 
     private ImageAdapter imageAdapter;
+	 /**
+     * Die IDs in dieser Map sind die gleichen wie im Imageadapter
+     */
     private HashMap<Integer, Element> mapAllViewModels; // Speichern aller Modelelemente mit ihrer Position als Key
 
 
@@ -289,12 +292,12 @@ public class Project extends Observable {
                     ((BoolElement) model).setStatusHigh(newStatus);
                     ((BoolElement)model).setResource(!newStatus);
 
-                    ComObjectSingle comObjectSingle1 = new ComObjectSingle(model, position, id, DatabaseHandler.ACTION_NOTHING);
+                    ComObjectSingle comObjectSingle = new ComObjectSingle(model, position, id, DatabaseHandler.ACTION_NOTHING);
                     if(model instanceof PushButtonModel)
-                        notify(this, comObjectSingle1);
+                        notify(this, comObjectSingle);
                     else {
-                        comObjectSingle1.setActionNr(DatabaseHandler.ACTION_UPDATE_SINGLE_ELEMENT);
-                        notify(this, comObjectSingle1);
+                        comObjectSingle.setActionNr(DatabaseHandler.ACTION_UPDATE_SINGLE_ELEMENT);
+                        notify(this, comObjectSingle);
                     }
                     Log.d(LOG_TAG, "Gesendet");
 
@@ -348,7 +351,7 @@ public class Project extends Observable {
             } else
                 Log.e(LOG_TAG, "Error - Kein Identifier gesetzt");
         }
-        else if (model instanceof PwmElement) {
+        else if (model instanceof AdcElement) {
 
             if (model.getIdentifier() !=null){
 
@@ -357,21 +360,21 @@ public class Project extends Observable {
                 //die Werte anhand der Stellen. Das macht die Überprüfung am Arduino schwieriger.
                 //Besser ist 034, oder z.B.: 009, so ist der PWM Wert immer 3 Stellen lang.
 
-                String pwm ="" ;
-                if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==1)
-                    pwm= "00"+Integer.toString(((PwmElement) model).getCurrentPwm());
-                else if (ziffernrekursiv(((PwmElement) model).getCurrentPwm())==2)
-                    pwm="0"+Integer.toString(((PwmElement) model).getCurrentPwm());
+                String adc ="" ;
+                if (checkDigits(((AdcElement) model).getCurrentValue())==1)
+                    adc= "00"+Integer.toString(((AdcElement) model).getCurrentValue());
+                else if (checkDigits(((AdcElement) model).getCurrentValue())==2)
+                    adc="0"+Integer.toString(((AdcElement) model).getCurrentValue());
                 else
-                    pwm=Integer.toString(((PwmElement) model).getCurrentPwm());
+                    adc=Integer.toString(((AdcElement) model).getCurrentValue());
 
-                String code = CodeGenerator.generateCodeToSend(pwm,model.getIdentifier());
+                String code = CodeGenerator.generateCodeToSend(adc, model.getIdentifier());
                 Log.d(LOG_TAG, "Identifier: " + model.getIdentifier());
 
                 if (model instanceof InputElement) {
                     Log.d(LOG_TAG, "Model ist ein InputElement");
                     Log.d(LOG_TAG, "Senden an Arduino...");
-                    ((InputElement) model).sendDataToArduino(currentConnection, code, Integer.parseInt(pwm));
+                    ((InputElement) model).sendDataToArduino(currentConnection, code, Integer.parseInt(adc));
                     ComObjectSingle comObjectSingle = new ComObjectSingle(model, position, id, DatabaseHandler.ACTION_UPDATE_SINGLE_ELEMENT);
                     notify(this, comObjectSingle);
                     Log.d(LOG_TAG, "Gesendet");
@@ -429,14 +432,14 @@ public class Project extends Observable {
                                     //receiveInt=Integer.parseInt(receive);
 //                                    Log.d(LOG_TAG, "receiveInt " + receiveInt);
 
-                                    if (model instanceof PwmElement && currentElement instanceof PwmElement) {
+                                    if (model instanceof AdcElement && currentElement instanceof AdcElement) {
 
 
                                         Log.d(LOG_TAG, "im instanceof");
-                                        ((PwmElement) currentElement).setCurrentPwm(Integer.parseInt(pwm));
-                                        ((PwmElement) currentElement).refreshRes();
+                                        ((AdcElement) currentElement).setCurrentValue(Integer.parseInt(adc));
+                                        ((AdcElement) currentElement).refreshRes();
 
-                                       gui.updatePWm(currentElement,imageAdapter,position);
+                                       gui.updateAdc(currentElement, imageAdapter, position);
 
                                        imageAdapter.notifyDataSetChanged();
                                         ComObjectStd comObj = new ComObjectStd(model, currentElement, position, (Integer) entry.getKey(), id, DatabaseHandler.ACTION_UPDATE_ELEMENT_BOTH);
@@ -447,21 +450,11 @@ public class Project extends Observable {
 //                                }
                             }
                         }
-                    
-                
                     }
-
-
                 }
-
-
-
-
             }
-
         }
         Log.d(LOG_TAG, "Kein BoolElement");
-
     }
 
 
@@ -479,8 +472,8 @@ public class Project extends Observable {
     }
 
 
-    public static int ziffernrekursiv(int zahl) {
-        return (zahl>0)? 1+ziffernrekursiv(zahl/10) : 0;
+    public static int checkDigits(int zahl) {
+        return (zahl>0)? 1+ checkDigits(zahl / 10) : 0;
     }
 
 

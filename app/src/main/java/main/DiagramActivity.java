@@ -66,16 +66,16 @@ public class DiagramActivity extends Activity {
             graphView.addSeries(series);
             graphView.setMinimumHeight(graphView.getHeight());
 
-            StringBuilder titleSeries = new StringBuilder();
+            StringBuilder titleSeries = new StringBuilder(); // TODO nicht über Klassenname, sondern z.B. über toString-Methode
             if (elementClass.equals(getString(R.string.classLedModel)))
                 titleSeries.append("Led ");
             else if (elementClass.equals(getString(R.string.classSwitchModel)))
                 titleSeries.append("Schalter ");
             else if(elementClass.equals(getString(R.string.classPushButtonModel)))
                 titleSeries.append("Button ");
-            else if(elementClass.equals(getString(R.string.classPwmInputModel)))
+            else if(elementClass.equals(getString(R.string.classAdcInputModel)))
                 titleSeries.append("ADC-Regler ");
-            else if(elementClass.equals(getString(R.string.classPwmModel)))
+            else if(elementClass.equals(getString(R.string.classAdcOutputModel)))
                 titleSeries.append("ADC-Anzeige ");
             titleSeries.append(elementIdentifier);
             series.setTitle(titleSeries.toString());

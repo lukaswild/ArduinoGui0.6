@@ -44,26 +44,49 @@ import observer.Project;
 public class MainActivity extends Activity {
 
     //Felder
+	    //Felder
+    /**
+     * allProjects: enthält alle Projecet, wird zu Beginn aus der DB geladen
+     * currentProject: enthhält das aktuelle Projekt, wird anhand des zulletzt geöffnet Datum ermittelt
+     */
     private static ArrayList<Project> allProjects = new ArrayList<Project>();
     private static Project currentProject;
 
+	/**
+     * allConnections: enthält alle Connectionc, wird zu Beginn aus der DB geladen
+     * currentProject: enthhält die aktuelle Connection (falls gessetzt)
+     */
     private static ArrayList<IConnection> allConnections = new ArrayList<IConnection>();
     private static IConnection currentConnection;
     private static HashMap<Integer, Integer> ProjectConnection = new HashMap<Integer, Integer>();
     public static HashMap<Integer, String> ElementIdentifyer = new HashMap<Integer, String>();
 
+	/**
+     * Das Feld für den Imageadapter
+     */
     public static ImageAdapter imgadapt;
     public static Gui gui;
     public static int lenghtIMGset=0;
 
     private MainFragment dataFragment;
+	/**
+     * Diese Codes werden benötigt, wenn die Activities gewechselt werden, um zu überprüfen, was
+     * eingegeben wurde
+     */
     private final int REQUEST_CODE_NEW_CON = 100;
     private final int REQUEST_CODE_NEW_PRO = 120;
     private final String ELEMENT_NAME = "element";
     private static int elementCount = 0;
     private final static String LOG_TAG = "MainActivity";
+	
+	/**
+     * Das Feld für die Datenbank
+     */
     private static DatabaseHandler dbHandler;
     //    private SQLiteDatabase db;
+	/**
+     * Das Feld für den Edit Mode
+     */
     private boolean editmode = false;
 
 
@@ -105,6 +128,12 @@ public class MainActivity extends Activity {
     }
 
     @Override
+	 /**
+     * Die wichtigste Methode:onCreate
+     * Hier wird festgelegt, was passiert, wenn die Activity erstellt wird
+     * alle wichtigen Initialiseirugnen befinden sich hier (wie z.B.: Datenbank
+     * Initialiserung, Zuweisung des Imageadapters, usw. )
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -155,12 +184,16 @@ public class MainActivity extends Activity {
                     String string = "";
                     EditText edit = (EditText) popDialog.findViewById(R.id.proNamePopup);
 
-                    currentProject.setName(edit.getText().toString());
-                    allProjects.add(currentProject);
-                    setCurrentProjByName(edit.getText().toString());
-                    dbHandler.addProjectToDb(currentProject);
-                    popDialog.dismiss();
-                    showName();
+                    if(!edit.getText().toString().equals("")) {
+
+                        currentProject.setName(edit.getText().toString());
+                        allProjects.add(currentProject);
+                        setCurrentProjByName(edit.getText().toString());
+                        dbHandler.addProjectToDb(currentProject);
+                        popDialog.dismiss();
+                        showName();
+                    } else
+                        Toast.makeText(getBaseContext(), getString(R.string.errorNameEmpty), Toast.LENGTH_SHORT).show();
                 }
 
             });
@@ -243,21 +276,24 @@ public class MainActivity extends Activity {
 
 
     // Alte Methode zum Abspeichern in der DB bei Ausstieg aus der App
-    private void storeDataInDb() {
-        ArrayList<String> allConsName = new ArrayList<String>();
-        ArrayList<String> allConsType = new ArrayList<String>();
-        ArrayList<String> allConsAddress = new ArrayList<String>();
-        splitConsIntoLists(allConsType, allConsName, allConsAddress);
-        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
+//    private void storeDataInDb() {
+//        ArrayList<String> allConsName = new ArrayList<String>();
+//        ArrayList<String> allConsType = new ArrayList<String>();
+//        ArrayList<String> allConsAddress = new ArrayList<String>();
+//        splitConsIntoLists(allConsType, allConsName, allConsAddress);
+//        dbHandler.updateConnections(allConsName, allConsType, allConsAddress, dbHandler.getDb());
+//
+//        // Eintragen der Projekte in die DB
+//        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
+//    }
 
-        // Eintragen der Projekte in die DB
-        dbHandler.updateProjects(allProjects, dbHandler.getDb(), this);
-    }
-
-
+    /**
+     * Diese Methode aktualisiert die Textviews zur Anzeige des aktuellen projekts und der aktuellen Verbindung
+     *
+     */
     public void showName(){
-        TextView view = (TextView)findViewById(R.id.textView3);
-        TextView view2 = (TextView)findViewById(R.id.textView2);
+        TextView view = (TextView)findViewById(R.id.tvProName);
+        TextView view2 = (TextView)findViewById(R.id.tvConName);
 
         //Wird nur gesetzt wenn der Name des Projekts nicht leer ist,
         //standardmäßig wird Project angezeigt
@@ -334,6 +370,10 @@ public class MainActivity extends Activity {
 
     }
 
+	 /**
+     * Diese Methode wird aufgerufen, wenn der Edit Mode geaendert werden soll
+     * @param view
+     */
     public void EditMode(View view) {
         if (editmode ==true){
             editmode =false;
@@ -367,12 +407,18 @@ public class MainActivity extends Activity {
         }
     }
 
+	 /**
+     * Mithilfe dieser Methode wird ein neuer Intent erzeugt und in die Activity HelpAvtivity gewechselt
+     */
     private void startActivityHelp() {
         Log.d(LOG_TAG, "HelpActivity wird gestartet...");
         Intent newHelpIntent = new Intent(this, HelpActivity.class);
         startActivity(newHelpIntent);
     }
 
+	 /**
+     * Mithilfe dieser Methode wird ein neuer Intent erzeugt und in die Activity ConnectionActivity gewechselt
+     */
     private void startActivityConnection() {
         Log.d(LOG_TAG, "ConnectionActivity wird gestartet...");
         Intent newConIntent = new Intent(this, ConnectionActivity.class);
@@ -405,6 +451,12 @@ public class MainActivity extends Activity {
         startActivityForResult(newConIntent, REQUEST_CODE_NEW_CON);
     }
 
+	 /**
+     *
+     * @param allConsType
+     * @param allConsHeader
+     * @param allConsAddress
+     */
     private void splitConsIntoLists(ArrayList<String> allConsType, ArrayList<String> allConsHeader, ArrayList<String> allConsAddress) {
         for (IConnection c : allConnections) {
             if (c instanceof BTConnection) {
@@ -439,7 +491,12 @@ public class MainActivity extends Activity {
         startActivityForResult(newProIntent, REQUEST_CODE_NEW_PRO);
     }
 
-
+    /**
+     * Die Methode wird ausgefuehrt, wenn eine Connection geloescht werden soll,
+     * es wird die Connection ermittelt, und wenn sie existiert wird sie geloescht
+     * @param conName der Verbindungsname der zu loeschenden Verbindung
+     * @return Wenn es geklappt hat true, sonst false
+     */
     public static boolean removeConnection(String conName) {
         for (IConnection c: allConnections) {
             if(c.getConNameDeclaration().equals(conName)) {
@@ -451,7 +508,12 @@ public class MainActivity extends Activity {
         }
         return false;
     }
-
+    /**
+     * Die Methode wird ausgefuehrt, wenn ein Projekt geloescht werden soll,
+     * es wird das Projekt ermittelt, und wenn es existiert wird es geloescht
+     * @param proName der Projektname des zu loeschenden Projekts
+     * @return Wenn es geklappt hat true, sonst false
+     */
     public static boolean removeProject(String proName) {
         for(Project p : allProjects) {
             if(p.getName().equals(proName)) {
@@ -464,7 +526,10 @@ public class MainActivity extends Activity {
         return false;
     }
 
-
+    /** Diese Methode zeigt das Einstellungsfenster, wenn auf den Button oben rechts gedrueckt wird.
+     * Es sind verschiedene Sekkbars eintahlten, und ein Auswahlmenue für die Sprachen
+     *
+     */
     public void showDialog(){
 
         final Dialog popDialog = new Dialog(this);
@@ -654,7 +719,6 @@ public class MainActivity extends Activity {
      * @param resultCode
      * @param data
      */
-
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         if(resultCode != 0) {
@@ -697,7 +761,10 @@ public class MainActivity extends Activity {
             }
         }
     }
-
+    /**
+     * Diese Methode wird benoetigt, wenn z.B.: nach dem Wechsel eines Projektes die Elemente auf der Oberflaeche aktualisiert werden sollen
+     *
+     */
     public static void loadImgRes() {
         //Zuerst muss die hashmap aus dem projekt(int, element) zu einer hashmap im imgadapt(int, int) gecastet werden
 

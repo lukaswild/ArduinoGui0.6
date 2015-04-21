@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import observer.DatabaseHandler;
 import generic.ExpListAdapterAllPro;
+import observer.DatabaseHandler;
 import observer.Project;
 
 /**
@@ -106,6 +106,12 @@ public class ProjectActivity extends  Activity {
                                     }
                                     expListAdapter.notifyDataSetChanged();
                                     dbHandler.deleteProjectDb(keyChosen);
+
+//                                    if(MainActivity.getCurrentProject().getName().equals(keyChosen)) {
+//                                        ((TextView)findViewById(R.id.tvProName)).setText("Kein Pro");
+//                                    }
+
+
                                     return true;
 
                                 case R.id.alterEntry:
@@ -270,12 +276,12 @@ public class ProjectActivity extends  Activity {
         boolean isUnique = isProNameUnique(proName);
 
         if(isUnique) {
-            if (proName != "") { // Bluetooth oder Ethernet
+            if (!proName.equals("")) { // Bluetooth oder Ethernet
                 // Log.d(LOG_TAG, Integer.toString(conType));
                 dialogNewPro.dismiss();
                 setResultToActivity(proName); // Variablen conType, strConName und address zur�ckliefern
             } else // nichts ausgew�hlt - sollte �berhaupt nicht vorkommen (als Absicherung wird es abgefangen)
-                Toast.makeText(getApplicationContext(), "Es wurde nichts ausgew�hlt. ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.errorNameEmpty), Toast.LENGTH_SHORT).show();
         } else
             Toast.makeText(this, getString(R.string.errorNameNotUnique), Toast.LENGTH_SHORT).show();
     }
@@ -289,7 +295,7 @@ public class ProjectActivity extends  Activity {
 
 
     /**
-     * Methode wird ausgef�hrt, wenn Button "Abbrechen" geklickt wurde
+     * Methode wird ausgefuehrt, wenn Button "Abbrechen" geklickt wurde
      * @param
      */
     public void proBtnCancelClicked(Dialog dialog) {
